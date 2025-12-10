@@ -1,0 +1,90 @@
+-- SEED ADMIN ACCOUNT (Robust Version)
+-- Usage: Copy and run this script in Supabase SQL Editor.
+-- This script safely creates or updates the admin user without relying on specific unique constraints for ON CONFLICT.
+
+create extension if not exists pgcrypto;
+
+DO $$
+DECLARE
+  v_email text := 'luan.nguyenthien@gmail.com';
+  v_password text := 'admin1234';
+  v_username text := 'admin';
+  v_user_id uuid;
+  v_encrypted_pw text;
+BEGIN
+  -- Generate hash once
+  v_encrypted_pw := crypt(v_password, gen_salt('bf'));
+  
+  -- 1. Try to find existing user by email
+  SELECT id INTO v_user_id FROM auth.users WHERE email = v_email LIMIT 1;
+  
+  IF v_user_id IS NOT NULL THEN
+    -- A. UPDATE EXISTING USER
+    UPDATE auth.users
+    SET 
+      encrypted_password = v_encrypted_pw,
+      email_confirmed_at = now(),
+      updated_at = now(),
+      raw_user_meta_data = jsonb_build_object('full_name', 'System Admin', 'username', v_username)
+    WHERE id = v_user_id;
+    
+    RAISE NOTICE 'Admin user found (ID: %). Password reset.', v_user_id;
+    
+  ELSE
+    -- B. INSERT NEW USER
+    v_user_id := gen_random_uuid();
+    
+    INSERT INTO auth.users (
+      instance_id,
+      id,
+      aud,
+      role,
+      email,
+      encrypted_password,
+      email_confirmed_at,
+      recovery_sent_at,
+      last_sign_in_at,
+      raw_app_meta_data,
+      raw_user_meta_data,
+      created_at,
+      updated_at,
+      confirmation_token,
+      email_change_token_new,
+      recovery_token
+    ) VALUES (
+      '00000000-0000-0000-0000-000000000000',
+      v_user_id,
+      'authenticated',
+      'authenticated',
+      v_email,
+      v_encrypted_pw,
+      now(),
+      null,
+      now(),
+      '{"provider": "email", "providers": ["email"]}',
+      jsonb_build_object('full_name', 'System Admin', 'username', v_username),
+      now(),
+      now(),
+      '',
+      '',
+      ''
+    );
+    
+    RAISE NOTICE 'Admin user created (ID: %).', v_user_id;
+  END IF;
+
+  -- 2. ENSURE PROFILE EXISTS AND HAS ADMIN ROLE
+  -- We use ON CONFLICT (id) here because public.profiles PK is 'id' which is definitely unique.
+  INSERT INTO public.profiles (id, username, full_name, role)
+  VALUES (
+    v_user_id,
+    v_username,
+    'System Admin',
+    'admin'
+  )
+  ON CONFLICT (id) DO UPDATE SET
+    role = 'admin',
+    username = v_username,
+    full_name = 'System Admin';
+
+END $$;
