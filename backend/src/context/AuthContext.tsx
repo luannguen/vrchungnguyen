@@ -1,91 +1,66 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from '../supabase';
-import { Session, User } from '@supabase/supabase-js';
+import { UserDTO } from '../components/data/types';
+import { authService } from '../services/authService';
 
 type AuthContextType = {
-    session: Session | null;
-    user: User | null;
-    role: string | null;
+    user: UserDTO | null;
     isLoading: boolean;
     signOut: () => Promise<void>;
     isAdmin: boolean;
+    role: string | null;
 };
 
 const AuthContext = createContext<AuthContextType>({
-    session: null,
     user: null,
-    role: null,
     isLoading: true,
     signOut: async () => { },
     isAdmin: false,
+    role: null,
 });
 
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [session, setSession] = useState<Session | null>(null);
-    const [user, setUser] = useState<User | null>(null);
-    const [role, setRole] = useState<string | null>(null);
+    const [user, setUser] = useState<UserDTO | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // Check active session
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session);
-            setUser(session?.user ?? null);
-            if (session?.user) {
-                fetchUserRole(session.user.id);
-            } else {
-                setIsLoading(false);
+        // Initial check
+        const initAuth = async () => {
+            const result = await authService.getCurrentUser();
+            if (result.success) {
+                setUser(result.data);
             }
+            setIsLoading(false);
+        };
+        initAuth();
+
+        // Subscribe to changes
+        const subscription = authService.onAuthStateChange((updatedUser) => {
+            setUser(updatedUser);
+            setIsLoading(false);
         });
 
-        // Listen for changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setSession(session);
-            setUser(session?.user ?? null);
-            if (session?.user) {
-                fetchUserRole(session.user.id);
-            } else {
-                setRole(null);
-                setIsLoading(false);
-            }
-        });
-
-        return () => subscription.unsubscribe();
+        return () => {
+            subscription.unsubscribe();
+        };
     }, []);
 
-    const fetchUserRole = async (userId: string) => {
-        try {
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('role')
-                .eq('id', userId)
-                .single();
-
-            if (error) {
-                console.error('Error fetching role:', error);
-            } else {
-                setRole(data?.role ?? 'user');
-            }
-        } catch (error) {
-            console.error('Error fetching role:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
     const signOut = async () => {
-        await supabase.auth.signOut();
-        setRole(null);
-        setSession(null);
+        await authService.logout();
         setUser(null);
     };
 
-    const isAdmin = role === 'admin' || role === 'manager';
+    const isAdmin = user?.role === 'admin' || user?.role === 'manager'; // manager included for backward compatibility logic if any
 
     return (
-        <AuthContext.Provider value={{ session, user, role, isLoading, signOut, isAdmin }}>
+        <AuthContext.Provider value={{
+            user,
+            isLoading,
+            signOut,
+            isAdmin,
+            role: user?.role || null
+        }}>
             {!isLoading && children}
         </AuthContext.Provider>
     );

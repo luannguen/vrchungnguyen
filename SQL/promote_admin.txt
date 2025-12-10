@@ -1,0 +1,16 @@
+-- PROMOTE USER TO ADMIN (SQL/promote_admin.txt)
+-- User ID: 683b9428-faba-41fe-aeed-6a5b9832eb03
+-- Email: nguyenzeroluan@gmail.com
+
+INSERT INTO public.profiles (id, username, full_name, role)
+VALUES (
+  '683b9428-faba-41fe-aeed-6a5b9832eb03',
+  'admin_luan',
+  'Luan Nguyen',
+  'admin'
+)
+ON CONFLICT (id) DO UPDATE
+SET role = 'admin', username = 'admin_luan';
+
+-- Verify it worked
+SELECT * FROM public.profiles WHERE id = '683b9428-faba-41fe-aeed-6a5b9832eb03';

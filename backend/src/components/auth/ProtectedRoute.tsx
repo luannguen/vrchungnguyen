@@ -2,7 +2,7 @@ import { Navigate, Outlet } from "react-router";
 import { useAuth } from "../../context/AuthContext";
 
 export default function ProtectedRoute() {
-    const { session, isLoading, isAdmin } = useAuth();
+    const { session, isLoading } = useAuth();
 
     if (isLoading) {
         return (

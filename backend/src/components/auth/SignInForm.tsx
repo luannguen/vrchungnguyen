@@ -5,35 +5,24 @@ import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
 import Button from "../ui/button/Button";
-import { supabase } from "../../supabase";
+import { useAuthFeature } from "../../hooks/features/useAuth";
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState(false); // Kept for UI state, logic can be implemented later
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  const { login, isLoading, error } = useAuthFeature();
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
 
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+    const user = await login(email, password);
 
-      if (error) throw error;
-
+    if (user) {
       navigate("/");
-    } catch (err: any) {
-      setError(err.message || "Something went wrong");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -118,8 +107,8 @@ export default function SignInForm() {
                 </Link>
               </div>
               <div>
-                <Button className="w-full" size="sm" disabled={loading}>
-                  {loading ? "Signing in..." : "Sign in"}
+                <Button className="w-full" size="sm" disabled={isLoading}>
+                  {isLoading ? "Signing in..." : "Sign in"}
                 </Button>
               </div>
             </div>
