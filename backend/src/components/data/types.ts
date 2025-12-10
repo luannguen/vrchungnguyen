@@ -48,6 +48,16 @@ export interface UserDTO {
     role: 'admin' | 'user' | 'moderator' | 'manager';
     fullName?: string;
     avatarUrl?: string;
+    phoneNumber?: string;
+    location?: string;
+    bio?: string;
+    socialLinks?: {
+        facebook?: string;
+        twitter?: string;
+        linkedin?: string;
+        instagram?: string;
+        github?: string;
+    };
 }
 
 export interface AuthDTO {

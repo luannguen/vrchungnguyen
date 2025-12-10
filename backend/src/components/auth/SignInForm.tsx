@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
@@ -6,6 +6,7 @@ import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
 import Button from "../ui/button/Button";
 import { useAuthFeature } from "../../hooks/features/useAuth";
+import { useAuth } from "../../context/AuthContext";
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,15 +15,23 @@ export default function SignInForm() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  const { user: globalUser } = useAuth(); // Check global state
   const { login, isLoading, error } = useAuthFeature();
+
+  useEffect(() => {
+    if (globalUser) {
+      navigate("/", { replace: true });
+    }
+  }, [globalUser, navigate]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const user = await login(email, password);
-
-    if (user) {
-      navigate("/");
+    console.log("[SignInForm] Submitting login form for:", email);
+    try {
+      const result = await login(email, password);
+      console.log("[SignInForm] Login result:", result);
+    } catch (err) {
+      console.error("[SignInForm] Critical error:", err);
     }
   };
 
@@ -107,7 +116,7 @@ export default function SignInForm() {
                 </Link>
               </div>
               <div>
-                <Button className="w-full" size="sm" disabled={isLoading}>
+                <Button className="w-full" size="sm" disabled={isLoading} type="submit">
                   {isLoading ? "Signing in..." : "Sign in"}
                 </Button>
               </div>

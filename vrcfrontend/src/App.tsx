@@ -23,6 +23,16 @@ import Contact from "./pages/Contact";
 import Events from "./pages/Events";
 import NotFound from "./pages/NotFound";
 
+// Auth & Admin pages
+// Auth & Admin pages - REMOVED during migration to backend
+// import Login from "./modules/user/pages/LoginPage";
+// import AdminLayout from "./components/layouts/AdminLayout";
+// import ProtectedRoute from "./modules/user/components/ProtectedRoute";
+// import Profile from "./modules/user/pages/ProfilePage";
+// import RoleManagement from "./pages/admin/RoleManagement";
+// import UserManagement from "./modules/user/pages/UserManagementPage";
+// import { AuthProvider } from "./modules/user/context/AuthContext";
+
 // Legal pages
 import Privacy from "./pages/legal/Privacy";
 import Terms from "./pages/legal/Terms";
@@ -56,6 +66,7 @@ import SpecializedProjects from "./pages/projects/Specialized";
 const App = () => (
   <TooltipProvider>
     <BrowserRouter>
+      {/* <AuthProvider> */}
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<MainLayout />}>
@@ -95,13 +106,27 @@ const App = () => (
           <Route path="legal/sitemap" element={<Sitemap />} />
           <Route path="data/statistics" element={<Statistics />} />
           <Route path="data/tools" element={<Tools />} />
+          {/* <Route path="login" element={<Login />} /> */}
           <Route path="*" element={<NotFound />} />
         </Route>
+
+        {/* Admin Protected Routes - REMOVED
+          <Route element={<ProtectedRoute />}>
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<Navigate to="/admin/profile" replace />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="roles" element={<RoleManagement />} />
+              <Route path="users" element={<UserManagement />} />
+             
+            </Route>
+          </Route> */}
+
       </Routes>
+      {/* </AuthProvider> */}
       <Toaster />
       <Sonner />
     </BrowserRouter>
-  </TooltipProvider>
+  </TooltipProvider >
 );
 
 export default App;

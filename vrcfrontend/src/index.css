@@ -75,7 +75,7 @@
   }
   
   .navbar-link {
-    @apply text-white hover:text-secondary transition-colors;
+    @apply text-primary hover:text-secondary transition-colors;
   }
   
   .footer-link {
