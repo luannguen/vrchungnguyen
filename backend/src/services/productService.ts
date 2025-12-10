@@ -61,7 +61,7 @@ export const productService = {
         try {
             const { data, error } = await supabase
                 .from('products')
-                .insert(product)
+                .insert(product as any)
                 .select()
                 .single();
 
@@ -82,7 +82,7 @@ export const productService = {
         try {
             const { data, error } = await supabase
                 .from('products')
-                .update(updates)
+                .update(updates as any)
                 .eq('id', id)
                 .select()
                 .single();

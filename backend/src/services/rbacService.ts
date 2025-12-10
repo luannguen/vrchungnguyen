@@ -47,7 +47,7 @@ export const rbacService = {
         try {
             const { data, error } = await supabase
                 .from('roles')
-                .insert({ name, description })
+                .insert({ name, description } as any)
                 .select()
                 .single();
 
@@ -83,7 +83,7 @@ export const rbacService = {
 
             const { error: insertError } = await supabase
                 .from('role_permissions')
-                .insert(inserts);
+                .insert(inserts as any);
 
             if (insertError) return failure(insertError.message, ErrorCodes.SERVER_ERROR);
 
@@ -123,14 +123,14 @@ export const rbacService = {
 
             const { error } = await supabase
                 .from('user_roles')
-                .insert({ user_id: userId, role_id: roleId });
+                .insert({ user_id: userId, role_id: roleId } as any);
 
             if (error) return failure(error.message, ErrorCodes.SERVER_ERROR);
 
             // Sync profile.role for backward compatibility if needed, using the role name
             const { data: role } = await supabase.from('roles').select('name').eq('id', roleId).single();
             if (role) {
-                await supabase.from('profiles').update({ role: role.name }).eq('id', userId);
+                await supabase.from('profiles').update({ role: role.name } as any).eq('id', userId);
             }
 
             return success(undefined);

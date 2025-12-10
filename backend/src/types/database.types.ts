@@ -170,6 +170,75 @@ export interface Database {
                     created_at?: string
                 }
             }
+            cms_pages: {
+                Row: {
+                    id: string
+                    slug: string
+                    title: string | null
+                    content: string | null
+                    is_published: boolean | null
+                    metadata: Json | null
+                    created_at: string | null
+                    updated_at: string | null
+                }
+                Insert: {
+                    id?: string
+                    slug: string
+                    title?: string | null
+                    content?: string | null
+                    is_published?: boolean | null
+                    metadata?: Json | null
+                    created_at?: string | null
+                    updated_at?: string | null
+                }
+                Update: {
+                    id?: string
+                    slug?: string
+                    title?: string | null
+                    content?: string | null
+                    is_published?: boolean | null
+                    metadata?: Json | null
+                    created_at?: string | null
+                    updated_at?: string | null
+                }
+            }
+            permissions: {
+                Row: {
+                    id: string
+                    code: string
+                    description: string | null
+                    created_at: string | null
+                }
+                Insert: {
+                    id?: string
+                    code: string
+                    description?: string | null
+                    created_at?: string | null
+                }
+                Update: {
+                    id?: string
+                    code?: string
+                    description?: string | null
+                    created_at?: string | null
+                }
+            }
+            role_permissions: {
+                Row: {
+                    role_id: string
+                    permission_id: string
+                    created_at: string | null
+                }
+                Insert: {
+                    role_id: string
+                    permission_id: string
+                    created_at?: string | null
+                }
+                Update: {
+                    role_id?: string
+                    permission_id?: string
+                    created_at?: string | null
+                }
+            }
             // Add other tables like permissions, role_permissions, news, projects, pages...
             // (kept shortened for brevity, can expand later as needed)
         }
