@@ -37,7 +37,8 @@ export const cmsContentService = {
         try {
             const { data, error } = await supabase
                 .from('categories')
-                .insert(category as any)
+                // @ts-ignore
+                .insert(category)
                 .select()
                 .single();
             if (error) return failure(error.message, ErrorCodes.SERVER_ERROR);
@@ -51,7 +52,8 @@ export const cmsContentService = {
         try {
             const { data, error } = await supabase
                 .from('categories')
-                .update(updates as any)
+                // @ts-ignore
+                .update(updates)
                 .eq('id', id)
                 .select()
                 .single();
@@ -95,7 +97,8 @@ export const cmsContentService = {
         try {
             const { data, error } = await supabase
                 .from('cms_pages')
-                .update(updates as any)
+                // @ts-ignore
+                .update(updates)
                 .eq('id', id)
                 .select()
                 .single();
