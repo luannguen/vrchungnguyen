@@ -19,7 +19,7 @@ export function success<T>(data: T): Result<T> {
     return { success: true, data };
 }
 
-export function failure(error: string, code = ErrorCodes.UNKNOWN_ERROR): Result<null> {
+export function failure<T = any>(error: string, code = ErrorCodes.UNKNOWN_ERROR): Result<T> {
     return { success: false, error, code };
 }
 
