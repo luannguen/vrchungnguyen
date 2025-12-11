@@ -41,6 +41,22 @@ export const authService = {
         }
     },
 
+    loginWithGoogle: async (): Promise<Result<{ url: string } | void>> => {
+        try {
+            const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: `${window.location.origin}/dashboard`
+                }
+            });
+
+            if (error) return failure(error.message, ErrorCodes.UNAUTHORIZED);
+            return success(data);
+        } catch (err: any) {
+            return failure(err.message || 'Network error', ErrorCodes.NETWORK_ERROR);
+        }
+    },
+
     logout: async (): Promise<Result<void>> => {
         try {
             const { error } = await supabase.auth.signOut();

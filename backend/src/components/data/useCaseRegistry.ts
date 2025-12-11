@@ -10,6 +10,15 @@ export const useCaseRegistry = {
         service: 'authService.login',
         hook: 'useAuth',
     },
+    'auth.loginWithGoogle': {
+        id: 'auth.loginWithGoogle',
+        domain: 'auth',
+        description: 'Login with Google OAuth',
+        input: 'void',
+        output: 'Result<{ url: string } | void>',
+        service: 'authService.loginWithGoogle',
+        hook: 'useAuth',
+    },
     'auth.logout': {
         id: 'auth.logout',
         domain: 'auth',
@@ -27,5 +36,14 @@ export const useCaseRegistry = {
         output: 'Result<UserDTO>',
         service: 'authService.getCurrentUser',
         hook: 'useAuth',
+    },
+    'rbac.getUserRole': {
+        id: 'rbac.getUserRole',
+        domain: 'rbac',
+        description: 'Get current user role',
+        input: 'void', // userId
+        output: 'Result<Role>',
+        service: 'rbacService.getUserRole',
+        hook: 'useRBAC',
     },
 };
