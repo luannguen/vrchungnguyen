@@ -10,33 +10,52 @@ export function useAuth() {
     useEffect(() => {
         let mounted = true;
 
-        // Listen for auth changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+        // Safety timeout: stop loading after 10s if nothing happens
+        const timeout = setTimeout(() => {
+            if (mounted) setLoading(false);
+        }, 10000);
+
+        const handleSession = async (session: any) => {
             if (session?.user) {
                 const result = await authService.getCurrentUser();
                 if (mounted) {
                     if (result.success && result.data) {
                         setUser(result.data);
                     } else {
-                        // Fallback to session user if service fails, or handle error
-                        // But usually getCurrentUser just wraps getUser.
-                        // If it fails, we might not want to log them in fully.
                         setUser(null);
                     }
                 }
             } else {
-                if (mounted) {
-                    setUser(null);
+                if (mounted) setUser(null);
+            }
+
+            if (mounted) {
+                // If we have a session, stop loading.
+                // If checking for redirect (hash has access_token), keep loading until Supabase processes it.
+                // Otherwise detailed check:
+                const isHandlingRedirect = !session && window.location.hash.includes('access_token');
+
+                if (!isHandlingRedirect) {
+                    setLoading(false);
+                    clearTimeout(timeout);
                 }
             }
-            if (mounted) {
-                setLoading(false);
-            }
+        };
+
+        // Check initial session (restored from storage)
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            handleSession(session);
+        });
+
+        // Listen for new auth events (OAuth redirects, etc)
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            handleSession(session);
         });
 
         return () => {
             mounted = false;
             subscription.unsubscribe();
+            clearTimeout(timeout);
         };
     }, []);
 
