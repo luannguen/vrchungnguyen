@@ -1,66 +1,43 @@
-/**
- * Core Data Types for 3-Layer Architecture
- */
-
-// --- Result Pattern ---
-
-export type Success<T> = {
-    success: true;
-    data: T;
+export type Result<T> = {
+    success: boolean;
+    data?: T;
+    error?: string;
+    code?: string;
 };
 
-export type Failure = {
-    success: false;
-    error: string;
-    code: ErrorCodes;
+export const ErrorCodes = {
+    VALIDATION_ERROR: 'VALIDATION_ERROR',
+    NOT_FOUND: 'NOT_FOUND',
+    UNAUTHORIZED: 'UNAUTHORIZED',
+    FORBIDDEN: 'FORBIDDEN',
+    NETWORK_ERROR: 'NETWORK_ERROR',
+    SERVER_ERROR: 'SERVER_ERROR',
+    UNKNOWN_ERROR: 'UNKNOWN_ERROR',
 };
 
-export type Result<T> = Success<T> | Failure;
-
-export const success = <T>(data: T): Success<T> => ({
-    success: true,
-    data,
-});
-
-export const failure = (error: string, code: ErrorCodes): Failure => ({
-    success: false,
-    error,
-    code,
-});
-
-// --- Error Codes ---
-
-export enum ErrorCodes {
-    VALIDATION_ERROR = 'VALIDATION_ERROR',
-    NOT_FOUND = 'NOT_FOUND',
-    UNAUTHORIZED = 'UNAUTHORIZED',
-    FORBIDDEN = 'FORBIDDEN',
-    NETWORK_ERROR = 'NETWORK_ERROR',
-    SERVER_ERROR = 'SERVER_ERROR',
-    UNKNOWN_ERROR = 'UNKNOWN_ERROR',
+export function success<T>(data: T): Result<T> {
+    return { success: true, data };
 }
 
-// --- DTOs (Data Transfer Objects) ---
+export function failure(error: string, code = ErrorCodes.UNKNOWN_ERROR): Result<null> {
+    return { success: false, error, code };
+}
+
+// Auth DTOs
+export interface LoginDTO {
+    email: string;
+    password?: string; // Optional because magic link or OAuth might not need it, but for now we use password
+}
 
 export interface UserDTO {
     id: string;
     email: string;
-    role: 'admin' | 'user' | 'moderator' | 'manager';
-    fullName?: string;
-    avatarUrl?: string;
-    phoneNumber?: string;
-    location?: string;
-    bio?: string;
-    socialLinks?: {
-        facebook?: string;
-        twitter?: string;
-        linkedin?: string;
-        instagram?: string;
-        github?: string;
-    };
+    full_name?: string;
+    avatar_url?: string;
+    role?: 'admin' | 'editor' | 'user';
 }
 
-export interface AuthDTO {
+export interface SessionDTO {
+    access_token: string;
     user: UserDTO;
-    session: unknown; // Supabase session object
 }
