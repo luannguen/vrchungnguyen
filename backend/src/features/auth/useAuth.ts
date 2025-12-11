@@ -8,31 +8,34 @@ export function useAuth() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Check initial session
-        const checkSession = async () => {
-            const result = await authService.getCurrentUser();
-            if (result.success && result.data) {
-                setUser(result.data);
-            }
-            setLoading(false);
-        };
-
-        checkSession();
+        let mounted = true;
 
         // Listen for auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
             if (session?.user) {
                 const result = await authService.getCurrentUser();
-                if (result.success && result.data) {
-                    setUser(result.data);
+                if (mounted) {
+                    if (result.success && result.data) {
+                        setUser(result.data);
+                    } else {
+                        // Fallback to session user if service fails, or handle error
+                        // But usually getCurrentUser just wraps getUser.
+                        // If it fails, we might not want to log them in fully.
+                        setUser(null);
+                    }
                 }
             } else {
-                setUser(null);
+                if (mounted) {
+                    setUser(null);
+                }
             }
-            setLoading(false);
+            if (mounted) {
+                setLoading(false);
+            }
         });
 
         return () => {
+            mounted = false;
             subscription.unsubscribe();
         };
     }, []);
