@@ -21,14 +21,19 @@ export const authService = {
                 return failure('Login failed', ErrorCodes.UNKNOWN_ERROR);
             }
 
-            // Fetch additional user profile data if needed (e.g., from public.users)
-            // For now, we map from auth.user
+            // Fetch user profile from public.users table to get the reliable role
+            const { data: profile } = await supabase
+                .from('users')
+                .select('*')
+                .eq('id', data.user.id)
+                .single();
+
             const userDTO: UserDTO = {
                 id: data.user.id,
                 email: data.user.email!,
-                full_name: data.user.user_metadata?.full_name,
-                avatar_url: data.user.user_metadata?.avatar_url,
-                role: data.user.user_metadata?.role || 'user', // Default to user if not set in metadata
+                full_name: profile?.full_name || data.user.user_metadata?.full_name,
+                avatar_url: profile?.avatar_url || data.user.user_metadata?.avatar_url,
+                role: profile?.role || 'user', // Get role from DB, default to user
             };
 
             return success({
@@ -75,12 +80,19 @@ export const authService = {
                 return failure('Not authenticated', ErrorCodes.UNAUTHORIZED);
             }
 
+            // Fetch user profile from public.users table
+            const { data: profile } = await supabase
+                .from('users')
+                .select('*')
+                .eq('id', user.id)
+                .single();
+
             const userDTO: UserDTO = {
                 id: user.id,
                 email: user.email!,
-                full_name: user.user_metadata?.full_name,
-                avatar_url: user.user_metadata?.avatar_url,
-                role: user.user_metadata?.role || 'user',
+                full_name: profile?.full_name || user.user_metadata?.full_name,
+                avatar_url: profile?.avatar_url || user.user_metadata?.avatar_url,
+                role: profile?.role || 'user',
             };
 
             return success(userDTO);

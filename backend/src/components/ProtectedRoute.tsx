@@ -24,8 +24,10 @@ export default function ProtectedRoute({ requiredRole }: ProtectedRouteProps) {
         return <Navigate to="/login" replace />;
     }
 
-    if (requiredRole && !hasRole(requiredRole) && !hasRole('admin')) {
-        return <Navigate to="/" replace />;
+    // Strict role check: if role is required and user lacks it
+    if (requiredRole && !hasRole(requiredRole)) {
+        // If user is logged in but doesn't have permission, send to User Dashboard
+        return <Navigate to="/user" replace />;
     }
 
     return <Outlet />;

@@ -3,14 +3,17 @@ import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import AdminLayout from './components/admin/layout/AdminLayout';
 import DashboardHome from './pages/DashboardHome';
+import UserPage from './pages/UserPage';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/user" element={<UserPage />} />
 
-        <Route element={<ProtectedRoute />}>
+        {/* Admin Routes - Strict 'admin' role required */}
+        <Route element={<ProtectedRoute requiredRole="admin" />}>
           <Route path="/" element={<AdminLayout />}>
             <Route index element={<DashboardHome />} />
             <Route path="users" element={<div>Users Management (Coming Soon)</div>} />
