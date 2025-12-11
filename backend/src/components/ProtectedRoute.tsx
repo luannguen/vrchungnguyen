@@ -25,8 +25,6 @@ export default function ProtectedRoute({ requiredRole }: ProtectedRouteProps) {
     }
 
     if (requiredRole && !hasRole(requiredRole) && !hasRole('admin')) {
-        // Allow admin to access everything, otherwise check specific role
-        // or redirects to 403 / dashboard if unauthorized
         return <Navigate to="/" replace />;
     }
 
