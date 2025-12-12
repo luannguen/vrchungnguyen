@@ -62,18 +62,26 @@ const Footer = () => {
               {siteDescription}
             </p>
             <div className="flex space-x-4">
-              <a href="https://facebook.com" className="text-gray-300 hover:text-white transition-colors" aria-label="Facebook">
-                <Facebook size={20} />
-              </a>
-              <a href="https://twitter.com" className="text-gray-300 hover:text-white transition-colors" aria-label="Twitter">
-                <Twitter size={20} />
-              </a>
-              <a href="https://linkedin.com" className="text-gray-300 hover:text-white transition-colors" aria-label="LinkedIn">
-                <Linkedin size={20} />
-              </a>
-              <a href="https://youtube.com" className="text-gray-300 hover:text-white transition-colors" aria-label="YouTube">
-                <Youtube size={20} />
-              </a>
+              {settings['social_facebook'] && (
+                <a href={settings['social_facebook']} className="text-gray-300 hover:text-white transition-colors" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+                  <Facebook size={20} />
+                </a>
+              )}
+              {settings['social_twitter'] && (
+                <a href={settings['social_twitter']} className="text-gray-300 hover:text-white transition-colors" aria-label="Twitter" target="_blank" rel="noopener noreferrer">
+                  <Twitter size={20} />
+                </a>
+              )}
+              {settings['social_linkedin'] && (
+                <a href={settings['social_linkedin']} className="text-gray-300 hover:text-white transition-colors" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
+                  <Linkedin size={20} />
+                </a>
+              )}
+              {settings['social_youtube'] && (
+                <a href={settings['social_youtube']} className="text-gray-300 hover:text-white transition-colors" aria-label="YouTube" target="_blank" rel="noopener noreferrer">
+                  <Youtube size={20} />
+                </a>
+              )}
             </div>
           </div>
 
