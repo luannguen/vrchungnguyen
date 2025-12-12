@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { rbacService, Role, PermissionDef, RoleDef } from '@/services/rbacService';
-import { Check, Shield, Loader2, Save } from 'lucide-react';
+import { Shield, Loader2, Save } from "lucide-react";
 
 const RolesPage: React.FC = () => {
     const [roles, setRoles] = useState<RoleDef[]>([]);
@@ -109,7 +109,7 @@ const RolesPage: React.FC = () => {
                                     <th key={role.id} scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[150px]">
                                         <div className="flex flex-col items-center">
                                             <Shield className={`h-5 w-5 mb-1 ${role.id === 'admin' ? 'text-purple-500' :
-                                                    role.id === 'editor' ? 'text-blue-500' : 'text-green-500'
+                                                role.id === 'editor' ? 'text-blue-500' : 'text-green-500'
                                                 }`} />
                                             {role.name}
                                             <button
