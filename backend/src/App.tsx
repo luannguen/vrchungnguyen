@@ -21,6 +21,7 @@ import ServicesPage from './pages/admin/ServicesPage';
 import ResourcesPage from './pages/admin/ResourcesPage'; // Added
 import AchievementsPage from './pages/admin/AchievementsPage';
 import FAQsPage from './pages/admin/FAQsPage';
+import TeamPage from './pages/admin/TeamPage';
 
 
 function App() {
@@ -50,6 +51,7 @@ function App() {
             <Route path="resources" element={<ResourcesPage />} /> {/* Added */}
             <Route path="achievements" element={<AchievementsPage />} />
             <Route path="faqs" element={<FAQsPage />} />
+            <Route path="team" element={<TeamPage />} />
             <Route path="settings" element={<SettingsPage />} />
           </Route>
         </Route>

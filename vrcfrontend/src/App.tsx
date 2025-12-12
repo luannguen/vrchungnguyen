@@ -24,6 +24,7 @@ import EnergyEfficiency from "./pages/technologies/EnergyEfficiency";
 import News from "./pages/News";
 import NewsDetail from "./pages/NewsDetail";
 import Contact from "./pages/Contact";
+import TeamPage from "./pages/TeamPage";
 import Events from "./pages/Events";
 import EventDetail from "./pages/EventDetail";
 import ProjectDetail from "./pages/ProjectDetail";
@@ -122,6 +123,7 @@ const App = () => (
             <Route path="publications/green-building-standards" element={<GreenBuildingStandards />} />
             <Route path="publications/energy-efficiency-report" element={<EnergyEfficiencyReport />} />
             <Route path="contact" element={<Contact />} />
+            <Route path="team" element={<TeamPage />} />
             <Route path="legal/privacy" element={<Privacy />} />
             <Route path="legal/terms" element={<Terms />} />
             <Route path="legal/cookies" element={<Cookies />} />

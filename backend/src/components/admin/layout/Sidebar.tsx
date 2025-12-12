@@ -28,6 +28,7 @@ const menuGroups = [
             { icon: Layout, label: 'banners', href: '/banners' },
             { icon: Calendar, label: 'events', href: '/events' },
             { icon: Mail, label: 'contacts', href: '/contacts' },
+            { icon: Users, label: 'team', href: '/team' },
         ]
     },
     {

@@ -128,3 +128,22 @@ export interface SiteSetting {
     description?: string;
     updated_at: string;
 }
+
+export interface TeamMember {
+    id: string;
+    name: string;
+    role: string;
+    bio?: string;
+    image_url?: string;
+    social_links?: {
+        linkedin?: string;
+        twitter?: string;
+        facebook?: string;
+        instagram?: string;
+        email?: string;
+        [key: string]: string | undefined;
+    };
+    display_order: number;
+    created_at: string;
+    updated_at: string;
+}

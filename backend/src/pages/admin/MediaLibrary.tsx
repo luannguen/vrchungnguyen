@@ -5,12 +5,20 @@ import { Button } from '@/components/ui/button';
 import { Card, CardFooter } from '@/components/ui/card';
 import { Loader2, Upload, Trash2, Copy, Check, Image as ImageIcon, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+} from "@/components/ui/dialog";
 
 export default function MediaLibrary() {
     const [images, setImages] = useState<MediaItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);
     const [copiedId, setCopiedId] = useState<string | null>(null);
+    const [selectedImage, setSelectedImage] = useState<MediaItem | null>(null);
 
     const fetchImages = async () => {
         setLoading(true);
@@ -62,6 +70,7 @@ export default function MediaLibrary() {
             toast.success('Image deleted');
             setImages(images.filter(img => img.path !== path && `${'uploads'}/${img.name}` !== path)); // Optimistic update or just filter
             fetchImages(); // Refresh to be sure
+            setSelectedImage(null); // Close dialog if open
         } catch (error) {
             console.error('Error deleting:', error);
             toast.error('Failed to delete image');
@@ -73,6 +82,20 @@ export default function MediaLibrary() {
         setCopiedId(id);
         toast.success('URL copied to clipboard');
         setTimeout(() => setCopiedId(null), 2000);
+    };
+
+    const formatDate = (dateString: string) => {
+        if (!dateString) return 'N/A';
+        return new Date(dateString).toLocaleString();
+    };
+
+    const formatSize = (bytes: number) => {
+        if (!bytes) return 'N/A';
+        const k = 1024;
+        const dm = 2;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     };
 
     return (
@@ -118,7 +141,11 @@ export default function MediaLibrary() {
                         </div>
                     ) : (
                         images.map((item) => (
-                            <Card key={item.id} className="overflow-hidden group">
+                            <Card
+                                key={item.id}
+                                className="overflow-hidden group cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all"
+                                onClick={() => setSelectedImage(item)}
+                            >
                                 <div className="aspect-square relative bg-muted/20">
                                     <img
                                         src={item.url}
@@ -126,26 +153,18 @@ export default function MediaLibrary() {
                                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                                         loading="lazy"
                                     />
-                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2" onClick={(e) => e.stopPropagation()}>
                                         <Button
                                             variant="secondary"
                                             size="icon"
                                             className="h-8 w-8"
-                                            onClick={() => handleCopyUrl(item.url, item.id)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleCopyUrl(item.url, item.id);
+                                            }}
                                             title="Copy URL"
                                         >
                                             {copiedId === item.id ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                                        </Button>
-                                        <Button
-                                            variant="destructive"
-                                            size="icon"
-                                            className="h-8 w-8"
-                                            onClick={() => {
-                                                handleDelete(item.path);
-                                            }}
-                                            title="Delete"
-                                        >
-                                            <Trash2 className="h-4 w-4" />
                                         </Button>
                                     </div>
                                 </div>
@@ -159,6 +178,87 @@ export default function MediaLibrary() {
                     )}
                 </div>
             )}
+
+            <Dialog open={!!selectedImage} onOpenChange={(open) => !open && setSelectedImage(null)}>
+                <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                        <DialogTitle>Image Details</DialogTitle>
+                        <DialogDescription>
+                            View details and manage this image.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    {selectedImage && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="bg-muted/30 rounded-lg p-2 border flex items-center justify-center">
+                                <img
+                                    src={selectedImage.url}
+                                    alt={selectedImage.name}
+                                    className="max-w-full max-h-[400px] object-contain rounded"
+                                />
+                            </div>
+
+                            <div className="space-y-4">
+                                <div className="space-y-1">
+                                    <h4 className="text-sm font-medium text-muted-foreground">Filename</h4>
+                                    <p className="text-sm font-semibold break-all">{selectedImage.name}</p>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-1">
+                                        <h4 className="text-sm font-medium text-muted-foreground">Size</h4>
+                                        <p className="text-sm">{formatSize(selectedImage.metadata?.size)}</p>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <h4 className="text-sm font-medium text-muted-foreground">Type</h4>
+                                        <p className="text-sm">{selectedImage.metadata?.mimetype || 'Image'}</p>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-1">
+                                    <h4 className="text-sm font-medium text-muted-foreground">Uploaded At</h4>
+                                    <p className="text-sm">{formatDate(selectedImage.created_at)}</p>
+                                </div>
+
+                                <div className="space-y-1">
+                                    <h4 className="text-sm font-medium text-muted-foreground">URL</h4>
+                                    <div className="flex items-center gap-2 mt-1">
+                                        <code className="flex-1 text-xs bg-muted p-2 rounded border break-all">
+                                            {selectedImage.url}
+                                        </code>
+                                        <Button
+                                            variant="outline"
+                                            size="icon"
+                                            className="h-8 w-8 shrink-0"
+                                            onClick={() => handleCopyUrl(selectedImage.url, selectedImage.id)}
+                                            title="Copy URL"
+                                        >
+                                            {copiedId === selectedImage.id ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                                        </Button>
+                                    </div>
+                                </div>
+
+                                <div className="pt-4 border-t flex justify-between items-center">
+                                    <Button variant="outline" onClick={() => setSelectedImage(null)}>
+                                        Close
+                                    </Button>
+                                    <Button
+                                        variant="destructive"
+                                        onClick={() => {
+                                            if (confirm('Are you sure you want to delete this image?')) {
+                                                handleDelete(selectedImage.path);
+                                            }
+                                        }}
+                                    >
+                                        <Trash2 className="h-4 w-4 mr-2" />
+                                        Delete Image
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

@@ -1,5 +1,5 @@
 import { LanguageSwitcher } from './LanguageSwitcher';
-import { Bell, Menu } from 'lucide-react';
+import { Bell } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 export function Header() {
