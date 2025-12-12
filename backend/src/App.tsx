@@ -7,6 +7,7 @@ import UsersPage from './pages/admin/UsersPage';
 import AdminLayout from './components/admin/layout/AdminLayout';
 import RolesPage from './pages/admin/RolesPage';
 import SettingsPage from './pages/admin/SettingsPage';
+import ProductsPage from './pages/admin/ProductsPage';
 
 function App() {
   return (
@@ -21,7 +22,7 @@ function App() {
             <Route index element={<DashboardHome />} />
             <Route path="users" element={<UsersPage />} />
             <Route path="roles" element={<RolesPage />} />
-            <Route path="products" element={<div>Products Management (Coming Soon)</div>} />
+            <Route path="products" element={<ProductsPage />} />
             <Route path="settings" element={<SettingsPage />} />
           </Route>
         </Route>

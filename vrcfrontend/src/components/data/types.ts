@@ -7,6 +7,7 @@ export enum ErrorCodes {
     NETWORK_ERROR = 'NETWORK_ERROR',
     SERVER_ERROR = 'SERVER_ERROR',
     UNKNOWN_ERROR = 'UNKNOWN_ERROR',
+    DB_ERROR = 'DB_ERROR',
 }
 
 export type Success<T> = {
@@ -42,3 +43,69 @@ export const failure = (
         details,
     },
 });
+
+// CMS Types
+export type ContentType = 'product' | 'event' | 'news' | 'project';
+
+export interface Category {
+    id: string;
+    name: string;
+    slug: string;
+    type: ContentType;
+    description?: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface Product {
+    id: string;
+    name: string;
+    slug: string;
+    description?: string;
+    category_id?: string;
+    category?: Category;
+    price?: string;
+    is_new: boolean;
+    is_bestseller: boolean;
+    image_url?: string;
+    features?: string[];
+    specifications?: Record<string, string>;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface Event {
+    id: string;
+    title: string;
+    slug: string;
+    summary?: string;
+    content?: string;
+    image_url?: string;
+    start_date?: string;
+    end_date?: string;
+    location?: string;
+    organizer?: string;
+    status: 'upcoming' | 'ongoing' | 'past';
+    category_id?: string;
+    category?: Category;
+    participants_count: number;
+    tags?: string[];
+    created_at: string;
+    updated_at: string;
+}
+
+export interface Project {
+    id: string;
+    name: string;
+    slug: string;
+    description?: string;
+    content?: string;
+    image_url?: string;
+    client?: string;
+    completion_date?: string;
+    category_id?: string;
+    category?: Category;
+    is_featured: boolean;
+    created_at: string;
+    updated_at: string;
+}
