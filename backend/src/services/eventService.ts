@@ -39,9 +39,12 @@ export const eventService = {
             id: uuidv4(),
         };
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { category, ...cleanEvent } = newEvent;
+
         const { data, error } = await supabase
             .from('events')
-            .insert([newEvent])
+            .insert([cleanEvent])
             .select()
             .single();
 
@@ -54,9 +57,12 @@ export const eventService = {
     },
 
     async updateEvent(id: string, updates: Partial<Event>): Promise<Event> {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { category, ...cleanUpdates } = updates;
+
         const { data, error } = await supabase
             .from('events')
-            .update(updates)
+            .update(cleanUpdates)
             .eq('id', id)
             .select()
             .single();

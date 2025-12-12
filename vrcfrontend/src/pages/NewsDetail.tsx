@@ -9,8 +9,8 @@ import { Separator } from "@/components/ui/separator";
 import { useNewsDetail } from "@/hooks/useNewsDetail";
 
 const NewsDetail = () => {
-  const { id } = useParams();
-  const { newsItem, loading, error } = useNewsDetail(id);
+  const { slug } = useParams();
+  const { newsItem, loading, error } = useNewsDetail(slug);
 
   if (loading) {
     return (

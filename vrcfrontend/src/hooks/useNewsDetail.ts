@@ -11,21 +11,15 @@ export function useNewsDetail(id: string | undefined) {
     useEffect(() => {
         const fetchDetail = async () => {
             if (!id) {
-                setError("Invalid ID");
+                // If it's a new page load with no ID yet, wait or do nothing
                 setLoading(false);
                 return;
             }
 
             setLoading(true);
-            const numericId = parseInt(id, 10);
 
-            if (isNaN(numericId)) {
-                setError("Invalid ID format");
-                setLoading(false);
-                return;
-            }
-
-            const result = await newsAPI.getById(numericId);
+            // Call API directly with string/UUID
+            const result = await newsAPI.getById(id);
 
             if (result.success) {
                 setNewsItem(result.data);

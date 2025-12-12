@@ -60,5 +60,37 @@ export const projectService = {
         } catch (err) {
             return handleSupabaseError(err, 'fetch project');
         }
+    },
+
+    // CATEGORIES
+    getProjectCategories: async (): Promise<Result<Category[]>> => {
+        try {
+            const { data, error } = await supabase
+                .from('categories')
+                .select('*')
+                .eq('type', 'project')
+                .order('name');
+
+            if (error) return handleSupabaseError(error, 'fetch project categories');
+            return success(data as Category[]);
+        } catch (err) {
+            return handleSupabaseError(err, 'fetch project categories');
+        }
+    },
+
+    getCategoryBySlug: async (slug: string): Promise<Result<Category>> => {
+        try {
+            const { data, error } = await supabase
+                .from('categories')
+                .select('*')
+                .eq('slug', slug)
+                .single();
+
+            if (error) return handleSupabaseError(error, 'fetch category by slug');
+            if (!data) return failure('Category not found', ErrorCodes.NOT_FOUND);
+            return success(data as Category);
+        } catch (err) {
+            return handleSupabaseError(err, 'fetch category by slug');
+        }
     }
 };

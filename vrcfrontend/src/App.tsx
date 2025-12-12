@@ -6,10 +6,12 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 // Public pages
 import MainLayout from "./components/layouts/MainLayout";
 import Index from "./pages/Index";
-import About from "./pages/About";
+import StaticPage from "./pages/StaticPage";
+// import About from "./pages/About"; // Replaced by dynamic StaticPage
 import Products from "./pages/Products";
 import Projects from "./pages/Projects";
 import Services from "./pages/Services";
+import ServiceDetail from "./pages/ServiceDetail"; // Added
 import Installation from "./pages/Installation";
 import Maintenance from "./pages/Maintenance";
 import Repair from "./pages/Repair";
@@ -44,6 +46,8 @@ import Sitemap from "./pages/legal/Sitemap";
 // Data & Resources pages
 import Statistics from "./pages/data/Statistics";
 import Tools from "./pages/data/Tools";
+import ResourceCategory from "./pages/data/ResourceCategory";
+import ResourceDetail from "./pages/data/ResourceDetail";
 
 // Publication pages
 import Publications from "./pages/publications/Index";
@@ -63,7 +67,10 @@ import AuxiliaryProducts from "./pages/products/Auxiliary";
 import IndustrialProjects from "./pages/projects/Industrial";
 import CommercialProjects from "./pages/projects/Commercial";
 import SpecializedProjects from "./pages/projects/Specialized";
+import ProjectCategory from "./pages/ProjectCategory";
 
+
+import SearchResults from "./pages/SearchResults";
 
 const App = () => (
   <TooltipProvider>
@@ -73,7 +80,9 @@ const App = () => (
         {/* Public routes */}
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Index />} />
-          <Route path="about" element={<About />} />
+          <Route path="about" element={<StaticPage slug="about-us" />} />
+          <Route path="intro" element={<StaticPage slug="intro" />} />
+          <Route path="page/:slug" element={<StaticPage />} />
           <Route path="products" element={<Products />} />
           <Route path="products/industrial" element={<IndustrialProducts />} />
           <Route path="products/commercial" element={<CommercialProducts />} />
@@ -81,10 +90,12 @@ const App = () => (
           <Route path="products/cold-storage" element={<ColdStorageProducts />} />
           <Route path="products/auxiliary" element={<AuxiliaryProducts />} />
           <Route path="projects" element={<Projects />} />
+          <Route path="projects/category/:slug" element={<ProjectCategory />} /> {/* Dynamic Category Route */}
           <Route path="projects/industrial" element={<IndustrialProjects />} />
           <Route path="projects/commercial" element={<CommercialProjects />} />
           <Route path="projects/specialized" element={<SpecializedProjects />} />
           <Route path="services" element={<Services />} />
+          <Route path="services/:slug" element={<ServiceDetail />} /> {/* Dynamic Service Detail */}
           <Route path="installation" element={<Installation />} />
           <Route path="maintenance" element={<Maintenance />} />
           <Route path="repair" element={<Repair />} />
@@ -94,10 +105,13 @@ const App = () => (
           <Route path="technologies/energy-efficiency" element={<EnergyEfficiency />} />
           <Route path="technology" element={<Navigate to="/technologies" replace />} />
           <Route path="news" element={<News />} />
+          <Route path="news/category/:category" element={<News />} />
+          <Route path="news/tag/:tag" element={<News />} />
           <Route path="news/:slug" element={<NewsDetail />} />
           <Route path="events" element={<Events />} />
           <Route path="event-details/:id" element={<EventDetail />} />
           <Route path="project-details/:id" element={<ProjectDetail />} />
+          <Route path="search" element={<SearchResults />} />
           <Route path="publications" element={<Publications />} />
           <Route path="publications/inverter-technology" element={<InverterTechnology />} />
           <Route path="publications/heat-recovery-solutions" element={<HeatRecoverySolutions />} />
@@ -108,8 +122,11 @@ const App = () => (
           <Route path="legal/terms" element={<Terms />} />
           <Route path="legal/cookies" element={<Cookies />} />
           <Route path="legal/sitemap" element={<Sitemap />} />
-          <Route path="data/statistics" element={<Statistics />} />
-          <Route path="data/tools" element={<Tools />} />
+
+          {/* Dynamic Data Resources Routes */}
+          <Route path="data/:slug" element={<ResourceCategory />} />
+          <Route path="data/:category/:slug" element={<ResourceDetail />} />
+
           {/* <Route path="login" element={<Login />} /> */}
           <Route path="*" element={<NotFound />} />
         </Route>

@@ -22,8 +22,8 @@ const Projects = () => {
           setFeaturedProjects(projectsResult.data);
         }
 
-        // Fetch categories using productService since categories might be shared or managed there
-        const categoriesResult = await productService.getCategories();
+        // Fetch categories 
+        const categoriesResult = await projectService.getProjectCategories();
         if (categoriesResult.success && categoriesResult.data) {
           setCategories(categoriesResult.data);
         }

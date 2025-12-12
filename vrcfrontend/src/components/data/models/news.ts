@@ -1,6 +1,6 @@
 
 export interface NewsItem {
-    id: number;
+    id: string | number;
     title: string;
     summary: string;
     content?: string; // Content might be optional in list view, or loaded fully

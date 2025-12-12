@@ -13,6 +13,13 @@ import ProjectsPage from './pages/admin/ProjectsPage';
 import MenuManager from './pages/admin/MenuManager';
 import CategoriesPage from './pages/admin/CategoriesPage';
 import NewsPage from './pages/admin/NewsPage';
+import ContactsPage from './pages/admin/ContactsPage';
+import MediaLibrary from './pages/admin/MediaLibrary';
+import BannersPage from './pages/admin/BannersPage';
+import PagesPage from './pages/admin/PagesPage';
+import ServicesPage from './pages/admin/ServicesPage';
+import ResourcesPage from './pages/admin/ResourcesPage'; // Added
+
 
 function App() {
   return (
@@ -33,6 +40,12 @@ function App() {
             <Route path="news" element={<NewsPage />} />
             <Route path="categories" element={<CategoriesPage />} />
             <Route path="menu" element={<MenuManager />} />
+            <Route path="contacts" element={<ContactsPage />} />
+            <Route path="media" element={<MediaLibrary />} />
+            <Route path="banners" element={<BannersPage />} />
+            <Route path="pages" element={<PagesPage />} />
+            <Route path="services" element={<ServicesPage />} />
+            <Route path="resources" element={<ResourcesPage />} /> {/* Added */}
             <Route path="settings" element={<SettingsPage />} />
           </Route>
         </Route>

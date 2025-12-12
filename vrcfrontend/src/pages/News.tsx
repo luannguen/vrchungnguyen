@@ -1,6 +1,6 @@
-
+import { useState } from "react";
 import { CalendarIcon, ChevronRight, User } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SearchIcon } from "@/components/ui/search-icon";
@@ -8,14 +8,45 @@ import { useNews } from "@/hooks/useNews";
 
 const News = () => {
   const {
-    filteredNews,
-    featuredNews,
+    filteredNews: allFilteredNews,
+    featuredNews: unusedFeatured,
     categories,
     loading,
     error,
     activeTab,
-    setActiveTab
+    setActiveTab,
+    searchNews
   } = useNews();
+
+  const { category, tag } = useParams();
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearch = () => {
+    searchNews(searchTerm);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  // Slugify helper
+  const slugify = (text: string) => (text || '').toLowerCase().replace(/\s+/g, '-');
+
+  // Apply local filtering based on URL params
+  let filteredNews = allFilteredNews;
+
+  if (category) {
+    filteredNews = filteredNews.filter(item => slugify(item.category) === category);
+  }
+
+  if (tag) {
+    filteredNews = filteredNews.filter(item => item.tags && item.tags.some(t => slugify(t) === tag));
+  }
+
+  // Recalculate featured news based on current filter
+  const featuredNews = filteredNews.length > 0 ? filteredNews[0] : null;
 
   // Format date for display
   const formatDate = (dateString: string) => {
@@ -64,7 +95,7 @@ const News = () => {
                   </span>
                 </div>
                 <h2 className="text-2xl md:text-3xl font-bold text-primary mb-3">
-                  <Link to={`/news-detail/${featuredNews.id}`} className="hover:text-accent">
+                  <Link to={`/news/${featuredNews.id}`} className="hover:text-accent">
                     {featuredNews.title}
                   </Link>
                 </h2>
@@ -82,7 +113,7 @@ const News = () => {
                 </div>
 
                 <Button asChild>
-                  <Link to={`/news-detail/${featuredNews.id}`}>
+                  <Link to={`/news/${featuredNews.id}`}>
                     Xem chi tiết
                     <ChevronRight size={16} className="ml-1" />
                   </Link>
@@ -103,7 +134,7 @@ const News = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filteredNews.slice(1).map(item => (
                 <div key={item.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-                  <Link to={item.type === "news" ? `/news-detail/${item.id}` : `/event-details/${item.id}`} className="block aspect-[4/3] overflow-hidden">
+                  <Link to={item.type === "news" ? `/news/${item.id}` : `/event-details/${item.id}`} className="block aspect-[4/3] overflow-hidden">
                     <img
                       src={item.image}
                       alt={item.title}
@@ -123,7 +154,7 @@ const News = () => {
                     </div>
 
                     <h3 className="text-lg font-bold text-primary mb-2 hover:text-accent">
-                      <Link to={item.type === "news" ? `/news-detail/${item.id}` : `/event-details/${item.id}`}>
+                      <Link to={item.type === "news" ? `/news/${item.id}` : `/event-details/${item.id}`}>
                         {item.title}
                       </Link>
                     </h3>
@@ -183,8 +214,14 @@ const News = () => {
                   type="text"
                   placeholder="Tìm kiếm tin tức..."
                   className="flex-grow border rounded-l-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyDown={handleKeyDown}
                 />
-                <button className="bg-primary text-white px-4 py-2 rounded-r-md">
+                <button
+                  className="bg-primary text-white px-4 py-2 rounded-r-md hover:bg-primary/90 transition-colors"
+                  onClick={handleSearch}
+                >
                   <SearchIcon size={18} />
                 </button>
               </div>
@@ -216,7 +253,7 @@ const News = () => {
               <div className="space-y-4">
                 {filteredNews.slice(0, 5).map(news => (
                   <div key={news.id} className="flex gap-3">
-                    <Link to={news.type === "news" ? `/news-detail/${news.id}` : `/event-details/${news.id}`} className="block w-20 h-20 flex-shrink-0">
+                    <Link to={news.type === "news" ? `/news/${news.id}` : `/event-details/${news.id}`} className="block w-20 h-20 flex-shrink-0">
                       <img
                         src={news.image}
                         alt={news.title}
@@ -224,7 +261,7 @@ const News = () => {
                       />
                     </Link>
                     <div>
-                      <Link to={news.type === "news" ? `/news-detail/${news.id}` : `/event-details/${news.id}`} className="font-medium text-sm hover:text-primary line-clamp-2">
+                      <Link to={news.type === "news" ? `/news/${news.id}` : `/event-details/${news.id}`} className="font-medium text-sm hover:text-primary line-clamp-2">
                         {news.title}
                       </Link>
                       <div className="text-xs text-muted-foreground mt-1 flex items-center">

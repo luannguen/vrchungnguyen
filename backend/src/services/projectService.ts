@@ -39,9 +39,12 @@ export const projectService = {
             id: uuidv4(),
         };
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { category, ...cleanProject } = newProject;
+
         const { data, error } = await supabase
             .from('projects')
-            .insert([newProject])
+            .insert([cleanProject])
             .select()
             .single();
 
@@ -54,9 +57,12 @@ export const projectService = {
     },
 
     async updateProject(id: string, updates: Partial<Project>): Promise<Project> {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { category, ...cleanUpdates } = updates;
+
         const { data, error } = await supabase
             .from('projects')
-            .update(updates)
+            .update(cleanUpdates)
             .eq('id', id)
             .select()
             .single();

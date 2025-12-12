@@ -8,125 +8,167 @@ import { useContactForm } from "@/hooks/useContactForm";
 const ContactForm = () => {
   const {
     formData,
+    errors,
     handleChange,
     handleSelectChange,
     submit,
     isSubmitting,
-    submitStatus
+    submitStatus,
+    setHoneypot
   } = useContactForm();
 
   return (
-    <section className="bg-gray-100 py-16">
+    <section className="bg-gray-50 py-20">
       <div className="container-custom">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold text-primary mb-2">Liên hệ với chúng tôi</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Hãy để lại thông tin liên hệ, chúng tôi sẽ sớm phản hồi tới quý khách hàng.
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">Liên hệ với chúng tôi</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+            Chúng tôi luôn lắng nghe và sẵn sàng hỗ trợ bạn. Hãy để lại thông tin, chúng tôi sẽ phản hồi sớm nhất có thể.
           </p>
         </div>
 
-        <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-md p-8">
-          {submitStatus === "success" && (
-            <div className="bg-green-50 border border-green-200 text-green-800 rounded-md p-4 mb-6">
-              Cảm ơn bạn đã liên hệ. Chúng tôi sẽ phản hồi trong thời gian sớm nhất!
-            </div>
-          )}
+        <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-5">
+            {/* Left side info panel (optional enhancement, kept simple for now) or just full width form */}
+            <div className="md:col-span-5 p-8 md:p-12">
+              {submitStatus === "success" && (
+                <div className="bg-green-50 border border-green-200 text-green-800 rounded-lg p-6 mb-8 flex items-center shadow-sm">
+                  <svg className="w-6 h-6 mr-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  <div>
+                    <h4 className="font-bold text-lg">Gửi thành công!</h4>
+                    <p>Cảm ơn bạn đã liên hệ. Chúng tôi sẽ phản hồi trong thời gian sớm nhất!</p>
+                  </div>
+                </div>
+              )}
 
-          {submitStatus === "error" && (
-            <div className="bg-red-50 border border-red-200 text-red-800 rounded-md p-4 mb-6">
-              Đã có lỗi xảy ra. Vui lòng thử lại sau!
-            </div>
-          )}
+              {submitStatus === "error" && (
+                <div className="bg-red-50 border border-red-200 text-red-800 rounded-lg p-6 mb-8 flex items-center shadow-sm">
+                  <svg className="w-6 h-6 mr-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  <div>
+                    <h4 className="font-bold text-lg">Gửi thất bại</h4>
+                    <p>Đã có lỗi xảy ra. Vui lòng thử lại sau hoặc liên hệ trực tiếp qua hotline.</p>
+                  </div>
+                </div>
+              )}
 
-          <form onSubmit={submit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                  Họ và tên *
-                </label>
-                <Input
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  placeholder="Nhập họ và tên của bạn"
-                />
-              </div>
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                  Email *
-                </label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  placeholder="example@domain.com"
-                />
-              </div>
-            </div>
+              <form onSubmit={submit} className="space-y-6">
+                {/* Honeypot */}
+                <div style={{ display: 'none' }} aria-hidden="true">
+                  <label htmlFor="confirm_email">Don't fill this out if you're human:</label>
+                  <Input
+                    id="confirm_email"
+                    name="confirm_email"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    onChange={(e) => setHoneypot(e.target.value)}
+                  />
+                </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                  Số điện thoại
-                </label>
-                <Input
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  placeholder="Nhập số điện thoại"
-                />
-              </div>
-              <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
-                  Chủ đề
-                </label>
-                <Select value={formData.subject} onValueChange={handleSelectChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Chọn chủ đề" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="general">Thông tin chung</SelectItem>
-                    <SelectItem value="support">Hỗ trợ kỹ thuật</SelectItem>
-                    <SelectItem value="quote">Yêu cầu báo giá</SelectItem>
-                    <SelectItem value="partnership">Hợp tác kinh doanh</SelectItem>
-                    <SelectItem value="other">Khác</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-2">
+                    <label htmlFor="name" className={`block text-sm font-semibold mb-1 transition-colors ${errors.name ? 'text-red-500' : 'text-gray-700'}`}>
+                      Họ và tên <span className="text-red-500">*</span>
+                    </label>
+                    <Input
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder="Nguyễn Văn A"
+                      className={`h-12 px-4 rounded-lg border-gray-200 focus:border-primary focus:ring-primary transition-all duration-200 ${errors.name ? 'border-red-500 focus:ring-red-200' : ''}`}
+                    />
+                    {errors.name && <p className="text-red-500 text-sm mt-1 animate-in fade-in slide-in-from-top-1">{errors.name}</p>}
+                  </div>
 
-            <div>
-              <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                Nội dung *
-              </label>
-              <Textarea
-                id="message"
-                name="message"
-                rows={5}
-                value={formData.message}
-                onChange={handleChange}
-                required
-                placeholder="Nhập nội dung liên hệ"
-                className="resize-none"
-              />
-            </div>
+                  <div className="space-y-2">
+                    <label htmlFor="email" className={`block text-sm font-semibold mb-1 transition-colors ${errors.email ? 'text-red-500' : 'text-gray-700'}`}>
+                      Email <span className="text-red-500">*</span>
+                    </label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="email@example.com"
+                      className={`h-12 px-4 rounded-lg border-gray-200 focus:border-primary focus:ring-primary transition-all duration-200 ${errors.email ? 'border-red-500 focus:ring-red-200' : ''}`}
+                    />
+                    {errors.email && <p className="text-red-500 text-sm mt-1 animate-in fade-in slide-in-from-top-1">{errors.email}</p>}
+                  </div>
+                </div>
 
-            <div className="text-center">
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="px-8 py-2"
-              >
-                {isSubmitting ? "Đang gửi..." : "Gửi liên hệ"}
-              </Button>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-2">
+                    <label htmlFor="phone" className={`block text-sm font-semibold mb-1 transition-colors ${errors.phone ? 'text-red-500' : 'text-gray-700'}`}>
+                      Số điện thoại
+                    </label>
+                    <Input
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      placeholder="0912 345 678"
+                      className={`h-12 px-4 rounded-lg border-gray-200 focus:border-primary focus:ring-primary transition-all duration-200 ${errors.phone ? 'border-red-500 focus:ring-red-200' : ''}`}
+                    />
+                    {errors.phone && <p className="text-red-500 text-sm mt-1 animate-in fade-in slide-in-from-top-1">{errors.phone}</p>}
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="subject" className={`block text-sm font-semibold mb-1 transition-colors ${errors.subject ? 'text-red-500' : 'text-gray-700'}`}>
+                      Chủ đề quan tâm
+                    </label>
+                    <Select value={formData.subject} onValueChange={handleSelectChange}>
+                      <SelectTrigger className={`h-12 px-4 rounded-lg border-gray-200 focus:border-primary focus:ring-primary transition-all duration-200 ${errors.subject ? 'border-red-500 focus:ring-red-200' : ''}`}>
+                        <SelectValue placeholder="Chọn chủ đề" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="general">Thông tin chung</SelectItem>
+                        <SelectItem value="support">Hỗ trợ kỹ thuật</SelectItem>
+                        <SelectItem value="quote">Yêu cầu báo giá</SelectItem>
+                        <SelectItem value="partnership">Hợp tác kinh doanh</SelectItem>
+                        <SelectItem value="other">Khác</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {errors.subject && <p className="text-red-500 text-sm mt-1 animate-in fade-in slide-in-from-top-1">{errors.subject}</p>}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="message" className={`block text-sm font-semibold mb-1 transition-colors ${errors.message ? 'text-red-500' : 'text-gray-700'}`}>
+                    Nội dung tin nhắn <span className="text-red-500">*</span>
+                  </label>
+                  <Textarea
+                    id="message"
+                    name="message"
+                    rows={6}
+                    value={formData.message}
+                    onChange={handleChange}
+                    placeholder="Hãy chia sẻ chi tiết về nhu cầu của bạn..."
+                    className={`resize-none p-4 rounded-lg border-gray-200 focus:border-primary focus:ring-primary transition-all duration-200 ${errors.message ? 'border-red-500 focus:ring-red-200' : ''}`}
+                  />
+                  {errors.message && <p className="text-red-500 text-sm mt-1 animate-in fade-in slide-in-from-top-1">{errors.message}</p>}
+                </div>
+
+                <div className="pt-4 text-center md:text-left">
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full md:w-auto px-10 py-4 h-auto text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Đang gửi...
+                      </>
+                    ) : "Gửi liên hệ ngay"}
+                  </Button>
+                </div>
+              </form>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </section>

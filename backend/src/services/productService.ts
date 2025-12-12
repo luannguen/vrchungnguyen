@@ -72,9 +72,13 @@ export const productService = {
 
     createProduct: async (product: Partial<Product>): Promise<Result<Product>> => {
         try {
+            // Remove 'category' object which is a relation, not a column
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { category, ...cleanProduct } = product;
+
             const { data, error } = await supabase
                 .from('products')
-                .insert([product])
+                .insert([cleanProduct])
                 .select()
                 .single();
 
@@ -87,9 +91,13 @@ export const productService = {
 
     updateProduct: async (id: string, updates: Partial<Product>): Promise<Result<Product>> => {
         try {
+            // Remove 'category' object which is a relation, not a column
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { category, ...cleanUpdates } = updates;
+
             const { data, error } = await supabase
                 .from('products')
-                .update(updates)
+                .update(cleanUpdates)
                 .eq('id', id)
                 .select()
                 .single();

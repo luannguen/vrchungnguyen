@@ -55,8 +55,8 @@ const SearchComponent = ({ isMobile = false }: SearchComponentProps) => {
   };
   return (
     <div className="relative" ref={searchContainerRef}>
-      <button 
-        className={`navbar-link ${isOpen ? 'text-accent' : ''} relative z-50`} 
+      <button
+        className={`navbar-link ${isOpen ? 'text-accent' : ''} relative z-50`}
         onClick={toggleSearch}
         aria-label="Search"
       >
@@ -72,7 +72,7 @@ const SearchComponent = ({ isMobile = false }: SearchComponentProps) => {
         {isOpen && (
           <>
             {/* Backdrop overlay */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -80,24 +80,24 @@ const SearchComponent = ({ isMobile = false }: SearchComponentProps) => {
               className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
               onClick={() => setIsOpen(false)}
             />
-            
-            {/* Search container */}            <motion.div 
-              initial={{ 
-                width: "0%", 
+
+            {/* Search container */}            <motion.div
+              initial={{
+                width: "0%",
                 opacity: 0
               }}
-              animate={{ 
+              animate={{
                 opacity: 1,
                 width: isMobile ? "90%" : "80%"
               }}
-              exit={{ 
+              exit={{
                 opacity: 0,
                 width: "0%"
               }}
-              transition={{ 
-                type: "spring", 
-                stiffness: 300, 
-                damping: 30 
+              transition={{
+                type: "spring",
+                stiffness: 300,
+                damping: 30
               }}
               className={`
                 fixed ${isMobile ? 'top-16 right-4' : 'top-16 left-[10%]'} 
@@ -112,7 +112,7 @@ const SearchComponent = ({ isMobile = false }: SearchComponentProps) => {
                   <motion.input
                     ref={searchInputRef}
                     type="text"
-                    placeholder="Type to search..."
+                    placeholder="Nhập từ khóa tìm kiếm..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="flex-1 p-3 pl-10 bg-transparent rounded-md 
@@ -126,35 +126,35 @@ const SearchComponent = ({ isMobile = false }: SearchComponentProps) => {
                     autoFocus
                   />
                 </div>
-                
-                <motion.div 
+
+                <motion.div
                   className="flex items-center ml-3 space-x-2"
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 }}
                 >
-                  <button 
-                    type="submit" 
+                  <button
+                    type="submit"
                     className="p-2 bg-primary hover:bg-primary/90 text-white rounded-md 
                               shadow-md hover:shadow-lg transition-all 
                               flex items-center justify-center space-x-1"
                     aria-label="Submit search"
                   >
-                    <span>Search</span>
+                    <span>Tìm kiếm</span>
                     <Search size={16} />
                   </button>
                 </motion.div>
               </form>
-              
+
               {/* Quick categories/suggestions - optional enhancement */}
-              <motion.div 
+              <motion.div
                 className="px-3 pb-3 border-t border-gray-200 dark:border-gray-700 pt-2 flex flex-wrap gap-2"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
               >
-                <span className="text-xs text-gray-500 dark:text-gray-400">Popular:</span>
-                {['Technologies', 'Services', 'Products', 'Support'].map((tag) => (
+                <span className="text-xs text-gray-500 dark:text-gray-400">Phổ biến:</span>
+                {['Kho lạnh', 'Điều hòa', 'Bảo trì', 'Tiết kiệm năng lượng', 'Chiller'].map((tag) => (
                   <button
                     key={tag}
                     onClick={() => {

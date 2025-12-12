@@ -1,10 +1,50 @@
-import { ArrowRight, CheckCircle, ArrowUpRight, FileCheck, Wrench, Cog, Shield, Clock } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import {
+  ArrowRight, CheckCircle, ArrowUpRight,
+  FileCheck, Wrench, Cog, Shield, Clock,
+  HelpCircle, LucideIcon
+} from "lucide-react";
 import { Link } from "react-router-dom";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { serviceService, Service } from "@/services/serviceService";
+
+// Map icon strings from DB to Lucide components
+const iconMap: Record<string, LucideIcon> = {
+  FileCheck,
+  Wrench,
+  Cog,
+  Shield,
+  Clock,
+  HelpCircle,
+  // Add defaults or fallbacks
+  default: FileCheck
+};
 
 const Services = () => {
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const result = await serviceService.getServices();
+        if (result.success && result.data) {
+          setServices(result.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch services", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchServices();
+  }, []);
+
+  const getIcon = (iconName: string | undefined) => {
+    if (!iconName) return iconMap.default;
+    return iconMap[iconName] || iconMap.default;
+  };
+
   return (
     <main className="flex-grow">
       {/* Hero Section */}
@@ -56,9 +96,9 @@ const Services = () => {
               </ul>
             </div>
             <div>
-              <img 
-                src="/assets/images/service-overview.jpg" 
-                alt="Dịch vụ điện lạnh chuyên nghiệp" 
+              <img
+                src="/assets/images/service-overview.jpg"
+                alt="Dịch vụ điện lạnh chuyên nghiệp"
                 className="rounded-lg shadow-lg"
                 onError={(e) => {
                   e.currentTarget.src = "/placeholder.svg";
@@ -81,149 +121,55 @@ const Services = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Service Card 1: Tư vấn thiết kế */}
-            <Card className="transition-all hover:shadow-md">
-              <CardHeader>
-                <div className="bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-                  <FileCheck className="text-primary" />
-                </div>
-                <CardTitle>Tư vấn thiết kế</CardTitle>
-                <CardDescription>
-                  Giải pháp thiết kế hệ thống điện lạnh tối ưu
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Đưa ra giải pháp thiết kế hệ thống điện lạnh phù hợp nhất với yêu cầu và điều kiện của từng công trình.
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Link to="/services/consulting" className="text-primary hover:text-accent flex items-center">
-                  Chi tiết
-                  <ArrowUpRight size={16} className="ml-1" />
-                </Link>
-              </CardFooter>
-            </Card>
-
-            {/* Service Card 2: Lắp đặt */}
-            <Card className="transition-all hover:shadow-md">
-              <CardHeader>
-                <div className="bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-                  <Wrench className="text-primary" />
-                </div>
-                <CardTitle>Lắp đặt chuyên nghiệp</CardTitle>
-                <CardDescription>
-                  Lắp đặt hệ thống lạnh công nghiệp và dân dụng
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Dịch vụ lắp đặt chuyên nghiệp với đội ngũ kỹ thuật giàu kinh nghiệm, đảm bảo hệ thống vận hành hiệu quả.
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Link to="/services/installation" className="text-primary hover:text-accent flex items-center">
-                  Chi tiết
-                  <ArrowUpRight size={16} className="ml-1" />
-                </Link>
-              </CardFooter>
-            </Card>
-
-            {/* Service Card 3: Bảo trì */}
-            <Card className="transition-all hover:shadow-md">
-              <CardHeader>
-                <div className="bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-                  <Cog className="text-primary" />
-                </div>
-                <CardTitle>Bảo trì định kỳ</CardTitle>
-                <CardDescription>
-                  Duy trì hiệu suất và kéo dài tuổi thọ thiết bị
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Chương trình bảo trì định kỳ giúp hệ thống vận hành ổn định, kéo dài tuổi thọ và phát hiện sớm các vấn đề tiềm ẩn.
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Link to="/services/maintenance" className="text-primary hover:text-accent flex items-center">
-                  Chi tiết
-                  <ArrowUpRight size={16} className="ml-1" />
-                </Link>
-              </CardFooter>
-            </Card>
-
-            {/* Service Card 4: Sửa chữa */}
-            <Card className="transition-all hover:shadow-md">
-              <CardHeader>
-                <div className="bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-                  <Shield className="text-primary" />
-                </div>
-                <CardTitle>Sửa chữa khẩn cấp</CardTitle>
-                <CardDescription>
-                  Khắc phục sự cố nhanh chóng, hỗ trợ 24/7
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Dịch vụ sửa chữa khẩn cấp với thời gian phản hồi nhanh, giảm thiểu thời gian dừng hoạt động của hệ thống.
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Link to="/services/repair" className="text-primary hover:text-accent flex items-center">
-                  Chi tiết
-                  <ArrowUpRight size={16} className="ml-1" />
-                </Link>
-              </CardFooter>
-            </Card>
-
-            {/* Service Card 5: Nâng cấp hệ thống */}
-            <Card className="transition-all hover:shadow-md">
-              <CardHeader>
-                <div className="bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-                  <Clock className="text-primary" />
-                </div>
-                <CardTitle>Nâng cấp hệ thống</CardTitle>
-                <CardDescription>
-                  Cải thiện hiệu suất và tiết kiệm năng lượng
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Tư vấn và thực hiện nâng cấp hệ thống điện lạnh cũ, áp dụng công nghệ mới giúp tiết kiệm chi phí vận hành.
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Link to="/services/upgrade" className="text-primary hover:text-accent flex items-center">
-                  Chi tiết
-                  <ArrowUpRight size={16} className="ml-1" />
-                </Link>
-              </CardFooter>
-            </Card>
-
-            {/* Service Card 6: Hỗ trợ kỹ thuật */}
-            <Card className="transition-all hover:shadow-md">
-              <CardHeader>
-                <div className="bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-                  <FileCheck className="text-primary" />
-                </div>
-                <CardTitle>Hỗ trợ kỹ thuật</CardTitle>
-                <CardDescription>
-                  Tư vấn và giải đáp mọi vấn đề kỹ thuật
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Đội ngũ kỹ thuật viên giàu kinh nghiệm luôn sẵn sàng hỗ trợ giải quyết mọi vấn đề về kỹ thuật điện lạnh.
-                </p>
-              </CardContent>
-              <CardFooter>
-                <Link to="/service-support" className="text-primary hover:text-accent flex items-center">
-                  Chi tiết
-                  <ArrowUpRight size={16} className="ml-1" />
-                </Link>
-              </CardFooter>
-            </Card>
+            {loading ? (
+              // Loading skeletons
+              Array(6).fill(0).map((_, i) => (
+                <Card key={i} className="animate-pulse">
+                  <CardHeader>
+                    <div className="w-12 h-12 bg-gray-200 rounded-lg mb-4"></div>
+                    <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
+                    <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                  </CardContent>
+                </Card>
+              ))
+            ) : services.length > 0 ? (
+              services.map((service) => {
+                const Icon = getIcon(service.icon);
+                return (
+                  <Card key={service.id} className="transition-all hover:shadow-md flex flex-col">
+                    <CardHeader>
+                      <div className="bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                        <Icon className="text-primary" />
+                      </div>
+                      <CardTitle>{service.title}</CardTitle>
+                      {/* Optional: if you had a subtitle, CardDescription goes here */}
+                    </CardHeader>
+                    <CardContent className="flex-grow">
+                      <p className="text-muted-foreground line-clamp-3">
+                        {service.description || "Xem chi tiết để biết thêm thông tin."}
+                      </p>
+                    </CardContent>
+                    <CardFooter>
+                      <Link
+                        to={`/services/${service.slug}`}
+                        className="text-primary hover:text-accent flex items-center"
+                      >
+                        Chi tiết
+                        <ArrowUpRight size={16} className="ml-1" />
+                      </Link>
+                    </CardFooter>
+                  </Card>
+                );
+              })
+            ) : (
+              <div className="col-span-full text-center py-10">
+                <p className="text-muted-foreground">Hiện chưa có dịch vụ nào.</p>
+              </div>
+            )}
           </div>
         </div>
       </section>

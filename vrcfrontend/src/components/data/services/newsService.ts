@@ -7,9 +7,9 @@ import { supabase } from "@/services/supabase"; // Ensure this client exists and
 
 
 export const newsAPI = {
-    getAll: async (): Promise<Result<NewsItem[]>> => {
+    getAll: async (search?: string): Promise<Result<NewsItem[]>> => {
         try {
-            const { data, error } = await supabase
+            let query = supabase
                 .from('news')
                 .select(`
                     id,
@@ -20,12 +20,18 @@ export const newsAPI = {
                     image_url,
                     publish_date,
                     author,
-                    categories (name),
+                    categories (name, slug),
                     tags,
                     views,
                     created_at
                 `)
                 .order('publish_date', { ascending: false });
+
+            if (search) {
+                query = query.ilike('title', `%${search}%`);
+            }
+
+            const { data, error } = await query;
 
             if (error) throw error;
 
@@ -51,10 +57,16 @@ export const newsAPI = {
 
             // If frontend expects mix of news and events, we might need to fetch events too and merge.
             // Let's fetch events as well if 'getAll' implies all feed.
-            const { data: eventsData, error: eventError } = await supabase
+            let eventQuery = supabase
                 .from('events')
                 .select('*')
                 .order('start_date', { ascending: false });
+
+            if (search) {
+                eventQuery = eventQuery.ilike('title', `%${search}%`);
+            }
+
+            const { data: eventsData, error: eventError } = await eventQuery;
 
             if (!eventError && eventsData) {
                 const mappedEvents: NewsItem[] = eventsData.map((item: any) => ({
@@ -104,7 +116,7 @@ export const newsAPI = {
                      categories (name)
                 `)
                 .eq('id', id)
-                .single();
+                .maybeSingle();
 
             if (newsData) {
                 const item: NewsItem = {
@@ -132,7 +144,7 @@ export const newsAPI = {
                 .from('events')
                 .select('*')
                 .eq('id', id)
-                .single();
+                .maybeSingle();
 
             if (eventData) {
                 const item: NewsItem = {
@@ -163,6 +175,20 @@ export const newsAPI = {
                 ErrorCodes.SERVER_ERROR,
                 error
             );
+        }
+    },
+
+    getCategories: async (): Promise<Result<any[]>> => {
+        try {
+            const { data, error } = await supabase
+                .from('categories')
+                .select('*')
+                .in('type', ['news', 'event']); // Fetch both news and event categories if distinguished
+
+            if (error) throw error;
+            return success(data || []);
+        } catch (error: any) {
+            return failure(error.message, ErrorCodes.DB_ERROR);
         }
     }
 };

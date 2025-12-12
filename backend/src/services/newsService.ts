@@ -67,9 +67,12 @@ export const newsService = {
             id: uuidv4(),
         };
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { category, categories, ...cleanNews } = newNews;
+
         const { data, error } = await supabase
             .from('news')
-            .insert([newNews])
+            .insert([cleanNews])
             .select()
             .single();
 
@@ -82,9 +85,12 @@ export const newsService = {
     },
 
     async updateNews(id: string, updates: any): Promise<any> {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { category, categories, ...cleanUpdates } = updates;
+
         const { data, error } = await supabase
             .from('news')
-            .update(updates)
+            .update(cleanUpdates)
             .eq('id', id)
             .select()
             .single();

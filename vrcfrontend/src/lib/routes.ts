@@ -40,16 +40,17 @@ export type RouteConfig = {
 export const ROUTES = {
   // Main pages
   HOME: { path: '/', label: 'Trang chủ' },
-  ABOUT: { path: '/about', label: 'Giới thiệu' },
+  ABOUT: { path: '/about', label: 'Về chúng tôi' },
+  INTRO: { path: '/intro', label: 'Giới thiệu VRC' },
   CONTACT: { path: '/contact', label: 'Liên hệ' },
-  
+
   // Service pages
   SERVICES: { path: '/services', label: 'Dịch vụ' },
   INSTALLATION: { path: '/installation', label: 'Lắp đặt' },
   MAINTENANCE: { path: '/maintenance', label: 'Bảo trì' },
   REPAIR: { path: '/repair', label: 'Sửa chữa' },
   SERVICE_SUPPORT: { path: '/service-support', label: 'Hỗ trợ dịch vụ' },
-    // Products and projects
+  // Products and projects
   PRODUCTS: { path: '/products', label: 'Sản phẩm' },
   PRODUCTS_RESIDENTIAL: { path: '/products/residential', label: 'Sản phẩm dân dụng' },
   PRODUCTS_COMMERCIAL: { path: '/products/commercial', label: 'Sản phẩm thương mại' },
@@ -60,18 +61,18 @@ export const ROUTES = {
   PROJECTS_COMMERCIAL: { path: '/projects/commercial', label: 'Dự án thương mại' },
   PROJECTS_INDUSTRIAL: { path: '/projects/industrial', label: 'Dự án công nghiệp' },
   PROJECTS_SPECIALIZED: { path: '/projects/specialized', label: 'Dự án đặc biệt' },
-    // Other key pages
+  // Other key pages
   NEWS: { path: '/news', label: 'Tin tức' },
   EVENTS: { path: '/events', label: 'Sự kiện' },
   TECHNOLOGIES: { path: '/technologies', label: 'Công nghệ' },
   CONSULTING: { path: '/consulting', label: 'Tư vấn' },
-  
+
   // Legal pages
   PRIVACY: { path: '/legal/privacy', label: 'Chính sách bảo mật' },
   TERMS: { path: '/legal/terms', label: 'Điều khoản sử dụng' },
   COOKIES: { path: '/legal/cookies', label: 'Chính sách cookie' },
   SITEMAP: { path: '/legal/sitemap', label: 'Sơ đồ trang' },
-  
+
   // Add more routes as needed
 } as const;
 

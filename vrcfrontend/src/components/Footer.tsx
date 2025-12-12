@@ -9,9 +9,9 @@ const Footer = () => {
           {/* Column 1 */}
           <div>
             <div className="mb-4">
-              <img 
-                src="/lovable-uploads/0bd3c048-8e37-4775-a6bc-0b54ec07edbe.png" 
-                alt="VRC - Tổng công ty Kỹ thuật lạnh Việt Nam" 
+              <img
+                src="/lovable-uploads/0bd3c048-8e37-4775-a6bc-0b54ec07edbe.png"
+                alt="VRC - Tổng công ty Kỹ thuật lạnh Việt Nam"
                 className="h-16"
               />
             </div>
@@ -33,19 +33,20 @@ const Footer = () => {
               </a>
             </div>
           </div>
-          
+
           {/* Column 2 */}
           <div>
             <h4 className="text-white font-semibold mb-4">Liên kết nhanh</h4>
             <ul className="space-y-2">
-              <li><AppLink routeKey="ABOUT" className="footer-link">Giới thiệu</AppLink></li>
+              <li><AppLink routeKey="ABOUT" className="footer-link">Về chúng tôi</AppLink></li>
+              <li><AppLink routeKey="INTRO" className="footer-link">Giới thiệu VRC</AppLink></li>
               <li><AppLink routeKey="PRODUCTS" className="footer-link">Sản phẩm</AppLink></li>
               <li><AppLink routeKey="SERVICES" className="footer-link">Dịch vụ</AppLink></li>
               <li><AppLink routeKey="NEWS" className="footer-link">Tin tức & sự kiện</AppLink></li>
               <li><AppLink routeKey="CONTACT" className="footer-link">Liên hệ</AppLink></li>
             </ul>
           </div>
-          
+
           {/* Column 3 */}
           <div>
             <h4 className="text-white font-semibold mb-4">Dịch vụ</h4>
@@ -57,7 +58,7 @@ const Footer = () => {
               <li><AppLink routeKey="SERVICE_SUPPORT" className="footer-link">Hỗ trợ kỹ thuật</AppLink></li>
             </ul>
           </div>
-          
+
           {/* Column 4 */}
           <div>
             <h4 className="text-white font-semibold mb-4">Liên hệ</h4>
@@ -66,8 +67,8 @@ const Footer = () => {
               <p>123 Nguyễn Văn Linh, Quận 7</p>
               <p>TP. Hồ Chí Minh, Việt Nam</p>
             </address>
-            <a 
-              href="mailto:info@vrc.com.vn" 
+            <a
+              href="mailto:info@vrc.com.vn"
               className="inline-flex items-center text-gray-300 hover:text-white transition-colors"
             >
               <Mail size={16} className="mr-2" />
@@ -75,7 +76,7 @@ const Footer = () => {
             </a>
           </div>
         </div>
-        
+
         <div className="border-t border-white/10 mt-12 pt-6 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-300 text-sm mb-4 md:mb-0">
             © {new Date().getFullYear()} VRC - Tổng công ty kỹ thuật điện lạnh Việt Nam. Tất cả quyền được bảo lưu.
