@@ -69,12 +69,15 @@ export const navigationService = {
         try {
             // Use upsert to update multiple items. 
             // We expect 'items' to contain all required fields (like label, path) to avoid NOT NULL constraint violations if the DB treats it as an insert attempt.
+            // Sanitize items to remove non-DB columns like 'children'
+            // Also removing 'updated_at' as the log confirmed it does not exist in the schema
+            const validItems = items.map(({ children, ...rest }) => ({
+                ...rest
+            }));
+
             const { error } = await supabase
                 .from('navigation')
-                .upsert(items.map(i => ({
-                    ...i,
-                    updated_at: new Date().toISOString()
-                })));
+                .upsert(validItems);
 
             if (error) throw error;
             return success(undefined);

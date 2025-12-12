@@ -122,7 +122,8 @@ export default function MenuManager() {
 
         const result = await navigationService.reorderItems(updates);
         if (!result.success) {
-            toast.error(t('reorder_fail'));
+            console.error('Reorder error:', result.error);
+            toast.error(result.error || t('reorder_fail'));
             fetchItems(); // revert
         }
     };
