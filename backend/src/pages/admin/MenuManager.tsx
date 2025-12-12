@@ -14,6 +14,7 @@ import { toast } from 'react-hot-toast';
 
 export default function MenuManager() {
     const [items, setItems] = useState<NavigationItem[]>([]);
+    const [position, setPosition] = useState<'header' | 'footer'>('header');
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
     const [editingItem, setEditingItem] = useState<Partial<NavigationItem>>({});
@@ -27,12 +28,16 @@ export default function MenuManager() {
         setLoading(true);
         const result = await navigationService.getNavigationItems();
         if (result.success) {
-            setItems(result.data || []);
+            setItems(result.data?.filter(i => (i.position || 'header') === position) || []);
         } else {
             toast.error('Failed to load menu items');
         }
         setLoading(false);
     };
+
+    useEffect(() => {
+        fetchItems();
+    }, [position]);
 
     const handleEdit = (item: NavigationItem) => {
         setEditingItem(item);
@@ -45,6 +50,7 @@ export default function MenuManager() {
             path: '',
             is_active: true,
             order_index: items.length + 1,
+            position: position,
             children: []
         });
         setIsEditing(true);
@@ -120,6 +126,37 @@ export default function MenuManager() {
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Menu Management</h1>
+            </div>
+
+            {/* Tabs */}
+            <div className="border-b border-gray-200 dark:border-gray-700">
+                <nav className="-mb-px flex space-x-8">
+                    <button
+                        onClick={() => setPosition('header')}
+                        className={`
+                            whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm
+                            ${position === 'header'
+                                ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}
+                        `}
+                    >
+                        Header Menu
+                    </button>
+                    <button
+                        onClick={() => setPosition('footer')}
+                        className={`
+                            whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm
+                            ${position === 'footer'
+                                ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}
+                        `}
+                    >
+                        Footer Menu
+                    </button>
+                </nav>
+            </div>
+
+            <div className="flex justify-end">
                 <button
                     onClick={handleCreate}
                     className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"

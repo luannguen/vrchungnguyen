@@ -117,6 +117,7 @@ export interface NavigationItem {
     parent_id?: string;
     order_index: number;
     is_active: boolean;
+    position?: 'header' | 'footer';
     children?: NavigationItem[];
     created_at: string;
 }
