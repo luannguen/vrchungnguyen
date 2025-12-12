@@ -19,6 +19,8 @@ import BannersPage from './pages/admin/BannersPage';
 import PagesPage from './pages/admin/PagesPage';
 import ServicesPage from './pages/admin/ServicesPage';
 import ResourcesPage from './pages/admin/ResourcesPage'; // Added
+import AchievementsPage from './pages/admin/AchievementsPage';
+import FAQsPage from './pages/admin/FAQsPage';
 
 
 function App() {
@@ -46,6 +48,8 @@ function App() {
             <Route path="pages" element={<PagesPage />} />
             <Route path="services" element={<ServicesPage />} />
             <Route path="resources" element={<ResourcesPage />} /> {/* Added */}
+            <Route path="achievements" element={<AchievementsPage />} />
+            <Route path="faqs" element={<FAQsPage />} />
             <Route path="settings" element={<SettingsPage />} />
           </Route>
         </Route>

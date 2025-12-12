@@ -136,7 +136,8 @@ export interface NavigationItem {
     is_active: boolean;
     position?: 'header' | 'footer';
     children?: NavigationItem[];
-    created_at: string;
+    type?: 'internal' | 'external' | 'custom';
+    created_at?: string; // Made optional as it might not be present in temp objects
 }
 
 export interface SiteSetting {

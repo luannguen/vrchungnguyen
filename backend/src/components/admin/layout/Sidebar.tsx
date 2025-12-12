@@ -1,7 +1,7 @@
 
 import { Link, useLocation } from 'react-router-dom';
 import {
-    LayoutDashboard, Users, UserCog, Settings, LogOut, Package, Calendar, Briefcase, List, FileText, FolderOpen, Mail, Image, Layout, Book, PenTool
+    LayoutDashboard, Users, UserCog, Settings, LogOut, Package, Calendar, Briefcase, List, FileText, FolderOpen, Mail, Image, Layout, Book, PenTool, Trophy, HelpCircle
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useAuth } from '@/features/auth/useAuth';
@@ -20,6 +20,8 @@ const menuItems = [
     { icon: Layout, label: 'Banners', href: '/banners' },
     { icon: Settings, label: 'Services', href: '/services' },
     { icon: PenTool, label: 'Tools & Resources', href: '/resources' }, // Added
+    { icon: Trophy, label: 'Achievements', href: '/achievements' },
+    { icon: HelpCircle, label: 'FAQs', href: '/faqs' },
     { icon: Book, label: 'Static Pages', href: '/pages' },
     { icon: Mail, label: 'Contacts', href: '/contacts' },
     { icon: Settings, label: 'Settings', href: '/settings' },

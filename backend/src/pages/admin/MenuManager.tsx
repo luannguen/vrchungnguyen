@@ -236,9 +236,9 @@ export default function MenuManager() {
             {/* Edit/Create Modal */}
             {isEditing && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-lg w-full p-6 space-y-4">
+                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
                         <div className="flex justify-between items-center">
-                            <h2 className="text-xl font-bold">{editingItem.id ? 'Edit Group' : 'New Group'}</h2>
+                            <h2 className="text-xl font-bold">{editingItem.id ? 'Edit Item' : 'New Item'}</h2>
                             <button onClick={() => setIsEditing(false)} className="text-gray-500 hover:text-gray-700">
                                 <X size={24} />
                             </button>
@@ -261,8 +261,82 @@ export default function MenuManager() {
                                     value={editingItem.path || ''}
                                     onChange={e => setEditingItem({ ...editingItem, path: e.target.value })}
                                     className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
-                                    placeholder="e.g. /home"
+                                    placeholder="e.g. /home or #"
                                 />
+                            </div>
+
+                            {/* Child Items Management (Simple layout for now) */}
+                            <div>
+                                <div className="flex justify-between items-center mb-2">
+                                    <label className="block text-sm font-medium">Sub-Items (Links)</label>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const currentChildren = editingItem.children || [];
+                                            setEditingItem({
+                                                ...editingItem,
+                                                children: [
+                                                    ...currentChildren,
+                                                    {
+                                                        id: `temp-${Date.now()}`, // Temporary ID
+                                                        label: '',
+                                                        path: '',
+                                                        is_active: true,
+                                                        order_index: currentChildren.length + 1,
+                                                        position: position,
+                                                        parent_id: editingItem.id, // Will be set by backend if new, but here for structure
+                                                        type: 'internal'
+                                                    }
+                                                ]
+                                            });
+                                        }}
+                                        className="text-xs bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+                                    >
+                                        + Add Link
+                                    </button>
+                                </div>
+                                <div className="space-y-3 pl-2 border-l-2 border-gray-100 dark:border-gray-700">
+                                    {editingItem.children?.map((child, idx) => (
+                                        <div key={idx} className="flex gap-2 items-start">
+                                            <div className="flex-1 space-y-2">
+                                                <input
+                                                    value={child.label}
+                                                    onChange={e => {
+                                                        const newChildren = [...(editingItem.children || [])];
+                                                        newChildren[idx] = { ...child, label: e.target.value };
+                                                        setEditingItem({ ...editingItem, children: newChildren });
+                                                    }}
+                                                    className="w-full p-2 text-sm border rounded dark:bg-gray-700 dark:border-gray-600"
+                                                    placeholder="Link Label"
+                                                />
+                                                <input
+                                                    value={child.path}
+                                                    onChange={e => {
+                                                        const newChildren = [...(editingItem.children || [])];
+                                                        newChildren[idx] = { ...child, path: e.target.value };
+                                                        setEditingItem({ ...editingItem, children: newChildren });
+                                                    }}
+                                                    className="w-full p-2 text-sm border rounded dark:bg-gray-700 dark:border-gray-600"
+                                                    placeholder="Link Path"
+                                                />
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    const newChildren = [...(editingItem.children || [])];
+                                                    newChildren.splice(idx, 1);
+                                                    setEditingItem({ ...editingItem, children: newChildren });
+                                                }}
+                                                className="mt-1 text-red-500 hover:text-red-700"
+                                            >
+                                                <X size={16} />
+                                            </button>
+                                        </div>
+                                    ))}
+                                    {(!editingItem.children || editingItem.children.length === 0) && (
+                                        <p className="text-xs text-gray-400 italic">No sub-items</p>
+                                    )}
+                                </div>
                             </div>
 
                             <div className="flex items-center gap-2">

@@ -18,7 +18,8 @@ const MainNavigation = ({ isMobile = false }: MainNavigationProps) => {
       setIsLoading(true);
       const result = await navigationService.getNavigationItems();
       if (result.success && result.data.length > 0) {
-        setNavItems(result.data);
+        const headerItems = result.data.filter(item => item.position === 'header' || !item.position); // Default to header if null
+        setNavItems(headerItems);
       } else {
         // Fallback or empty? keeping state empty means nothing renders or we could set defaults.
         // For now, let's assume DB has data as per migration.

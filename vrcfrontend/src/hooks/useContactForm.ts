@@ -8,19 +8,32 @@ import { useToast } from "@/components/ui/use-toast"; // Assuming toast exists o
 export function useContactForm() {
     const [searchParams] = useSearchParams();
     const urlSubject = searchParams.get("subject");
+    const productId = searchParams.get("product");
 
     // Check if the URL subject matches one of our predefined options
     const validSubjects = ["general", "support", "quote", "partnership", "other"];
     const isPredefinedSubject = urlSubject && validSubjects.includes(urlSubject);
 
+    // Determine default subject
+    let defaultSubject = "general";
+    if (isPredefinedSubject) defaultSubject = urlSubject;
+    else if (productId) defaultSubject = "quote";
+    else if (urlSubject) defaultSubject = "quote";
+
+    // Determine default message
+    let defaultMessage = "";
+    if (productId) {
+        defaultMessage = `Tôi quan tâm đến sản phẩm có ID: ${productId}.\nVui lòng tư vấn thêm cho tôi.`;
+    } else if (!isPredefinedSubject && urlSubject) {
+        defaultMessage = urlSubject + "\n\n";
+    }
+
     const [formData, setFormData] = useState<ContactDTO>({
         name: "",
         email: "",
         phone: "",
-        // If subject is predefined, use it. If it's custom (like from project detail), use 'quote'
-        subject: isPredefinedSubject ? urlSubject : (urlSubject ? "quote" : "general"),
-        // If subject is custom, pre-fill it into the message
-        message: (!isPredefinedSubject && urlSubject) ? urlSubject + "\n\n" : "",
+        subject: defaultSubject,
+        message: defaultMessage,
     });
 
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -93,14 +106,12 @@ export function useContactForm() {
         const validationResult = contactSchema.safeParse(formData);
         if (!validationResult.success) {
             const formattedErrors: Record<string, string> = {};
+            const errorList = validationResult.error.issues;
 
-            // Use safe access to errors array, handling both 'issues' and 'errors' properties
-            const errorList = (validationResult.error as any).errors || (validationResult.error as any).issues || [];
-
-            errorList.forEach((err: any) => {
+            errorList.forEach((err) => {
                 const field = err.path[0];
                 if (field) {
-                    formattedErrors[field] = err.message;
+                    formattedErrors[field.toString()] = err.message;
                 }
             });
 
@@ -118,32 +129,46 @@ export function useContactForm() {
         setIsSubmitting(true);
         setSubmitStatus("idle");
 
-        const result = await contactService.createContact(formData);
+        try {
+            const result = await contactService.createContact(formData);
 
-        setIsSubmitting(false);
+            if (result.success) {
+                setLastSubmitted(now);
+                setSubmitStatus("success");
+                setFormData({
+                    name: "",
+                    email: "",
+                    phone: "",
+                    subject: "general",
+                    message: "",
+                });
+                toast({
+                    title: "Thành công",
+                    description: "Cảm ơn bạn đã liên hệ. Chúng tôi sẽ phản hồi sớm nhất!",
+                    variant: "default",
+                });
+            } else {
+                setSubmitStatus("error");
+                // Explicitly cast to failure type or any since we know it failed
+                const failure = result as any;
+                const errorMessage = failure.error?.message || "Gửi liên hệ thất bại (mã lỗi không xác định)";
 
-        if (result.success) {
-            setLastSubmitted(now);
-            setSubmitStatus("success");
-            setFormData({
-                name: "",
-                email: "",
-                phone: "",
-                subject: "general",
-                message: "",
-            });
-            toast({
-                title: "Thành công",
-                description: "Cảm ơn bạn đã liên hệ. Chúng tôi sẽ phản hồi sớm nhất!",
-                variant: "default",
-            });
-        } else {
+                toast({
+                    title: "Lỗi",
+                    description: errorMessage,
+                    variant: "destructive",
+                });
+            }
+        } catch (error) {
+            console.error("Submission error:", error);
             setSubmitStatus("error");
             toast({
                 title: "Lỗi",
-                description: result.error.message,
+                description: "Đã xảy ra lỗi khi gửi form. Vui lòng thử lại sau.",
                 variant: "destructive",
             });
+        } finally {
+            setIsSubmitting(false);
         }
     };
 

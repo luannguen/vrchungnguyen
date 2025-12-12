@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Project, Category } from "@/components/data/types";
 import { projectService } from "@/services/projectService";
 import { productService } from "@/services/productService";
+import AchievementsSection from "@/components/AchievementsSection";
 
 const Projects = () => {
   const [featuredProjects, setFeaturedProjects] = useState<Project[]>([]);
@@ -227,30 +228,8 @@ const Projects = () => {
         </div>
       </section>
 
-      {/* Stats Section - Static for now */}
-      <section className="py-12 bg-accent/10">
-        <div className="container-custom">
-          <h2 className="text-center mb-10">Thành tựu của chúng tôi</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">500+</div>
-              <p className="text-muted-foreground">Dự án đã hoàn thành</p>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">20+</div>
-              <p className="text-muted-foreground">Năm kinh nghiệm</p>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">50+</div>
-              <p className="text-muted-foreground">Đối tác lớn</p>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">100+</div>
-              <p className="text-muted-foreground">Kỹ sư & nhân viên</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Stats Section - Dynamic */}
+      <AchievementsSection />
 
       {/* CTA Section */}
       <section className="py-12 bg-white">

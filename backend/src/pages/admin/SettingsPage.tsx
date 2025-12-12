@@ -155,116 +155,114 @@ const SettingsPage: React.FC = () => {
                     </div>
                 </div>
             </div>
-        </div>
-            </div >
 
-    {/* SEO & Scripts Settings */ }
-    < div className = "bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg" >
-        <div className="px-4 py-5 sm:p-6 space-y-6">
-            <div>
-                <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">SEO & Scripts</h3>
-                <div className="mt-4 grid grid-cols-1 gap-y-6">
+
+            {/* SEO & Scripts Settings */}
+            <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+                <div className="px-4 py-5 sm:p-6 space-y-6">
                     <div>
-                        <label htmlFor="site_title" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Meta Title (Default)
-                        </label>
-                        <div className="mt-1">
-                            <input
-                                type="text"
-                                id="site_title"
-                                value={settings['site_title'] || ''}
-                                onChange={(e) => handleChange('site_title', e.target.value)}
-                                className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                placeholder="e.g. VRC - Tổng công ty kỹ thuật điện lạnh Việt Nam"
-                            />
-                        </div>
-                    </div>
+                        <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">SEO & Scripts</h3>
+                        <div className="mt-4 grid grid-cols-1 gap-y-6">
+                            <div>
+                                <label htmlFor="site_title" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    Meta Title (Default)
+                                </label>
+                                <div className="mt-1">
+                                    <input
+                                        type="text"
+                                        id="site_title"
+                                        value={settings['site_title'] || ''}
+                                        onChange={(e) => handleChange('site_title', e.target.value)}
+                                        className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                        placeholder="e.g. VRC - Tổng công ty kỹ thuật điện lạnh Việt Nam"
+                                    />
+                                </div>
+                            </div>
 
-                    <div>
-                        <label htmlFor="site_description" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Meta Description (Default)
-                        </label>
-                        <div className="mt-1">
-                            <textarea
-                                id="site_description"
-                                rows={3}
-                                value={settings['site_description'] || ''}
-                                onChange={(e) => handleChange('site_description', e.target.value)}
-                                className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                placeholder="Brief description of your company..."
-                            />
-                        </div>
-                    </div>
+                            <div>
+                                <label htmlFor="site_description" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    Meta Description (Default)
+                                </label>
+                                <div className="mt-1">
+                                    <textarea
+                                        id="site_description"
+                                        rows={3}
+                                        value={settings['site_description'] || ''}
+                                        onChange={(e) => handleChange('site_description', e.target.value)}
+                                        className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                        placeholder="Brief description of your company..."
+                                    />
+                                </div>
+                            </div>
 
-                    <div>
-                        <label htmlFor="site_keywords" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Keywords
-                        </label>
-                        <div className="mt-1">
-                            <input
-                                type="text"
-                                id="site_keywords"
-                                value={settings['site_keywords'] || ''}
-                                onChange={(e) => handleChange('site_keywords', e.target.value)}
-                                className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                placeholder="comma, separated, keywords"
-                            />
-                        </div>
-                    </div>
+                            <div>
+                                <label htmlFor="site_keywords" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    Keywords
+                                </label>
+                                <div className="mt-1">
+                                    <input
+                                        type="text"
+                                        id="site_keywords"
+                                        value={settings['site_keywords'] || ''}
+                                        onChange={(e) => handleChange('site_keywords', e.target.value)}
+                                        className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                        placeholder="comma, separated, keywords"
+                                    />
+                                </div>
+                            </div>
 
-                    <div>
-                        <label htmlFor="og_image_url" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            OG Image URL (Social Share)
-                        </label>
-                        <div className="mt-1">
-                            <input
-                                type="text"
-                                id="og_image_url"
-                                value={settings['og_image_url'] || ''}
-                                onChange={(e) => handleChange('og_image_url', e.target.value)}
-                                className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                placeholder="https://..."
-                            />
-                        </div>
-                    </div>
+                            <div>
+                                <label htmlFor="og_image_url" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    OG Image URL (Social Share)
+                                </label>
+                                <div className="mt-1">
+                                    <input
+                                        type="text"
+                                        id="og_image_url"
+                                        value={settings['og_image_url'] || ''}
+                                        onChange={(e) => handleChange('og_image_url', e.target.value)}
+                                        className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                        placeholder="https://..."
+                                    />
+                                </div>
+                            </div>
 
-                    <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-                        <label htmlFor="header_scripts" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Header Scripts
-                        </label>
-                        <div className="mt-1">
-                            <textarea
-                                id="header_scripts"
-                                rows={3}
-                                value={settings['header_scripts'] || ''}
-                                onChange={(e) => handleChange('header_scripts', e.target.value)}
-                                className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border dark:bg-gray-700 dark:border-gray-600 dark:text-white font-mono text-xs"
-                                placeholder="<script>...</script>"
-                            />
-                        </div>
-                    </div>
+                            <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                                <label htmlFor="header_scripts" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    Header Scripts
+                                </label>
+                                <div className="mt-1">
+                                    <textarea
+                                        id="header_scripts"
+                                        rows={3}
+                                        value={settings['header_scripts'] || ''}
+                                        onChange={(e) => handleChange('header_scripts', e.target.value)}
+                                        className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border dark:bg-gray-700 dark:border-gray-600 dark:text-white font-mono text-xs"
+                                        placeholder="<script>...</script>"
+                                    />
+                                </div>
+                            </div>
 
-                    <div>
-                        <label htmlFor="footer_scripts" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Footer Scripts
-                        </label>
-                        <div className="mt-1">
-                            <textarea
-                                id="footer_scripts"
-                                rows={3}
-                                value={settings['footer_scripts'] || ''}
-                                onChange={(e) => handleChange('footer_scripts', e.target.value)}
-                                className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border dark:bg-gray-700 dark:border-gray-600 dark:text-white font-mono text-xs"
-                                placeholder="<script>...</script>"
-                            />
+                            <div>
+                                <label htmlFor="footer_scripts" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    Footer Scripts
+                                </label>
+                                <div className="mt-1">
+                                    <textarea
+                                        id="footer_scripts"
+                                        rows={3}
+                                        value={settings['footer_scripts'] || ''}
+                                        onChange={(e) => handleChange('footer_scripts', e.target.value)}
+                                        className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border dark:bg-gray-700 dark:border-gray-600 dark:text-white font-mono text-xs"
+                                        placeholder="<script>...</script>"
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-            </div >
-            </div >
-        </div >
     );
 };
 
