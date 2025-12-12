@@ -1,9 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
-import AdminLayout from './components/admin/layout/AdminLayout';
 import DashboardHome from './pages/DashboardHome';
 import UserPage from './pages/UserPage';
+import UsersPage from './pages/admin/UsersPage';
+import AdminLayout from './components/admin/layout/AdminLayout';
+import RolesPage from './pages/admin/RolesPage';
+import SettingsPage from './pages/admin/SettingsPage';
 
 function App() {
   return (
@@ -16,10 +19,10 @@ function App() {
         <Route element={<ProtectedRoute requiredRole="admin" />}>
           <Route path="/" element={<AdminLayout />}>
             <Route index element={<DashboardHome />} />
-            <Route path="users" element={<div>Users Management (Coming Soon)</div>} />
-            <Route path="roles" element={<div>Roles Management (Coming Soon)</div>} />
+            <Route path="users" element={<UsersPage />} />
+            <Route path="roles" element={<RolesPage />} />
             <Route path="products" element={<div>Products Management (Coming Soon)</div>} />
-            <Route path="settings" element={<div>Settings (Coming Soon)</div>} />
+            <Route path="settings" element={<SettingsPage />} />
           </Route>
         </Route>
 
