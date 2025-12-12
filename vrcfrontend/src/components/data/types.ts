@@ -109,3 +109,21 @@ export interface Project {
     created_at: string;
     updated_at: string;
 }
+
+export interface NavigationItem {
+    id: string;
+    label: string;
+    path: string;
+    parent_id?: string;
+    order_index: number;
+    is_active: boolean;
+    children?: NavigationItem[];
+    created_at: string;
+}
+
+export interface SiteSetting {
+    key: string;
+    value: string;
+    description?: string;
+    updated_at: string;
+}

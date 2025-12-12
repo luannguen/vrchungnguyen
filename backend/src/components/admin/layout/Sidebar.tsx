@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, UserCog, Settings, LogOut, Package } from 'lucide-react';
+import { LayoutDashboard, Users, UserCog, Settings, LogOut, Package, Calendar, Briefcase, List, FileText, FolderOpen } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useAuth } from '@/features/auth/useAuth';
 
@@ -8,6 +8,11 @@ const menuItems = [
     { icon: Users, label: 'Users', href: '/users' },
     { icon: UserCog, label: 'Roles', href: '/roles' },
     { icon: Package, label: 'Products', href: '/products' },
+    { icon: Calendar, label: 'Events', href: '/events' },
+    { icon: FileText, label: 'News', href: '/news' },
+    { icon: FolderOpen, label: 'Categories', href: '/categories' },
+    { icon: Briefcase, label: 'Projects', href: '/projects' },
+    { icon: List, label: 'Menu', href: '/menu' },
     { icon: Settings, label: 'Settings', href: '/settings' },
 ];
 

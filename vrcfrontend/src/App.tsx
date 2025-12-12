@@ -21,6 +21,8 @@ import News from "./pages/News";
 import NewsDetail from "./pages/NewsDetail";
 import Contact from "./pages/Contact";
 import Events from "./pages/Events";
+import EventDetail from "./pages/EventDetail";
+import ProjectDetail from "./pages/ProjectDetail";
 import NotFound from "./pages/NotFound";
 
 // Auth & Admin pages
@@ -94,6 +96,8 @@ const App = () => (
           <Route path="news" element={<News />} />
           <Route path="news/:slug" element={<NewsDetail />} />
           <Route path="events" element={<Events />} />
+          <Route path="event-details/:id" element={<EventDetail />} />
+          <Route path="project-details/:id" element={<ProjectDetail />} />
           <Route path="publications" element={<Publications />} />
           <Route path="publications/inverter-technology" element={<InverterTechnology />} />
           <Route path="publications/heat-recovery-solutions" element={<HeatRecoverySolutions />} />
