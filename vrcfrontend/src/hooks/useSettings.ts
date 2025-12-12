@@ -10,13 +10,21 @@ export const useSettings = () => {
     useEffect(() => {
         const fetchSettings = async () => {
             setLoading(true);
-            const result = await settingsService.getSettings();
-            if (result.success && result.data) {
-                setSettings(result.data);
-            } else {
-                setError(result.error?.message || 'Failed to load settings');
+            try {
+                const result = await settingsService.getSettings();
+
+                if (result.success) {
+                    setSettings(result.data);
+                } else {
+                    const failureResult = result as { success: false; error: { message: string } };
+                    setError(failureResult.error?.message || 'Failed to load settings');
+                }
+            } catch (err) {
+                console.error('useSettings exception:', err);
+                setError('An unexpected error occurred');
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
         };
 
         fetchSettings();
