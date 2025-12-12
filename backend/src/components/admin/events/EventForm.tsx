@@ -1,33 +1,46 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { Calendar, MapPin, Tag, Image as ImageIcon, X, Save, Clock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { eventsService } from '../../../services/events.service';
+import { Event, Category } from '@/components/data/types';
 
 interface EventFormProps {
-    initialData?: any;
+    initialData?: Event;
+    categories?: Category[];
+    onSave: (data: Partial<Event>) => Promise<void>;
+    onCancel: () => void;
 }
 
-const EventForm: React.FC<EventFormProps> = ({ initialData }) => {
-    const navigate = useNavigate();
+const EventForm: React.FC<EventFormProps> = ({ initialData, categories = [], onSave, onCancel }) => {
     const { t } = useTranslation();
     const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState({
-        title: initialData?.title || '',
-        slug: initialData?.slug || '',
-        summary: initialData?.summary || '',
-        content: initialData?.content || '',
-        startDate: initialData?.startDate ? new Date(initialData.startDate).toISOString().slice(0, 16) : '',
-        endDate: initialData?.endDate ? new Date(initialData.endDate).toISOString().slice(0, 16) : '',
-        location: initialData?.location || '',
-        organizer: initialData?.organizer || '',
-        status: initialData?.status || 'upcoming',
-        category: initialData?.category || '',
-        image: initialData?.image || '',
-        tags: initialData?.tags || [],
+
+    // Type-safe initial state
+    const [formData, setFormData] = useState<Partial<Event>>({
+        title: '',
+        slug: '',
+        summary: '',
+        content: '',
+        start_date: '',
+        end_date: '',
+        location: '',
+        organizer: '',
+        status: 'upcoming',
+        category_id: '',
+        image_url: '',
+        tags: [],
     });
 
     const [tagInput, setTagInput] = useState('');
+
+    useEffect(() => {
+        if (initialData) {
+            setFormData({
+                ...initialData,
+                start_date: initialData.start_date ? new Date(initialData.start_date).toISOString().slice(0, 16) : '',
+                end_date: initialData.end_date ? new Date(initialData.end_date).toISOString().slice(0, 16) : '',
+            });
+        }
+    }, [initialData]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -37,15 +50,16 @@ const EventForm: React.FC<EventFormProps> = ({ initialData }) => {
     const handleAddTag = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' && tagInput.trim()) {
             e.preventDefault();
-            if (!formData.tags.includes(tagInput.trim())) {
-                setFormData(prev => ({ ...prev, tags: [...prev.tags, tagInput.trim()] }));
+            const currentTags = formData.tags || [];
+            if (!currentTags.includes(tagInput.trim())) {
+                setFormData(prev => ({ ...prev, tags: [...(prev.tags || []), tagInput.trim()] }));
             }
             setTagInput('');
         }
     };
 
     const removeTag = (tagToRemove: string) => {
-        setFormData(prev => ({ ...prev, tags: prev.tags.filter((tag: string) => tag !== tagToRemove) }));
+        setFormData(prev => ({ ...prev, tags: (prev.tags || []).filter((tag: string) => tag !== tagToRemove) }));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -53,12 +67,7 @@ const EventForm: React.FC<EventFormProps> = ({ initialData }) => {
         setLoading(true);
 
         try {
-            if (initialData) {
-                await eventsService.update(initialData.id, formData);
-            } else {
-                await eventsService.create(formData);
-            }
-            navigate('/admin/events');
+            await onSave(formData);
         } catch (error) {
             console.error('Error saving event:', error);
         } finally {
@@ -76,7 +85,7 @@ const EventForm: React.FC<EventFormProps> = ({ initialData }) => {
                     <div className="flex space-x-3">
                         <button
                             type="button"
-                            onClick={() => navigate('/admin/events')}
+                            onClick={onCancel}
                             className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 flex items-center"
                         >
                             <X className="w-4 h-4 mr-2" />
@@ -100,7 +109,7 @@ const EventForm: React.FC<EventFormProps> = ({ initialData }) => {
                             <input
                                 type="text"
                                 name="title"
-                                value={formData.title}
+                                value={formData.title || ''}
                                 onChange={handleChange}
                                 className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                 required
@@ -112,7 +121,7 @@ const EventForm: React.FC<EventFormProps> = ({ initialData }) => {
                             <input
                                 type="text"
                                 name="slug"
-                                value={formData.slug}
+                                value={formData.slug || ''}
                                 onChange={handleChange}
                                 className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                 required
@@ -128,8 +137,8 @@ const EventForm: React.FC<EventFormProps> = ({ initialData }) => {
                                     </div>
                                     <input
                                         type="datetime-local"
-                                        name="startDate"
-                                        value={formData.startDate}
+                                        name="start_date"
+                                        value={formData.start_date || ''}
                                         onChange={handleChange}
                                         className="block w-full pl-10 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                         required
@@ -144,8 +153,8 @@ const EventForm: React.FC<EventFormProps> = ({ initialData }) => {
                                     </div>
                                     <input
                                         type="datetime-local"
-                                        name="endDate"
-                                        value={formData.endDate}
+                                        name="end_date"
+                                        value={formData.end_date || ''}
                                         onChange={handleChange}
                                         className="block w-full pl-10 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                         required
@@ -163,7 +172,7 @@ const EventForm: React.FC<EventFormProps> = ({ initialData }) => {
                                     </div>
                                     <select
                                         name="status"
-                                        value={formData.status}
+                                        value={formData.status || 'upcoming'}
                                         onChange={handleChange}
                                         className="block w-full pl-10 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                     >
@@ -176,17 +185,27 @@ const EventForm: React.FC<EventFormProps> = ({ initialData }) => {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">{t('category')}</label>
                                 <select
-                                    name="category"
-                                    value={formData.category}
+                                    name="category_id"
+                                    value={formData.category_id || ''}
                                     onChange={handleChange}
                                     className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                     required
                                 >
                                     <option value="">{t('select_category')}</option>
-                                    <option value="workshop">Workshop</option>
-                                    <option value="conference">Conference</option>
-                                    <option value="webinar">Webinar</option>
-                                    <option value="meetup">Meetup</option>
+                                    {categories.length > 0 ? (
+                                        categories.map((cat) => (
+                                            <option key={cat.id} value={cat.id}>
+                                                {cat.name}
+                                            </option>
+                                        ))
+                                    ) : (
+                                        <>
+                                            <option value="Workshop">Workshop</option>
+                                            <option value="Conference">Conference</option>
+                                            <option value="Webinar">Webinar</option>
+                                            <option value="Meetup">Meetup</option>
+                                        </>
+                                    )}
                                 </select>
                             </div>
                         </div>
@@ -200,7 +219,7 @@ const EventForm: React.FC<EventFormProps> = ({ initialData }) => {
                                 <input
                                     type="text"
                                     name="location"
-                                    value={formData.location}
+                                    value={formData.location || ''}
                                     onChange={handleChange}
                                     className="block w-full pl-10 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                     required
@@ -213,7 +232,7 @@ const EventForm: React.FC<EventFormProps> = ({ initialData }) => {
                             <input
                                 type="text"
                                 name="organizer"
-                                value={formData.organizer}
+                                value={formData.organizer || ''}
                                 onChange={handleChange}
                                 className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                 required
@@ -228,8 +247,8 @@ const EventForm: React.FC<EventFormProps> = ({ initialData }) => {
                                 </div>
                                 <input
                                     type="text"
-                                    name="image"
-                                    value={formData.image}
+                                    name="image_url"
+                                    value={formData.image_url || ''}
                                     onChange={handleChange}
                                     className="block w-full pl-10 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                 />
@@ -239,10 +258,10 @@ const EventForm: React.FC<EventFormProps> = ({ initialData }) => {
 
                     <div className="space-y-6">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">{t('image_url')}</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('image_preview')}</label>
                             <div className="mt-1 relative aspect-video rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden bg-gray-50">
-                                {formData.image ? (
-                                    <img src={formData.image} alt={t('preview')} className="w-full h-full object-cover" />
+                                {formData.image_url ? (
+                                    <img src={formData.image_url} alt={t('preview')} className="w-full h-full object-cover" />
                                 ) : (
                                     <div className="text-center">
                                         <ImageIcon className="mx-auto h-12 w-12 text-gray-400" />
@@ -256,7 +275,7 @@ const EventForm: React.FC<EventFormProps> = ({ initialData }) => {
                             <label className="block text-sm font-medium text-gray-700">{t('summary')}</label>
                             <textarea
                                 name="summary"
-                                value={formData.summary}
+                                value={formData.summary || ''}
                                 onChange={handleChange}
                                 rows={3}
                                 className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -268,7 +287,7 @@ const EventForm: React.FC<EventFormProps> = ({ initialData }) => {
                             <label className="block text-sm font-medium text-gray-700">{t('content')}</label>
                             <textarea
                                 name="content"
-                                value={formData.content}
+                                value={formData.content || ''}
                                 onChange={handleChange}
                                 rows={10}
                                 className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -292,7 +311,7 @@ const EventForm: React.FC<EventFormProps> = ({ initialData }) => {
                                 />
                             </div>
                             <div className="mt-2 flex flex-wrap gap-2">
-                                {formData.tags.map((tag: string, index: number) => (
+                                {(formData.tags || []).map((tag: string, index: number) => (
                                     <span
                                         key={index}
                                         className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"

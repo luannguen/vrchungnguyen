@@ -1,38 +1,67 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Tag, Image as ImageIcon, X, Save, Plus, Trash2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Image as ImageIcon, X, Save, Plus, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { productsService } from '../../../services/products.service';
+import { Product, Category } from '../../../components/data/types';
 
 interface ProductFormProps {
-    initialData?: any;
+    initialData?: Product;
+    categories: Category[];
+    onSave: (data: Partial<Product>) => Promise<void>;
+    onCancel: () => void;
 }
 
-const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
-    const navigate = useNavigate();
+const ProductForm: React.FC<ProductFormProps> = ({ initialData, categories, onSave, onCancel }) => {
     const { t } = useTranslation();
     const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState({
-        name: initialData?.name || '',
-        slug: initialData?.slug || '',
-        category: initialData?.category || '',
-        price: initialData?.price || '',
-        image: initialData?.image || '',
-        description: initialData?.description || '',
-        isNew: initialData?.isNew || false,
-        isBestseller: initialData?.isBestseller || false,
-        features: initialData?.features || [],
-        specifications: initialData?.specifications || {},
+
+    // Initialize form data
+    const [formData, setFormData] = useState<Partial<Product>>({
+        name: '',
+        slug: '',
+        category_id: '',
+        price: 0,
+        image_url: '',
+        description: '',
+        is_new: false,
+        is_bestseller: false,
+        features: [],
+        specifications: {},
     });
+
+    useEffect(() => {
+        if (initialData) {
+            setFormData({
+                name: initialData.name,
+                slug: initialData.slug,
+                category_id: initialData.category_id,
+                price: initialData.price,
+                image_url: initialData.image_url,
+                description: initialData.description,
+                is_new: initialData.is_new,
+                is_bestseller: initialData.is_bestseller,
+                features: initialData.features || [],
+                specifications: initialData.specifications || {},
+            });
+        }
+    }, [initialData]);
 
     const [featureInput, setFeatureInput] = useState('');
     const [newSpec, setNewSpec] = useState({ key: '', value: '' });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target as HTMLInputElement;
+
+        let newValue: any = value;
+        if (type === 'checkbox') {
+            newValue = (e.target as HTMLInputElement).checked;
+        } else if (name === 'price') {
+            // Basic number handling
+            newValue = value === '' ? 0 : parseFloat(value);
+        }
+
         setFormData(prev => ({
             ...prev,
-            [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+            [name]: newValue
         }));
     };
 
@@ -41,7 +70,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
             e.preventDefault();
             setFormData(prev => ({
                 ...prev,
-                features: [...prev.features, featureInput.trim()]
+                features: [...(prev.features || []), featureInput.trim()]
             }));
             setFeatureInput('');
         }
@@ -50,7 +79,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
     const removeFeature = (index: number) => {
         setFormData(prev => ({
             ...prev,
-            features: prev.features.filter((_: string, i: number) => i !== index)
+            features: (prev.features || []).filter((_: string, i: number) => i !== index)
         }));
     };
 
@@ -58,14 +87,14 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
         if (newSpec.key && newSpec.value) {
             setFormData(prev => ({
                 ...prev,
-                specifications: { ...prev.specifications, [newSpec.key]: newSpec.value }
+                specifications: { ...(prev.specifications || {}), [newSpec.key]: newSpec.value }
             }));
             setNewSpec({ key: '', value: '' });
         }
     };
 
     const removeSpec = (key: string) => {
-        const newSpecs = { ...formData.specifications };
+        const newSpecs = { ...(formData.specifications || {}) };
         delete newSpecs[key];
         setFormData(prev => ({ ...prev, specifications: newSpecs }));
     };
@@ -73,16 +102,10 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-
         try {
-            if (initialData) {
-                await productsService.update(initialData.id, formData);
-            } else {
-                await productsService.create(formData);
-            }
-            navigate('/admin/products');
+            await onSave(formData);
         } catch (error) {
-            console.error('Error saving product:', error);
+            console.error('Error in form submission:', error);
         } finally {
             setLoading(false);
         }
@@ -98,7 +121,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                     <div className="flex space-x-3">
                         <button
                             type="button"
-                            onClick={() => navigate('/admin/products')}
+                            onClick={onCancel}
                             className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 flex items-center"
                         >
                             <X className="w-4 h-4 mr-2" />
@@ -145,23 +168,24 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">{t('category')}</label>
                                 <select
-                                    name="category"
-                                    value={formData.category}
+                                    name="category_id"
+                                    value={formData.category_id}
                                     onChange={handleChange}
                                     className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                     required
                                 >
                                     <option value="">{t('select_category')}</option>
-                                    <option value="vr-headsets">VR Headsets</option>
-                                    <option value="accessories">Accessories</option>
-                                    <option value="cameras">Cameras</option>
-                                    <option value="software">Software</option>
+                                    {categories.map((cat) => (
+                                        <option key={cat.id} value={cat.id}>
+                                            {cat.name}
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">{t('price')}</label>
                                 <input
-                                    type="text"
+                                    type="number"
                                     name="price"
                                     value={formData.price}
                                     onChange={handleChange}
@@ -176,8 +200,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                             <label className="flex items-center">
                                 <input
                                     type="checkbox"
-                                    name="isNew"
-                                    checked={formData.isNew}
+                                    name="is_new"
+                                    checked={!!formData.is_new}
                                     onChange={handleChange}
                                     className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                                 />
@@ -186,8 +210,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                             <label className="flex items-center">
                                 <input
                                     type="checkbox"
-                                    name="isBestseller"
-                                    checked={formData.isBestseller}
+                                    name="is_bestseller"
+                                    checked={!!formData.is_bestseller}
                                     onChange={handleChange}
                                     className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                                 />
@@ -203,8 +227,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                                 </div>
                                 <input
                                     type="text"
-                                    name="image"
-                                    value={formData.image}
+                                    name="image_url"
+                                    value={formData.image_url}
                                     onChange={handleChange}
                                     placeholder="https://..."
                                     className="block w-full pl-10 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -215,10 +239,10 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
 
                     <div className="space-y-6">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">{t('image_url')}</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('image_preview')}</label>
                             <div className="mt-1 relative aspect-video rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden bg-gray-50">
-                                {formData.image ? (
-                                    <img src={formData.image} alt={t('preview')} className="w-full h-full object-cover" />
+                                {formData.image_url ? (
+                                    <img src={formData.image_url} alt={t('preview')} className="w-full h-full object-cover" />
                                 ) : (
                                     <div className="text-center">
                                         <ImageIcon className="mx-auto h-12 w-12 text-gray-400" />
@@ -259,7 +283,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                                 if (featureInput.trim()) {
                                     setFormData(prev => ({
                                         ...prev,
-                                        features: [...prev.features, featureInput.trim()]
+                                        features: [...(prev.features || []), featureInput.trim()]
                                     }));
                                     setFeatureInput('');
                                 }
@@ -270,7 +294,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                         </button>
                     </div>
                     <ul className="space-y-2">
-                        {formData.features.map((feature: string, index: number) => (
+                        {(formData.features || []).map((feature: string, index: number) => (
                             <li key={index} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-lg">
                                 <span className="text-sm text-gray-700">{feature}</span>
                                 <button
@@ -313,7 +337,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
                         </div>
                     </div>
                     <div className="space-y-2">
-                        {Object.entries(formData.specifications).map(([key, value]) => (
+                        {Object.entries(formData.specifications || {}).map(([key, value]) => (
                             <div key={key} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-lg">
                                 <div className="flex-1 grid grid-cols-2 gap-4">
                                     <span className="text-sm font-medium text-gray-700">{key}</span>

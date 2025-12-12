@@ -64,7 +64,7 @@ export interface Product {
     description?: string;
     category_id?: string;
     category?: Category;
-    price?: string;
+    price?: number;
     is_new: boolean;
     is_bestseller: boolean;
     image_url?: string;

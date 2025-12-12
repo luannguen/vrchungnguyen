@@ -65,19 +65,16 @@ export const navigationService = {
         }
     },
 
-    async reorderItems(items: { id: string; order_index: number }[]): Promise<Result<void>> {
+    async reorderItems(items: Partial<NavigationItem>[]): Promise<Result<void>> {
         try {
-            // Use upsert or multiple updates. For stability, loop updates roughly fine for small menu
-            // Supabase supports upsert if PK provided
+            // Use upsert to update multiple items. 
+            // We expect 'items' to contain all required fields (like label, path) to avoid NOT NULL constraint violations if the DB treats it as an insert attempt.
             const { error } = await supabase
                 .from('navigation')
-                .upsert(items.map(i => ({ id: i.id, order_index: i.order_index, updated_at: new Date().toISOString() }))); // Only updating order_index might require providing other non-nulls? 
-            // Actually upsert needs all required fields if it was insert, but for update it works if PK matches? 
-            // Supabase upsert: "If a row with the same primary key exists, it updates the row."
-            // But if there are other NOT NULL columns without default, it requires them? No, only for insert.
-            // But wait, if partial update, upsert works?
-            // "For an update, you only need to provide the primary key and the columns you want to update." <- Check documentation memory.
-            // Usually passing just ID and one field works if row exists.
+                .upsert(items.map(i => ({
+                    ...i,
+                    updated_at: new Date().toISOString()
+                })));
 
             if (error) throw error;
             return success(undefined);

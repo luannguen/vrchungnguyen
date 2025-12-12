@@ -113,7 +113,7 @@ export default function MenuManager() {
         // Update local state largely for UI feedback, but we need to persist order
         // Prepare bulk update
         const updates = newItems.map((item, idx) => ({
-            id: item.id,
+            ...item,
             order_index: idx + 1
         }));
 
