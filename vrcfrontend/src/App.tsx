@@ -124,6 +124,8 @@ const App = () => (
           <Route path="legal/sitemap" element={<Sitemap />} />
 
           {/* Dynamic Data Resources Routes */}
+          <Route path="data/statistics" element={<Statistics />} />
+          <Route path="data/tools" element={<Tools />} />
           <Route path="data/:slug" element={<ResourceCategory />} />
           <Route path="data/:category/:slug" element={<ResourceDetail />} />
 

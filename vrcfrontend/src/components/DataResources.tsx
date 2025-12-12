@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { LineChart, BarChart3, Gauge, ArrowRight, LucideIcon, ChevronDown, ChevronUp } from 'lucide-react';
 import { useResources } from '@/hooks/useResources';
 import { Button } from '@/components/ui/button';
@@ -56,10 +57,10 @@ export const DataResources = () => {
                       ))}
                     </ul>
                     {resource.link && (
-                      <a href={resource.link} className="inline-flex items-center text-accent hover:text-primary transition-colors font-medium">
+                      <Link to={resource.link} className="inline-flex items-center text-accent hover:text-primary transition-colors font-medium">
                         Xem chi tiết
                         <ArrowRight size={18} className="ml-2" />
-                      </a>
+                      </Link>
                     )}
                   </div>
                 );
