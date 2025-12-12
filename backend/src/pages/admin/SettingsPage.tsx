@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Save, Loader2 } from 'lucide-react';
+import { Save, Loader2, Upload, Image as ImageIcon, X } from 'lucide-react';
 import { settingsService } from '@/services/settingsService';
+import { mediaService } from '@/services/mediaService';
 import { toast } from 'react-hot-toast';
 
 const SettingsPage: React.FC = () => {
     const [settings, setSettings] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [uploadingLogo, setUploadingLogo] = useState(false);
 
     useEffect(() => {
         fetchSettings();
@@ -26,6 +28,38 @@ const SettingsPage: React.FC = () => {
 
     const handleChange = (key: string, value: string) => {
         setSettings(prev => ({ ...prev, [key]: value }));
+    };
+
+    const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || e.target.files.length === 0) return;
+        const file = e.target.files[0];
+
+        // Validations
+        if (file.size > 2 * 1024 * 1024) { // 2MB limit for logo
+            toast.error('Logo size too large. Max 2MB.');
+            return;
+        }
+
+        setUploadingLogo(true);
+        try {
+            const result = await mediaService.uploadImage(file, 'settings');
+            if (result) {
+                handleChange('site_logo', result.url);
+                toast.success('Logo uploaded temporarily. Save changes to persist.');
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('Failed to upload logo');
+        } finally {
+            setUploadingLogo(false);
+            e.target.value = ''; // Reset input
+        }
+    };
+
+    const handleRemoveLogo = () => {
+        if (confirm('Remove current logo?')) {
+            handleChange('site_logo', '');
+        }
     };
 
     const handleSave = async () => {
@@ -63,6 +97,63 @@ const SettingsPage: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Brand Identity */}
+                <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg lg:col-span-2">
+                    <div className="px-4 py-5 sm:p-6 space-y-6">
+                        <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">Brand Identity</h3>
+                        <div className="flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0 sm:space-x-6">
+                            <div className="flex-shrink-0">
+                                {settings['site_logo'] ? (
+                                    <div className="relative group">
+                                        <img
+                                            src={settings['site_logo']}
+                                            alt="Site Logo"
+                                            className="h-24 w-auto object-contain bg-gray-50 border rounded-md p-2"
+                                        />
+                                        <button
+                                            onClick={handleRemoveLogo}
+                                            className="absolute -top-2 -right-2 bg-red-100 text-red-600 rounded-full p-1 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                                            title="Remove Logo"
+                                        >
+                                            <X className="h-4 w-4" />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="h-24 w-24 border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center bg-gray-50/50">
+                                        <ImageIcon className="h-8 w-8 text-gray-400" />
+                                    </div>
+                                )}
+                            </div>
+                            <div className="flex-1 space-y-1">
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    Website Logo
+                                </label>
+                                <p className="text-sm text-gray-500">
+                                    Recommended size: 200x60px. Max size: 2MB. Format: PNG, JPG, WEBP.
+                                </p>
+                                <div className="mt-2">
+                                    <label htmlFor="logo-upload" className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                        {uploadingLogo ? (
+                                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                        ) : (
+                                            <Upload className="h-4 w-4 mr-2" />
+                                        )}
+                                        {uploadingLogo ? 'Uploading...' : 'Change Logo'}
+                                    </label>
+                                    <input
+                                        id="logo-upload"
+                                        type="file"
+                                        className="hidden"
+                                        accept="image/*"
+                                        onChange={handleLogoUpload}
+                                        disabled={uploadingLogo}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 {/* General Information */}
                 <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
                     <div className="px-4 py-5 sm:p-6 space-y-6">

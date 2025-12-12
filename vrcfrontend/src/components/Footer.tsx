@@ -1,47 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import { Facebook, Twitter, Linkedin, Youtube, Mail, Loader2 } from 'lucide-react';
-import AppLink from '@/components/ui/app-link';
 import { navigationService } from '@/services/navigationService';
-import { settingsService } from '@/services/settingsService';
+import { useSettings } from '@/hooks/useSettings';
 import { NavigationItem } from '@/components/data/types';
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
   const [footerMenus, setFooterMenus] = useState<NavigationItem[]>([]);
-  const [settings, setSettings] = useState<Record<string, string>>({});
-  const [loading, setLoading] = useState(true);
+  const { settings, loading } = useSettings();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchNav = async () => {
       try {
-        const [navResult, settingsResult] = await Promise.all([
-          navigationService.getNavigationItems(),
-          settingsService.getSettings()
-        ]);
-
+        const navResult = await navigationService.getNavigationItems();
         if (navResult.success && navResult.data) {
-          // Filter root items that are marked for footer
-          // Note: The service returns built tree. We just filter roots.
           const footerRoots = navResult.data.filter(item => item.position === 'footer');
           setFooterMenus(footerRoots);
         }
-
-        if (settingsResult.success && settingsResult.data) {
-          setSettings(settingsResult.data);
-        }
       } catch (error) {
-        console.error("Failed to load footer data", error);
-      } finally {
-        setLoading(false);
+        console.error("Failed to load footer nav", error);
       }
     };
-    fetchData();
+    fetchNav();
   }, []);
 
   const copyrightText = settings['copyright_text'] || `© ${new Date().getFullYear()} VRC - Tổng công ty kỹ thuật điện lạnh Việt Nam. Tất cả quyền được bảo lưu.`;
   const contactEmail = settings['contact_email'] || 'info@vrc.com.vn';
   const contactAddress = settings['contact_address'] || '123 Nguyễn Văn Linh, Quận 7, TP. Hồ Chí Minh, Việt Nam';
   const siteDescription = settings['site_description'] || 'Cung cấp giải pháp điện lạnh toàn diện cho mọi doanh nghiệp và công trình.';
+  const siteLogo = settings['site_logo'] || '/lovable-uploads/0bd3c048-8e37-4775-a6bc-0b54ec07edbe.png';
 
   if (loading) return <footer className="bg-primary text-white py-12"><div className="flex justify-center"><Loader2 className="animate-spin" /></div></footer>;
 
@@ -53,9 +40,9 @@ const Footer = () => {
           <div>
             <div className="mb-4">
               <img
-                src="/lovable-uploads/0bd3c048-8e37-4775-a6bc-0b54ec07edbe.png"
+                src={siteLogo}
                 alt="VRC Logo"
-                className="h-16"
+                className="h-16 object-contain"
               />
             </div>
             <p className="text-gray-300 mb-6">
