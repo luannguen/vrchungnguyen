@@ -3,9 +3,8 @@ import { Result, success, failure, ErrorCodes } from "../types";
 import { NewsItem } from "../models/news";
 import { mockNewsItems } from "../mock/newsData";
 
-import { supabase } from "@/lib/supabaseClient"; // Ensure this client exists and is configured
-import { Result, success, failure, ErrorCodes } from "../types";
-import { NewsItem } from "../models/news";
+import { supabase } from "@/services/supabase"; // Ensure this client exists and is configured
+
 
 export const newsAPI = {
     getAll: async (): Promise<Result<NewsItem[]>> => {
