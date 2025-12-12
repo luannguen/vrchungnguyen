@@ -1,0 +1,12 @@
+[
+    {
+        "id": 1,
+        "name": "React",
+        "icon": "react.svg"
+    },
+    {
+        "id": 2,
+        "name": "Node.js",
+        "icon": "nodejs.svg"
+    }
+]

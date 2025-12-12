@@ -25,10 +25,10 @@ export const serviceService = {
                 .select('*')
                 .order('created_at', { ascending: false });
 
-            if (error) return failure(error.message, ErrorCodes.DB_ERROR, error);
+            if (error) return failure(error.message, ErrorCodes.DB_ERROR);
             return success(data || []);
         } catch (err: any) {
-            return failure(err.message, ErrorCodes.UNKNOWN_ERROR, err);
+            return failure(err.message, ErrorCodes.UNKNOWN_ERROR);
         }
     },
 
@@ -40,10 +40,10 @@ export const serviceService = {
                 .eq('id', id)
                 .single();
 
-            if (error) return failure(error.message, ErrorCodes.DB_ERROR, error);
+            if (error) return failure(error.message, ErrorCodes.DB_ERROR);
             return success(data);
         } catch (err: any) {
-            return failure(err.message, ErrorCodes.UNKNOWN_ERROR, err);
+            return failure(err.message, ErrorCodes.UNKNOWN_ERROR);
         }
     },
 
@@ -55,10 +55,10 @@ export const serviceService = {
                 .select()
                 .single();
 
-            if (error) return failure(error.message, ErrorCodes.DB_ERROR, error);
+            if (error) return failure(error.message, ErrorCodes.DB_ERROR);
             return success(data);
         } catch (err: any) {
-            return failure(err.message, ErrorCodes.UNKNOWN_ERROR, err);
+            return failure(err.message, ErrorCodes.UNKNOWN_ERROR);
         }
     },
 
@@ -71,10 +71,10 @@ export const serviceService = {
                 .select()
                 .single();
 
-            if (error) return failure(error.message, ErrorCodes.DB_ERROR, error);
+            if (error) return failure(error.message, ErrorCodes.DB_ERROR);
             return success(data);
         } catch (err: any) {
-            return failure(err.message, ErrorCodes.UNKNOWN_ERROR, err);
+            return failure(err.message, ErrorCodes.UNKNOWN_ERROR);
         }
     },
 
@@ -85,10 +85,10 @@ export const serviceService = {
                 .delete()
                 .eq('id', id);
 
-            if (error) return failure(error.message, ErrorCodes.DB_ERROR, error);
+            if (error) return failure(error.message, ErrorCodes.DB_ERROR);
             return success(undefined);
         } catch (err: any) {
-            return failure(err.message, ErrorCodes.UNKNOWN_ERROR, err);
+            return failure(err.message, ErrorCodes.UNKNOWN_ERROR);
         }
     }
 };

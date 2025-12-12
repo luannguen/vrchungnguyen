@@ -48,7 +48,7 @@ export default function ServicesPage() {
       toast({
         variant: "destructive",
         title: "Lỗi tải dữ liệu",
-        description: result.error.message,
+        description: result.error || "Có lỗi xảy ra",
       });
     }
     setLoading(false);
@@ -66,7 +66,7 @@ export default function ServicesPage() {
       toast({ title: "Thành công", description: "Đã xóa dịch vụ" });
       fetchServices();
     } else {
-      toast({ variant: "destructive", title: "Lỗi", description: result.error.message });
+      toast({ variant: "destructive", title: "Lỗi", description: result.error || "Có lỗi xảy ra" });
     }
   };
 

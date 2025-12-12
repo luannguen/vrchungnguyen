@@ -146,8 +146,10 @@ const ProjectDetail = () => {
                             </ul>
 
                             <div className="mt-8 pt-6 border-t">
-                                <Button className="w-full">
-                                    Liên hệ tư vấn dự án tương tự
+                                <Button className="w-full" asChild>
+                                    <Link to={`/contact?subject=${encodeURIComponent(`Tư vấn dự án: ${project.name}`)}`}>
+                                        Liên hệ tư vấn dự án tương tự
+                                    </Link>
                                 </Button>
                             </div>
                         </div>

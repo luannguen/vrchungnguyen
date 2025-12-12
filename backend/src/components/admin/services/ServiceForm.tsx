@@ -18,7 +18,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
 import { serviceService, Service, CreateServiceDTO } from "@/services/serviceService";
-import { slugify } from "@/lib/utils"; // Assuming utility exists, else will define locally or handle simple slug
+import { slugify } from "@/lib/utils";
 
 const serviceSchema = z.object({
     title: z.string().min(2, "Tiêu đề phải có ít nhất 2 ký tự"),
@@ -27,7 +27,7 @@ const serviceSchema = z.object({
     content: z.string().optional(),
     icon: z.string().optional(),
     image_url: z.string().optional(),
-    is_active: z.boolean().default(true),
+    is_active: z.boolean(),
 });
 
 type ServiceFormValues = z.infer<typeof serviceSchema>;
@@ -64,7 +64,7 @@ export default function ServiceForm({ initialData, onSuccess, onCancel }: Servic
                 content: initialData.content || "",
                 icon: initialData.icon || "",
                 image_url: initialData.image_url || "",
-                is_active: initialData.is_active,
+                is_active: initialData.is_active ?? true,
             });
         }
     }, [initialData, form]);
@@ -73,8 +73,7 @@ export default function ServiceForm({ initialData, onSuccess, onCancel }: Servic
     const title = form.watch("title");
     useEffect(() => {
         if (!initialData && title && !form.getValues("slug")) {
-            // Simple slugify fallback if utils missing
-            const slug = title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+            const slug = slugify(title);
             form.setValue("slug", slug);
         }
     }, [title, initialData, form]);
@@ -88,7 +87,7 @@ export default function ServiceForm({ initialData, onSuccess, onCancel }: Servic
                     toast({ title: "Thành công", description: "Cập nhật dịch vụ thành công" });
                     onSuccess();
                 } else {
-                    toast({ variant: "destructive", title: "Lỗi", description: result.error.message });
+                    toast({ variant: "destructive", title: "Lỗi", description: result.error || "Có lỗi xảy ra" });
                 }
             } else {
                 const result = await serviceService.createService(data as CreateServiceDTO);
@@ -96,7 +95,7 @@ export default function ServiceForm({ initialData, onSuccess, onCancel }: Servic
                     toast({ title: "Thành công", description: "Tạo dịch vụ mới thành công" });
                     onSuccess();
                 } else {
-                    toast({ variant: "destructive", title: "Lỗi", description: result.error.message });
+                    toast({ variant: "destructive", title: "Lỗi", description: result.error || "Có lỗi xảy ra" });
                 }
             }
         } catch (error: any) {
