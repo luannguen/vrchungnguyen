@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Save, Loader2, Upload, Image as ImageIcon, X } from 'lucide-react';
 import { settingsService } from '@/services/settingsService';
+import { useTranslation } from 'react-i18next';
 import { mediaService } from '@/services/mediaService';
 import { toast } from 'react-hot-toast';
 
 const SettingsPage: React.FC = () => {
+    const { t } = useTranslation();
     const [settings, setSettings] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -21,7 +23,7 @@ const SettingsPage: React.FC = () => {
             const settingMap = result.data.reduce((acc, curr) => ({ ...acc, [curr.key]: curr.value }), {} as Record<string, string>);
             setSettings(settingMap);
         } else {
-            toast.error('Failed to load settings');
+            toast.error(t('load_settings_fail'));
         }
         setLoading(false);
     };
@@ -36,7 +38,7 @@ const SettingsPage: React.FC = () => {
 
         // Validations
         if (file.size > 2 * 1024 * 1024) { // 2MB limit for logo
-            toast.error('Logo size too large. Max 2MB.');
+            toast.error(t('logo_too_large'));
             return;
         }
 
@@ -45,11 +47,11 @@ const SettingsPage: React.FC = () => {
             const result = await mediaService.uploadImage(file, 'settings');
             if (result) {
                 handleChange('site_logo', result.url);
-                toast.success('Logo uploaded temporarily. Save changes to persist.');
+                toast.success(t('logo_uploaded_temp'));
             }
         } catch (error) {
             console.error(error);
-            toast.error('Failed to upload logo');
+            toast.error(t('upload_logo_fail'));
         } finally {
             setUploadingLogo(false);
             e.target.value = ''; // Reset input
@@ -57,7 +59,7 @@ const SettingsPage: React.FC = () => {
     };
 
     const handleRemoveLogo = () => {
-        if (confirm('Remove current logo?')) {
+        if (confirm(t('confirm_remove_logo'))) {
             handleChange('site_logo', '');
         }
     };
@@ -71,9 +73,9 @@ const SettingsPage: React.FC = () => {
 
         const result = await settingsService.updateSettings(updates);
         if (result.success) {
-            toast.success('Settings saved successfully');
+            toast.success(t('settings_saved'));
         } else {
-            toast.error('Failed to save settings');
+            toast.error(t('save_settings_fail'));
         }
         setSaving(false);
     };
@@ -83,7 +85,7 @@ const SettingsPage: React.FC = () => {
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">System Settings</h1>
+                <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">{t('system_settings')}</h1>
                 <div className="flex space-x-3">
                     <button
                         onClick={handleSave}
@@ -91,7 +93,7 @@ const SettingsPage: React.FC = () => {
                         className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
                     >
                         {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
-                        Save Changes
+                        {t('save_changes')}
                     </button>
                 </div>
             </div>
@@ -100,7 +102,7 @@ const SettingsPage: React.FC = () => {
                 {/* Brand Identity */}
                 <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg lg:col-span-2">
                     <div className="px-4 py-5 sm:p-6 space-y-6">
-                        <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">Brand Identity</h3>
+                        <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">{t('brand_identity')}</h3>
                         <div className="flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0 sm:space-x-6">
                             <div className="flex-shrink-0">
                                 {settings['site_logo'] ? (
@@ -126,10 +128,10 @@ const SettingsPage: React.FC = () => {
                             </div>
                             <div className="flex-1 space-y-1">
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    Website Logo
+                                    {t('website_logo')}
                                 </label>
                                 <p className="text-sm text-gray-500">
-                                    Recommended size: 200x60px. Max size: 2MB. Format: PNG, JPG, WEBP.
+                                    {t('logo_recommendation')}
                                 </p>
                                 <div className="mt-2">
                                     <label htmlFor="logo-upload" className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
@@ -138,7 +140,7 @@ const SettingsPage: React.FC = () => {
                                         ) : (
                                             <Upload className="h-4 w-4 mr-2" />
                                         )}
-                                        {uploadingLogo ? 'Uploading...' : 'Change Logo'}
+                                        {uploadingLogo ? t('uploading') : t('change_logo')}
                                     </label>
                                     <input
                                         id="logo-upload"
@@ -157,10 +159,10 @@ const SettingsPage: React.FC = () => {
                 {/* General Information */}
                 <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
                     <div className="px-4 py-5 sm:p-6 space-y-6">
-                        <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">General Information & SEO</h3>
+                        <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">{t('general_info_seo')}</h3>
                         <div className="grid grid-cols-1 gap-y-6">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Company Name</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('company_name')}</label>
                                 <input
                                     type="text"
                                     value={settings['company_name'] || ''}
@@ -170,7 +172,7 @@ const SettingsPage: React.FC = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Slogan / Tagline</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('slogan')}</label>
                                 <input
                                     type="text"
                                     value={settings['company_slogan'] || ''}
@@ -180,7 +182,7 @@ const SettingsPage: React.FC = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Meta Title (Default)</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('meta_title')}</label>
                                 <input
                                     type="text"
                                     value={settings['site_title'] || ''}
@@ -189,7 +191,7 @@ const SettingsPage: React.FC = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Meta Description (Default)</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('meta_description')}</label>
                                 <textarea
                                     rows={3}
                                     value={settings['site_description'] || ''}
@@ -204,10 +206,10 @@ const SettingsPage: React.FC = () => {
                 {/* Contact Information */}
                 <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
                     <div className="px-4 py-5 sm:p-6 space-y-6">
-                        <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">Contact Details</h3>
+                        <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">{t('contact_details')}</h3>
                         <div className="grid grid-cols-1 gap-y-6">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Address</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('address')}</label>
                                 <input
                                     type="text"
                                     value={settings['contact_address'] || ''}
@@ -218,7 +220,7 @@ const SettingsPage: React.FC = () => {
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Phone</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('phone')}</label>
                                     <input
                                         type="text"
                                         value={settings['contact_phone'] || ''}
@@ -228,7 +230,7 @@ const SettingsPage: React.FC = () => {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Hotline</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('hotline')}</label>
                                     <input
                                         type="text"
                                         value={settings['contact_hotline'] || ''}
@@ -240,7 +242,7 @@ const SettingsPage: React.FC = () => {
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('email')}</label>
                                     <input
                                         type="email"
                                         value={settings['contact_email'] || ''}
@@ -250,7 +252,7 @@ const SettingsPage: React.FC = () => {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Working Hours</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('working_hours')}</label>
                                     <input
                                         type="text"
                                         value={settings['contact_working_hours'] || ''}
@@ -267,10 +269,10 @@ const SettingsPage: React.FC = () => {
                 {/* Social Media */}
                 <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
                     <div className="px-4 py-5 sm:p-6 space-y-6">
-                        <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">Social Media Links</h3>
+                        <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">{t('social_media_links')}</h3>
                         <div className="grid grid-cols-1 gap-y-6">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Facebook URL</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('facebook_label')}</label>
                                 <input
                                     type="text"
                                     value={settings['social_facebook'] || ''}
@@ -280,7 +282,7 @@ const SettingsPage: React.FC = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Zalo URL</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('zalo_label')}</label>
                                 <input
                                     type="text"
                                     value={settings['social_zalo'] || ''}
@@ -290,7 +292,7 @@ const SettingsPage: React.FC = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">YouTube URL</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('youtube_label')}</label>
                                 <input
                                     type="text"
                                     value={settings['social_youtube'] || ''}
@@ -306,9 +308,9 @@ const SettingsPage: React.FC = () => {
                 {/* Map & Embeds */}
                 <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
                     <div className="px-4 py-5 sm:p-6 space-y-6">
-                        <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">Map & Embeds</h3>
+                        <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">{t('map_embeds')}</h3>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Map Embed URL (src attribute from Google Maps)</label>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('map_embed_url')}</label>
                             <textarea
                                 rows={4}
                                 value={settings['map_embed_url'] || ''}

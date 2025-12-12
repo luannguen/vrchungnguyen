@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 
 interface TopicCardProps {
@@ -36,35 +37,36 @@ const fallbackTopics: TopicCardProps[] = [
 ];
 
 const FeaturedTopics = () => {
+  const { t } = useTranslation();
   return (
     <section className="py-16 bg-white">
       <div className="container-custom">
         <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between">
           <div>
-            <h2 className="mb-4">Sản phẩm nổi bật</h2>
+            <h2 className="mb-4">{t('featured_products')}</h2>
             <p className="text-muted-foreground max-w-2xl">
-              Khám phá các giải pháp điện lạnh hàng đầu của chúng tôi, phù hợp với mọi nhu cầu công nghiệp và thương mại.
+              {t('featured_products_desc')}
             </p>
           </div>
           <a href="/products" className="mt-4 md:mt-0 inline-flex items-center text-accent hover:text-primary transition-colors font-medium">
-            Xem tất cả sản phẩm
+            {t('view_all_products')}
             <ArrowRight size={18} className="ml-2" />
           </a>
         </div>
-        
+
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {(fallbackTopics).map((topic, index) => (
             <div key={index} className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-              <img 
-                src={topic.imageUrl} 
-                alt={topic.title} 
+              <img
+                src={topic.imageUrl}
+                alt={topic.title}
                 className="w-full h-48 object-cover"
               />
               <div className="p-6">
                 <h3 className="text-xl font-semibold mb-2">{topic.title}</h3>
                 <p className="text-muted-foreground mb-4">{topic.description}</p>
                 <a href={topic.link} className="inline-flex items-center text-accent hover:text-primary transition-colors font-medium">
-                  Tìm hiểu thêm
+                  {t('find_out_more')}
                   <ArrowRight size={18} className="ml-2" />
                 </a>
               </div>

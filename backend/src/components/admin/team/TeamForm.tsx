@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { TeamMember } from '@/components/data/types';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +14,7 @@ interface TeamFormProps {
 }
 
 const TeamForm: React.FC<TeamFormProps> = ({ initialData, onSave, onCancel }) => {
+    const { t } = useTranslation();
     const [formData, setFormData] = useState<Partial<TeamMember>>({
         name: '',
         role: '',
@@ -61,7 +63,7 @@ const TeamForm: React.FC<TeamFormProps> = ({ initialData, onSave, onCancel }) =>
             <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow">
                 <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-medium text-gray-900">
-                        {initialData ? 'Edit Team Member' : 'New Team Member'}
+                        {initialData ? t('edit_member') : t('new_member')}
                     </h3>
                     <Button type="button" variant="ghost" onClick={onCancel}>
                         <X className="h-6 w-6" />
@@ -71,7 +73,7 @@ const TeamForm: React.FC<TeamFormProps> = ({ initialData, onSave, onCancel }) =>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Name</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('name')}</label>
                             <Input
                                 value={formData.name || ''}
                                 onChange={e => handleChange('name', e.target.value)}
@@ -79,7 +81,7 @@ const TeamForm: React.FC<TeamFormProps> = ({ initialData, onSave, onCancel }) =>
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Role</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('role')}</label>
                             <Input
                                 value={formData.role || ''}
                                 onChange={e => handleChange('role', e.target.value)}
@@ -87,7 +89,7 @@ const TeamForm: React.FC<TeamFormProps> = ({ initialData, onSave, onCancel }) =>
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Order</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('order')}</label>
                             <Input
                                 type="number"
                                 value={formData.display_order || 0}
@@ -96,7 +98,7 @@ const TeamForm: React.FC<TeamFormProps> = ({ initialData, onSave, onCancel }) =>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Image</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('avatar')}</label>
                             <div className="flex gap-2">
                                 <Input
                                     value={formData.image_url || ''}
@@ -109,7 +111,7 @@ const TeamForm: React.FC<TeamFormProps> = ({ initialData, onSave, onCancel }) =>
                             </div>
                             {formData.image_url && (
                                 <div className="mt-2 w-24 h-24 rounded-full overflow-hidden border">
-                                    <img src={formData.image_url} alt="Preview" className="w-full h-full object-cover" />
+                                    <img src={formData.image_url} alt={t('image_preview') || 'Preview'} className="w-full h-full object-cover" />
                                 </div>
                             )}
                         </div>
@@ -117,7 +119,7 @@ const TeamForm: React.FC<TeamFormProps> = ({ initialData, onSave, onCancel }) =>
 
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Bio</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('bio')}</label>
                             <Textarea
                                 value={formData.bio || ''}
                                 onChange={e => handleChange('bio', e.target.value)}
@@ -126,20 +128,20 @@ const TeamForm: React.FC<TeamFormProps> = ({ initialData, onSave, onCancel }) =>
                         </div>
 
                         <div className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-700">Social Links</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('social_links')}</label>
                             <div className="grid grid-cols-1 gap-2">
                                 <Input
-                                    placeholder="LinkedIn URL"
+                                    placeholder={t('linkedin_url')}
                                     value={formData.social_links?.linkedin || ''}
                                     onChange={e => handleSocialChange('linkedin', e.target.value)}
                                 />
                                 <Input
-                                    placeholder="Twitter URL"
+                                    placeholder={t('twitter_url')}
                                     value={formData.social_links?.twitter || ''}
                                     onChange={e => handleSocialChange('twitter', e.target.value)}
                                 />
                                 <Input
-                                    placeholder="Email Address"
+                                    placeholder={t('email_address')}
                                     value={formData.social_links?.email || ''}
                                     onChange={e => handleSocialChange('email', e.target.value)}
                                 />
@@ -149,9 +151,9 @@ const TeamForm: React.FC<TeamFormProps> = ({ initialData, onSave, onCancel }) =>
                 </div>
 
                 <div className="flex justify-end gap-3 pt-4 border-t">
-                    <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
+                    <Button type="button" variant="outline" onClick={onCancel}>{t('cancel')}</Button>
                     <Button type="submit" disabled={loading}>
-                        {loading ? 'Saving...' : 'Save Member'}
+                        {loading ? t('loading') : t('save')}
                     </Button>
                 </div>
             </form>

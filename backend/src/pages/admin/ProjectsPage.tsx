@@ -5,11 +5,13 @@ import { productService } from '@/services/productService'; // Reusing for getCa
 import { Project, Category } from '@/components/data/types';
 import { Plus, Edit2, Trash2, Search, Loader2, Briefcase } from 'lucide-react';
 import ProjectForm from '@/components/admin/projects/ProjectForm';
+import { useTranslation } from 'react-i18next';
 
 const ProjectsPage: React.FC = () => {
     const [projects, setProjects] = useState<Project[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
+    const { t } = useTranslation();
     const [searchTerm, setSearchTerm] = useState('');
 
     // Edit/Create State
@@ -38,13 +40,13 @@ const ProjectsPage: React.FC = () => {
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this project?')) return;
+        if (!confirm(t('confirm_delete_project'))) return;
 
         try {
             await projectService.deleteProject(id);
             setProjects(prev => prev.filter(p => p.id !== id));
         } catch (error) {
-            alert('Failed to delete project');
+            alert(t('delete_project_fail'));
         }
     };
 
@@ -59,7 +61,7 @@ const ProjectsPage: React.FC = () => {
             setEditingProject(undefined);
             loadData();
         } catch (error) {
-            alert('Failed to save project');
+            alert(t('save_project_fail'));
         }
     };
 
@@ -73,7 +75,7 @@ const ProjectsPage: React.FC = () => {
             <div className="space-y-6">
                 <div className="flex justify-between items-center">
                     <h1 className="text-2xl font-semibold text-gray-900">
-                        {editingProject ? 'Edit Project' : 'Create Project'}
+                        {editingProject ? t('edit_project') : t('create_project')}
                     </h1>
                 </div>
                 <ProjectForm
@@ -89,13 +91,13 @@ const ProjectsPage: React.FC = () => {
     return (
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h1 className="text-2xl font-semibold text-gray-900">Projects</h1>
+                <h1 className="text-2xl font-semibold text-gray-900">{t('projects')}</h1>
                 <button
                     onClick={() => { setEditingProject(undefined); setIsEditing(true); }}
                     className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
                     <Plus className="h-4 w-4 mr-2" />
-                    Add Project
+                    {t('add_project')}
                 </button>
             </div>
 
@@ -107,7 +109,7 @@ const ProjectsPage: React.FC = () => {
                     <input
                         type="text"
                         className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md border p-2"
-                        placeholder="Search projects..."
+                        placeholder={t('search_projects_placeholder')}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -122,26 +124,26 @@ const ProjectsPage: React.FC = () => {
                 ) : filteredProjects.length === 0 ? (
                     <div className="flex flex-col items-center justify-center p-8 text-gray-500">
                         <Briefcase className="h-12 w-12 mb-2 opacity-50" />
-                        <p>No projects found.</p>
+                        <p>{t('no_projects')}</p>
                     </div>
                 ) : (
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Project
+                                    {t('project_header')}
                                 </th>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Client
+                                    {t('client_header')}
                                 </th>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Completion Date
+                                    {t('completion_date_header')}
                                 </th>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Featured
+                                    {t('featured_header')}
                                 </th>
                                 <th scope="col" className="relative px-6 py-3">
-                                    <span className="sr-only">Actions</span>
+                                    <span className="sr-only">{t('actions_header')}</span>
                                 </th>
                             </tr>
                         </thead>
@@ -174,7 +176,7 @@ const ProjectsPage: React.FC = () => {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                         {project.is_featured ? (
                                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                                Featured
+                                                {t('featured_header')}
                                             </span>
                                         ) : (
                                             <span className="text-gray-400">-</span>

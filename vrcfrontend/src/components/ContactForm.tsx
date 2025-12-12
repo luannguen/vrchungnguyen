@@ -4,8 +4,10 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { useContactForm } from "@/hooks/useContactForm";
+import { useTranslation } from 'react-i18next';
 
 const ContactForm = () => {
+  const { t } = useTranslation();
   const {
     formData,
     errors,
@@ -21,22 +23,21 @@ const ContactForm = () => {
     <section className="bg-gray-50 py-20">
       <div className="container-custom">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Liên hệ với chúng tôi</h2>
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">{t('contact_us_title')}</h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-            Chúng tôi luôn lắng nghe và sẵn sàng hỗ trợ bạn. Hãy để lại thông tin, chúng tôi sẽ phản hồi sớm nhất có thể.
+            {t('contact_us_desc')}
           </p>
         </div>
 
         <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="grid grid-cols-1 md:grid-cols-5">
-            {/* Left side info panel (optional enhancement, kept simple for now) or just full width form */}
             <div className="md:col-span-5 p-8 md:p-12">
               {submitStatus === "success" && (
                 <div className="bg-green-50 border border-green-200 text-green-800 rounded-lg p-6 mb-8 flex items-center shadow-sm">
                   <svg className="w-6 h-6 mr-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                   <div>
-                    <h4 className="font-bold text-lg">Gửi thành công!</h4>
-                    <p>Cảm ơn bạn đã liên hệ. Chúng tôi sẽ phản hồi trong thời gian sớm nhất!</p>
+                    <h4 className="font-bold text-lg">{t('sent_success')}</h4>
+                    <p>{t('sent_success_desc')}</p>
                   </div>
                 </div>
               )}
@@ -45,8 +46,8 @@ const ContactForm = () => {
                 <div className="bg-red-50 border border-red-200 text-red-800 rounded-lg p-6 mb-8 flex items-center shadow-sm">
                   <svg className="w-6 h-6 mr-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                   <div>
-                    <h4 className="font-bold text-lg">Gửi thất bại</h4>
-                    <p>Đã có lỗi xảy ra. Vui lòng thử lại sau hoặc liên hệ trực tiếp qua hotline.</p>
+                    <h4 className="font-bold text-lg">{t('sent_fail')}</h4>
+                    <p>{t('sent_fail_desc')}</p>
                   </div>
                 </div>
               )}
@@ -67,14 +68,14 @@ const ContactForm = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-2">
                     <label htmlFor="name" className={`block text-sm font-semibold mb-1 transition-colors ${errors.name ? 'text-red-500' : 'text-gray-700'}`}>
-                      Họ và tên <span className="text-red-500">*</span>
+                      {t('full_name')} <span className="text-red-500">*</span>
                     </label>
                     <Input
                       id="name"
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
-                      placeholder="Nguyễn Văn A"
+                      placeholder={t('full_name_placeholder')}
                       className={`h-12 px-4 rounded-lg border-gray-200 focus:border-primary focus:ring-primary transition-all duration-200 ${errors.name ? 'border-red-500 focus:ring-red-200' : ''}`}
                     />
                     {errors.name && <p className="text-red-500 text-sm mt-1 animate-in fade-in slide-in-from-top-1">{errors.name}</p>}
@@ -100,7 +101,7 @@ const ContactForm = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-2">
                     <label htmlFor="phone" className={`block text-sm font-semibold mb-1 transition-colors ${errors.phone ? 'text-red-500' : 'text-gray-700'}`}>
-                      Số điện thoại
+                      {t('phone_number')}
                     </label>
                     <Input
                       id="phone"
@@ -115,18 +116,18 @@ const ContactForm = () => {
 
                   <div className="space-y-2">
                     <label htmlFor="subject" className={`block text-sm font-semibold mb-1 transition-colors ${errors.subject ? 'text-red-500' : 'text-gray-700'}`}>
-                      Chủ đề quan tâm
+                      {t('subject')}
                     </label>
                     <Select value={formData.subject} onValueChange={handleSelectChange}>
                       <SelectTrigger className={`h-12 px-4 rounded-lg border-gray-200 focus:border-primary focus:ring-primary transition-all duration-200 ${errors.subject ? 'border-red-500 focus:ring-red-200' : ''}`}>
-                        <SelectValue placeholder="Chọn chủ đề" />
+                        <SelectValue placeholder={t('select_subject')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="general">Thông tin chung</SelectItem>
-                        <SelectItem value="support">Hỗ trợ kỹ thuật</SelectItem>
-                        <SelectItem value="quote">Yêu cầu báo giá</SelectItem>
-                        <SelectItem value="partnership">Hợp tác kinh doanh</SelectItem>
-                        <SelectItem value="other">Khác</SelectItem>
+                        <SelectItem value="general">{t('subject_general')}</SelectItem>
+                        <SelectItem value="support">{t('subject_support')}</SelectItem>
+                        <SelectItem value="quote">{t('subject_quote')}</SelectItem>
+                        <SelectItem value="partnership">{t('subject_partnership')}</SelectItem>
+                        <SelectItem value="other">{t('subject_other')}</SelectItem>
                       </SelectContent>
                     </Select>
                     {errors.subject && <p className="text-red-500 text-sm mt-1 animate-in fade-in slide-in-from-top-1">{errors.subject}</p>}
@@ -135,7 +136,7 @@ const ContactForm = () => {
 
                 <div className="space-y-2">
                   <label htmlFor="message" className={`block text-sm font-semibold mb-1 transition-colors ${errors.message ? 'text-red-500' : 'text-gray-700'}`}>
-                    Nội dung tin nhắn <span className="text-red-500">*</span>
+                    {t('message_content')} <span className="text-red-500">*</span>
                   </label>
                   <Textarea
                     id="message"
@@ -143,7 +144,7 @@ const ContactForm = () => {
                     rows={6}
                     value={formData.message}
                     onChange={handleChange}
-                    placeholder="Hãy chia sẻ chi tiết về nhu cầu của bạn..."
+                    placeholder={t('message_placeholder')}
                     className={`resize-none p-4 rounded-lg border-gray-200 focus:border-primary focus:ring-primary transition-all duration-200 ${errors.message ? 'border-red-500 focus:ring-red-200' : ''}`}
                   />
                   {errors.message && <p className="text-red-500 text-sm mt-1 animate-in fade-in slide-in-from-top-1">{errors.message}</p>}
@@ -161,9 +162,9 @@ const ContactForm = () => {
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        Đang gửi...
+                        {t('sending')}...
                       </>
-                    ) : "Gửi liên hệ ngay"}
+                    ) : t('send_message')}
                   </Button>
                 </div>
               </form>

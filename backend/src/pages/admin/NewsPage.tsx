@@ -6,10 +6,12 @@ import { Plus, Edit2, Trash2, Search, Loader2, FileText } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import NewsForm from './news/NewsForm';
+import { useTranslation } from 'react-i18next';
 
 const NewsPage: React.FC = () => {
     const [newsList, setNewsList] = useState<News[]>([]);
     const [loading, setLoading] = useState(true);
+    const { t } = useTranslation();
     const [searchTerm, setSearchTerm] = useState('');
 
     // Edit/Create State
@@ -33,13 +35,13 @@ const NewsPage: React.FC = () => {
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this news item?')) return;
+        if (!confirm(t('confirm_delete_news'))) return;
 
         try {
             await newsService.deleteNews(id);
             setNewsList(prev => prev.filter(n => n.id !== id));
         } catch (error) {
-            alert('Failed to delete news');
+            alert(t('delete_news_fail'));
         }
     };
 
@@ -54,7 +56,7 @@ const NewsPage: React.FC = () => {
             setEditingNews(undefined);
             loadData();
         } catch (error) {
-            alert('Failed to save news');
+            alert(t('save_news_fail'));
         }
     };
 
@@ -76,10 +78,10 @@ const NewsPage: React.FC = () => {
     return (
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h1 className="text-2xl font-semibold text-gray-900">News & Articles</h1>
+                <h1 className="text-2xl font-semibold text-gray-900">{t('news_articles')}</h1>
                 <Button onClick={() => { setEditingNews(undefined); setIsEditing(true); }}>
                     <Plus className="h-4 w-4 mr-2" />
-                    Add News
+                    {t('add_news')}
                 </Button>
             </div>
 
@@ -91,7 +93,7 @@ const NewsPage: React.FC = () => {
                     <Input
                         type="text"
                         className="pl-10"
-                        placeholder="Search news..."
+                        placeholder={t('search_news_placeholder')}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -106,17 +108,17 @@ const NewsPage: React.FC = () => {
                 ) : filteredNews.length === 0 ? (
                     <div className="flex flex-col items-center justify-center p-8 text-gray-500">
                         <FileText className="h-12 w-12 mb-2 opacity-50" />
-                        <p>No news found.</p>
+                        <p>{t('no_news')}</p>
                     </div>
                 ) : (
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Article</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                <th scope="col" className="relative px-6 py-3"><span className="sr-only">Actions</span></th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('article')}</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('category_header')}</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('author')}</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('date_header')}</th>
+                                <th scope="col" className="relative px-6 py-3"><span className="sr-only">{t('actions_header')}</span></th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">

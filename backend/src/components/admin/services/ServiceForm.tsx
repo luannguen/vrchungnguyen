@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -19,18 +19,17 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
 import { serviceService, Service, CreateServiceDTO } from "@/services/serviceService";
 import { slugify } from "@/lib/utils";
+import { useTranslation } from 'react-i18next';
 
-const serviceSchema = z.object({
-    title: z.string().min(2, "Tiêu đề phải có ít nhất 2 ký tự"),
-    slug: z.string().min(2, "Slug phải có ít nhất 2 ký tự"),
-    description: z.string().optional(),
-    content: z.string().optional(),
-    icon: z.string().optional(),
-    image_url: z.string().optional(),
-    is_active: z.boolean(),
-});
-
-type ServiceFormValues = z.infer<typeof serviceSchema>;
+type ServiceFormValues = {
+    title: string;
+    slug: string;
+    description?: string;
+    content?: string;
+    icon?: string;
+    image_url?: string;
+    is_active: boolean;
+};
 
 interface ServiceFormProps {
     initialData?: Service | null;
@@ -40,7 +39,18 @@ interface ServiceFormProps {
 
 export default function ServiceForm({ initialData, onSuccess, onCancel }: ServiceFormProps) {
     const { toast } = useToast();
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
+
+    const serviceSchema = useMemo(() => z.object({
+        title: z.string().min(2, t('error_min_length', { count: 2 })),
+        slug: z.string().min(2, t('error_min_length', { count: 2 })),
+        description: z.string().optional(),
+        content: z.string().optional(),
+        icon: z.string().optional(),
+        image_url: z.string().optional(),
+        is_active: z.boolean(),
+    }), [t]);
 
     const form = useForm<ServiceFormValues>({
         resolver: zodResolver(serviceSchema),
@@ -84,22 +94,22 @@ export default function ServiceForm({ initialData, onSuccess, onCancel }: Servic
             if (initialData) {
                 const result = await serviceService.updateService(initialData.id, data);
                 if (result.success) {
-                    toast({ title: "Thành công", description: "Cập nhật dịch vụ thành công" });
+                    toast({ title: t('success'), description: t('service_update_success') });
                     onSuccess();
                 } else {
-                    toast({ variant: "destructive", title: "Lỗi", description: result.error || "Có lỗi xảy ra" });
+                    toast({ variant: "destructive", title: t('error'), description: result.error || t('error_occurred') });
                 }
             } else {
                 const result = await serviceService.createService(data as CreateServiceDTO);
                 if (result.success) {
-                    toast({ title: "Thành công", description: "Tạo dịch vụ mới thành công" });
+                    toast({ title: t('success'), description: t('service_create_success') });
                     onSuccess();
                 } else {
-                    toast({ variant: "destructive", title: "Lỗi", description: result.error || "Có lỗi xảy ra" });
+                    toast({ variant: "destructive", title: t('error'), description: result.error || t('error_occurred') });
                 }
             }
         } catch (error: any) {
-            toast({ variant: "destructive", title: "Lỗi", description: error.message || "Đã có lỗi xảy ra" });
+            toast({ variant: "destructive", title: t('error'), description: error.message || t('error_occurred') });
         } finally {
             setIsLoading(false);
         }
@@ -114,9 +124,9 @@ export default function ServiceForm({ initialData, onSuccess, onCancel }: Servic
                         name="title"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Tiêu đề dịch vụ</FormLabel>
+                                <FormLabel>{t('service_title')}</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Nhập tiêu đề..." {...field} />
+                                    <Input placeholder={t('service_title_placeholder')} {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -127,11 +137,11 @@ export default function ServiceForm({ initialData, onSuccess, onCancel }: Servic
                         name="slug"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Đường dẫn (Slug)</FormLabel>
+                                <FormLabel>{t('slug')}</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="duong-dan-dich-vu" {...field} />
+                                    <Input placeholder={t('slug_placeholder')} {...field} />
                                 </FormControl>
-                                <FormDescription>Đường dẫn URL của dịch vụ (duy nhất).</FormDescription>
+                                <FormDescription>{t('slug_desc')}</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -143,9 +153,9 @@ export default function ServiceForm({ initialData, onSuccess, onCancel }: Servic
                     name="description"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Mô tả ngắn</FormLabel>
+                            <FormLabel>{t('short_description')}</FormLabel>
                             <FormControl>
-                                <Textarea placeholder="Mô tả ngắn về dịch vụ..." {...field} />
+                                <Textarea placeholder={t('short_desc_placeholder')} {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -157,11 +167,11 @@ export default function ServiceForm({ initialData, onSuccess, onCancel }: Servic
                     name="content"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Nội dung chi tiết (HTML)</FormLabel>
+                            <FormLabel>{t('content_html')}</FormLabel>
                             <FormControl>
-                                <Textarea className="min-h-[200px] font-mono text-sm" placeholder="<p>Nội dung chi tiết...</p>" {...field} />
+                                <Textarea className="min-h-[200px] font-mono text-sm" placeholder={t('content_placeholder')} {...field} />
                             </FormControl>
-                            <FormDescription>Hỗ trợ định dạng HTML cơ bản.</FormDescription>
+                            <FormDescription>{t('html_support')}</FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}
@@ -173,11 +183,11 @@ export default function ServiceForm({ initialData, onSuccess, onCancel }: Servic
                         name="icon"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Icon (Lucide Name)</FormLabel>
+                                <FormLabel>{t('icon_lucide')}</FormLabel>
                                 <FormControl>
                                     <Input placeholder="Wrench, Cog, ..." {...field} />
                                 </FormControl>
-                                <FormDescription>Tên icon từ thư viện Lucide React.</FormDescription>
+                                <FormDescription>{t('icon_desc')}</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -187,7 +197,7 @@ export default function ServiceForm({ initialData, onSuccess, onCancel }: Servic
                         name="image_url"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Ảnh đại diện (URL)</FormLabel>
+                                <FormLabel>{t('image_url')}</FormLabel>
                                 <FormControl>
                                     <Input placeholder="https://..." {...field} />
                                 </FormControl>
@@ -203,9 +213,9 @@ export default function ServiceForm({ initialData, onSuccess, onCancel }: Servic
                     render={({ field }) => (
                         <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                             <div className="space-y-0.5">
-                                <FormLabel className="text-base">Hiển thị</FormLabel>
+                                <FormLabel className="text-base">{t('is_visible')}</FormLabel>
                                 <FormDescription>
-                                    Bật để hiển thị dịch vụ này trên trang web.
+                                    {t('is_visible_desc')}
                                 </FormDescription>
                             </div>
                             <FormControl>
@@ -220,11 +230,11 @@ export default function ServiceForm({ initialData, onSuccess, onCancel }: Servic
 
                 <div className="flex justify-end gap-4">
                     <Button type="button" variant="outline" onClick={onCancel}>
-                        Hủy
+                        {t('cancel')}
                     </Button>
                     <Button type="submit" disabled={isLoading}>
                         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        {initialData ? "Cập nhật" : "Tạo mới"}
+                        {initialData ? t('save') : t('create_new')}
                     </Button>
                 </div>
             </form>

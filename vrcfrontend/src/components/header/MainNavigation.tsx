@@ -42,6 +42,9 @@ const MainNavigation = ({ isMobile = false }: MainNavigationProps) => {
       '/products': 'products',
       '/news': 'news',
       '/contact': 'contact',
+      '/services': 'services',
+      '/projects': 'projects',
+      '/team': 'team',
     };
 
     if (item.path && pathToKeyMap[item.path]) {

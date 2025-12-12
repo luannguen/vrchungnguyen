@@ -2,8 +2,10 @@
 import { useState, useEffect } from 'react';
 import { ChevronRight, Loader2 } from 'lucide-react';
 import { bannerService, Banner } from '@/services/bannerService';
+import { useTranslation } from 'react-i18next';
 
 const HeroSection = () => {
+  const { t } = useTranslation();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [banners, setBanners] = useState<Banner[]>([]);
   const [loading, setLoading] = useState(true);
@@ -98,7 +100,7 @@ const HeroSection = () => {
                   href={slide.link}
                   className="inline-flex items-center btn-secondary font-medium"
                 >
-                  Tìm hiểu thêm
+                  {t('find_out_more')}
                   <ChevronRight size={20} className="ml-2" />
                 </a>
               )}

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { rbacService, Role, PermissionDef, RoleDef } from '@/services/rbacService';
 import { Shield, Loader2, Save } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 const RolesPage: React.FC = () => {
+    const { t } = useTranslation();
     const [roles, setRoles] = useState<RoleDef[]>([]);
     const [permissions, setPermissions] = useState<PermissionDef[]>([]);
     const [rolePermissions, setRolePermissions] = useState<Record<Role, string[]>>({
@@ -62,13 +64,13 @@ const RolesPage: React.FC = () => {
         try {
             const result = await rbacService.updateRolePermissions(roleId, rolePermissions[roleId]);
             if (result.success) {
-                alert(`Permissions updated for ${roleId}`);
+                alert(t('permissions_updated_success', { role: roleId }));
             } else {
-                alert(`Failed to update: ${result.code}`);
+                alert(t('update_permission_fail', { code: result.code }));
             }
         } catch (error) {
             console.error('Save failed', error);
-            alert('An unexpected error occurred');
+            alert(t('unexpected_error'));
         } finally {
             setSaving(false);
         }
@@ -85,17 +87,16 @@ const RolesPage: React.FC = () => {
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-semibold text-gray-900">Roles Management</h1>
+                <h1 className="text-2xl font-semibold text-gray-900">{t('roles_management')}</h1>
             </div>
 
             <div className="bg-white shadow overflow-hidden rounded-lg">
                 <div className="px-4 py-5 sm:px-6">
                     <h3 className="text-lg leading-6 font-medium text-gray-900">
-                        Role Permissions
+                        {t('role_permissions')}
                     </h3>
                     <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                        Manage access levels for each role. Click a checkbox to toggle permission.
-                        Don't forget to save changes for each role.
+                        {t('role_permissions_subtitle')}
                     </p>
                 </div>
                 <div className="border-t border-gray-200 overflow-x-auto">
@@ -103,7 +104,7 @@ const RolesPage: React.FC = () => {
                         <thead className="bg-gray-50">
                             <tr>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Permission
+                                    {t('permission_header')}
                                 </th>
                                 {roles.map(role => (
                                     <th key={role.id} scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[150px]">
@@ -118,7 +119,7 @@ const RolesPage: React.FC = () => {
                                                 className="mt-2 inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
                                             >
                                                 <Save className="h-3 w-3 mr-1" />
-                                                Save
+                                                {t('save')}
                                             </button>
                                         </div>
                                     </th>

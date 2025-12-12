@@ -3,8 +3,10 @@ import { productService } from '@/services/productService';
 import { Product, Category } from '@/components/data/types';
 import { Plus, Edit2, Trash2, Search, Loader2, Package } from 'lucide-react';
 import ProductForm from '@/components/admin/products/ProductForm';
+import { useTranslation } from 'react-i18next';
 
 const ProductsPage: React.FC = () => {
+    const { t } = useTranslation();
     const [products, setProducts] = useState<Product[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
@@ -57,13 +59,13 @@ const ProductsPage: React.FC = () => {
     }, [searchTerm, filterCategory]);
 
     const handleDelete = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this product?')) return;
+        if (!confirm(t('confirm_delete_product'))) return;
 
         const result = await productService.deleteProduct(id);
         if (result.success) {
             setProducts(prev => prev.filter(p => p.id !== id));
         } else {
-            alert('Failed to delete product: ' + result.error);
+            alert(t('delete_product_fail') + result.error);
         }
     };
 
@@ -80,7 +82,7 @@ const ProductsPage: React.FC = () => {
             setEditingProduct(undefined);
             loadData(); // Refresh list
         } else {
-            alert('Failed to save: ' + result.error);
+            alert(t('save_fail') + result.error);
         }
     };
 
@@ -89,7 +91,7 @@ const ProductsPage: React.FC = () => {
             <div className="space-y-6">
                 <div className="flex justify-between items-center">
                     <h1 className="text-2xl font-semibold text-gray-900">
-                        {editingProduct ? 'Edit Product' : 'Create Product'}
+                        {editingProduct ? t('edit_product') : t('create_product')}
                     </h1>
                 </div>
                 <ProductForm
@@ -105,13 +107,13 @@ const ProductsPage: React.FC = () => {
     return (
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h1 className="text-2xl font-semibold text-gray-900">Products</h1>
+                <h1 className="text-2xl font-semibold text-gray-900">{t('products')}</h1>
                 <button
                     onClick={() => { setEditingProduct(undefined); setIsEditing(true); }}
                     className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
                     <Plus className="h-4 w-4 mr-2" />
-                    Add Product
+                    {t('add_product')}
                 </button>
             </div>
 
@@ -124,7 +126,7 @@ const ProductsPage: React.FC = () => {
                     <input
                         type="text"
                         className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md border p-2"
-                        placeholder="Search products..."
+                        placeholder={t('search_products_placeholder')}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -135,7 +137,7 @@ const ProductsPage: React.FC = () => {
                         onChange={(e) => setFilterCategory(e.target.value)}
                         className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md border"
                     >
-                        <option value="">All Categories</option>
+                        <option value="">{t('all_categories')}</option>
                         {categories.map(cat => (
                             <option key={cat.id} value={cat.id}>{cat.name}</option>
                         ))}
@@ -152,26 +154,26 @@ const ProductsPage: React.FC = () => {
                 ) : products.length === 0 ? (
                     <div className="flex flex-col items-center justify-center p-8 text-gray-500">
                         <Package className="h-12 w-12 mb-2 opacity-50" />
-                        <p>No products found.</p>
+                        <p>{t('no_products')}</p>
                     </div>
                 ) : (
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Product
+                                    {t('product_header')}
                                 </th>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Category
+                                    {t('category_header')}
                                 </th>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Price
+                                    {t('price_header')}
                                 </th>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Status
+                                    {t('status_header')}
                                 </th>
                                 <th scope="col" className="relative px-6 py-3">
-                                    <span className="sr-only">Actions</span>
+                                    <span className="sr-only">{t('actions')}</span>
                                 </th>
                             </tr>
                         </thead>
@@ -196,7 +198,7 @@ const ProductsPage: React.FC = () => {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm text-gray-900">{product.category?.name || 'Uncategorized'}</div>
+                                        <div className="text-sm text-gray-900">{product.category?.name || t('uncategorized')}</div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                         {product.price}
@@ -205,12 +207,12 @@ const ProductsPage: React.FC = () => {
                                         <div className="flex flex-col gap-1">
                                             {product.is_new && (
                                                 <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 w-fit">
-                                                    New
+                                                    {t('new_label')}
                                                 </span>
                                             )}
                                             {product.is_bestseller && (
                                                 <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800 w-fit">
-                                                    Bestseller
+                                                    {t('bestseller_label')}
                                                 </span>
                                             )}
                                             {!product.is_new && !product.is_bestseller && (

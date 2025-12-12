@@ -1,6 +1,7 @@
 
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 
 interface PublicationProps {
@@ -46,10 +47,11 @@ const fallbackPublications: PublicationProps[] = [
     imageUrl: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
     link: "/publications/energy-efficiency-report"
   }
-// Removed extra closing bracket
+  // Removed extra closing bracket
 ];
 
 const LatestPublications = () => {
+  const { t } = useTranslation();
   // Sử dụng fallbackPublications thay vì publications từ API
   const publications = fallbackPublications;
   return (
@@ -57,24 +59,24 @@ const LatestPublications = () => {
       <div className="container-custom">
         <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between">
           <div>
-            <h2 className="mb-4">Bài viết mới nhất</h2>
+            <h2 className="mb-4">{t('latest_news')}</h2>
             <p className="text-muted-foreground max-w-2xl">
-              Tham khảo các báo cáo, nghiên cứu và hướng dẫn mới nhất về công nghệ tiết kiệm năng lượng và giải pháp điều hòa không khí hiệu suất cao.
+              {t('latest_news_desc')}
             </p>
           </div>
           <Link to="/publications" className="mt-4 md:mt-0 inline-flex items-center text-accent hover:text-primary transition-colors font-medium">
-            Xem tất cả bài viết
+            {t('view_all_news')}
             <ArrowRight size={18} className="ml-2" />
           </Link>
         </div>
-        
+
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {publications.map((publication, index) => (
             <div key={index} className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
               <div className="relative">
-                <img 
-                  src={publication.imageUrl} 
-                  alt={publication.title} 
+                <img
+                  src={publication.imageUrl}
+                  alt={publication.title}
                   className="w-full h-40 object-cover"
                 />
                 <span className="absolute top-2 right-2 bg-secondary text-secondary-foreground text-xs px-2 py-1 rounded">
@@ -85,7 +87,7 @@ const LatestPublications = () => {
                 <p className="text-sm text-muted-foreground mb-2">{publication.date}</p>
                 <h3 className="text-base font-medium line-clamp-2 mb-3">{publication.title}</h3>
                 <Link to={publication.link} className="inline-flex items-center text-accent hover:text-primary transition-colors text-sm font-medium">
-                  Xem thêm
+                  {t('read_more')}
                   <ArrowRight size={16} className="ml-1" />
                 </Link>
               </div>

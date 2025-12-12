@@ -1,8 +1,10 @@
+import { useTranslation } from 'react-i18next';
 import ContactForm from "@/components/ContactForm";
 import { useSettings } from "@/hooks/useSettings";
 import { Loader2 } from "lucide-react";
 
 const Contact = () => {
+  const { t } = useTranslation();
   const { settings, loading } = useSettings();
 
   if (loading) return <div className="flex justify-center p-12"><Loader2 className="animate-spin text-primary" /></div>;
@@ -41,11 +43,11 @@ const Contact = () => {
   return (
     <main className="flex-grow">
       <div className="container-custom py-8 md:py-12">
-        <h1 className="text-3xl md:text-4xl font-bold text-primary mb-4">Liên hệ</h1>
+        <h1 className="text-3xl md:text-4xl font-bold text-primary mb-4">{t('contact')}</h1>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-5">
             <div className="bg-white shadow-md rounded-lg p-6">
-              <h2 className="text-xl font-semibold text-primary mb-4">Thông tin liên hệ</h2>
+              <h2 className="text-xl font-semibold text-primary mb-4">{t('contact_info')}</h2>
 
               <div className="space-y-4">
                 <div>
@@ -54,35 +56,35 @@ const Contact = () => {
                 </div>
 
                 <div>
-                  <h3 className="font-medium">Địa chỉ:</h3>
+                  <h3 className="font-medium">{t('address')}:</h3>
                   <p className="text-gray-600">{address}</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <h3 className="font-medium">Điện thoại:</h3>
+                    <h3 className="font-medium">{t('phone')}:</h3>
                     <p className="text-gray-600">{phone}</p>
                   </div>
 
                   <div>
-                    <h3 className="font-medium">Email:</h3>
+                    <h3 className="font-medium">{t('email')}:</h3>
                     <p className="text-gray-600">{email}</p>
                   </div>
 
                   <div>
-                    <h3 className="font-medium">Hotline:</h3>
+                    <h3 className="font-medium">{t('hotline')}:</h3>
                     <p className="text-gray-600">{hotline}</p>
                   </div>
 
                   <div>
-                    <h3 className="font-medium">Giờ làm việc:</h3>
+                    <h3 className="font-medium">{t('working_hours')}:</h3>
                     <p className="text-gray-600">{workingHours}</p>
                   </div>
                 </div>
               </div>
 
               <div className="mt-6">
-                <h3 className="font-medium mb-2">Kết nối với chúng tôi:</h3>
+                <h3 className="font-medium mb-2">{t('connect_with_us')}:</h3>
                 <div className="flex space-x-4">
                   {socials.map((social) => settings[social.key] ? (
                     <a
@@ -101,7 +103,7 @@ const Contact = () => {
 
             <div className="mt-8">
               <div className="bg-white shadow-md rounded-lg p-6">
-                <h2 className="text-xl font-semibold text-primary mb-4">Bản đồ</h2>
+                <h2 className="text-xl font-semibold text-primary mb-4">{t('map')}</h2>
                 <div className="aspect-video w-full h-full rounded-md overflow-hidden">
                   <iframe
                     src={mapEmbedUrl}

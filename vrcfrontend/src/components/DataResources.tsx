@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { LineChart, BarChart3, Gauge, ArrowRight, LucideIcon, ChevronDown, ChevronUp } from 'lucide-react';
 import { useResources } from '@/hooks/useResources';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
 
 const iconMap: Record<string, LucideIcon> = {
   LineChart,
@@ -12,6 +13,7 @@ const iconMap: Record<string, LucideIcon> = {
 };
 
 export const DataResources = () => {
+  const { t } = useTranslation();
   const { resources, loading } = useResources();
   const [showAll, setShowAll] = useState(false);
 
@@ -22,14 +24,14 @@ export const DataResources = () => {
     <section className="py-16 bg-white">
       <div className="container-custom">
         <div className="mb-12">
-          <h2 className="mb-4">Công cụ & Tài nguyên</h2>
+          <h2 className="mb-4">{t('tools_resources')}</h2>
           <p className="text-muted-foreground max-w-2xl">
-            Truy cập các công cụ tính toán, dữ liệu phân tích và tài nguyên hỗ trợ cho việc lựa chọn và vận hành hệ thống điều hòa không khí hiệu quả.
+            {t('tools_resources_desc')}
           </p>
         </div>
 
         {loading ? (
-          <div className="text-center py-10">Đang tải dữ liệu...</div>
+          <div className="text-center py-10">{t('loading_data')}...</div>
         ) : (
           <>
             <div className="grid md:grid-cols-2 gap-8">
@@ -58,7 +60,7 @@ export const DataResources = () => {
                     </ul>
                     {resource.link && (
                       <Link to={resource.link} className="inline-flex items-center text-accent hover:text-primary transition-colors font-medium">
-                        Xem chi tiết
+                        {t('view_details')}
                         <ArrowRight size={18} className="ml-2" />
                       </Link>
                     )}
@@ -76,12 +78,12 @@ export const DataResources = () => {
                 >
                   {showAll ? (
                     <>
-                      Thu gọn
+                      {t('collapse')}
                       <ChevronUp className="h-4 w-4" />
                     </>
                   ) : (
                     <>
-                      Xem tất cả ({resources.length})
+                      {t('view_all')} ({resources.length})
                       <ChevronDown className="h-4 w-4" />
                     </>
                   )}

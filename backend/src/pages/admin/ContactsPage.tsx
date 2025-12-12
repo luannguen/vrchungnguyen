@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from "react";
+import { useTranslation } from 'react-i18next';
 import { contactService, Contact } from "@/services/contactService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,6 +26,7 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 
 export default function ContactsPage() {
+    const { t } = useTranslation();
     const [contacts, setContacts] = useState<Contact[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
@@ -38,7 +40,7 @@ export default function ContactsPage() {
             setContacts(data || []);
         } catch (error) {
             console.error("Failed to fetch contacts", error);
-            toast.error("Failed to load contacts");
+            toast.error(t('load_contacts_fail'));
         } finally {
             setLoading(false);
         }
@@ -74,29 +76,29 @@ export default function ContactsPage() {
             if (selectedContact && selectedContact.id === id) {
                 setSelectedContact({ ...selectedContact, status: newStatus });
             }
-            toast.success(`Status updated to ${newStatus}`);
+            toast.success(t('status_updated', { status: newStatus }));
         } catch (error) {
-            toast.error("Failed to update status");
+            toast.error(t('update_status_fail'));
         }
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm("Are you sure you want to delete this contact?")) return;
+        if (!confirm(t('confirm_delete_contact'))) return;
         try {
             await contactService.deleteContact(id);
             setContacts(prev => prev.filter(c => c.id !== id));
             setIsDetailOpen(false);
-            toast.success("Contact deleted");
+            toast.success(t('delete_contact_success'));
         } catch (error) {
-            toast.error("Failed to delete contact");
+            toast.error(t('delete_contact_fail'));
         }
     };
 
     const getStatusBadge = (status: string) => {
         switch (status) {
-            case 'new': return <Badge className="bg-blue-500 hover:bg-blue-600">New</Badge>;
-            case 'read': return <Badge variant="secondary">Read</Badge>;
-            case 'replied': return <Badge className="bg-green-500 hover:bg-green-600">Replied</Badge>;
+            case 'new': return <Badge className="bg-blue-500 hover:bg-blue-600">{t('status_new')}</Badge>;
+            case 'read': return <Badge variant="secondary">{t('status_read')}</Badge>;
+            case 'replied': return <Badge className="bg-green-500 hover:bg-green-600">{t('status_replied')}</Badge>;
             default: return <Badge variant="outline">{status}</Badge>;
         }
     };
@@ -105,8 +107,8 @@ export default function ContactsPage() {
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Contact Messages</h1>
-                    <p className="text-muted-foreground">Manage inquiries from the website.</p>
+                    <h1 className="text-3xl font-bold tracking-tight">{t('contact_messages')}</h1>
+                    <p className="text-muted-foreground">{t('contact_messages_subtitle')}</p>
                 </div>
             </div>
 
@@ -114,7 +116,7 @@ export default function ContactsPage() {
                 <div className="relative flex-1 max-w-sm">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
-                        placeholder="Search by name, email..."
+                        placeholder={t('search_contacts_placeholder')}
                         className="pl-8"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -126,11 +128,11 @@ export default function ContactsPage() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Date</TableHead>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Subject</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <TableHead>{t('date_header')}</TableHead>
+                            <TableHead>{t('name_header')}</TableHead>
+                            <TableHead>{t('subject_header')}</TableHead>
+                            <TableHead>{t('status_header')}</TableHead>
+                            <TableHead className="text-right">{t('actions_header')}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -143,7 +145,7 @@ export default function ContactsPage() {
                         ) : contacts.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
-                                    No messages found.
+                                    {t('no_messages')}
                                 </TableCell>
                             </TableRow>
                         ) : (
@@ -178,41 +180,41 @@ export default function ContactsPage() {
             <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
-                        <DialogTitle>Message Detail</DialogTitle>
+                        <DialogTitle>{t('message_detail')}</DialogTitle>
                         <DialogDescription>
-                            Received on {selectedContact && format(new Date(selectedContact.created_at), 'PPpp')}
+                            {t('received_on')} {selectedContact && format(new Date(selectedContact.created_at), 'PPpp')}
                         </DialogDescription>
                     </DialogHeader>
                     {selectedContact && (
                         <div className="space-y-4 py-4">
                             <div className="grid grid-cols-2 gap-4 text-sm">
                                 <div>
-                                    <span className="font-semibold text-muted-foreground block">From:</span>
+                                    <span className="font-semibold text-muted-foreground block">{t('from_label')}</span>
                                     {selectedContact.name}
                                 </div>
                                 <div>
-                                    <span className="font-semibold text-muted-foreground block">Email:</span>
+                                    <span className="font-semibold text-muted-foreground block">{t('email_label')}</span>
                                     <a href={`mailto:${selectedContact.email}`} className="text-blue-600 hover:underline">{selectedContact.email}</a>
                                 </div>
                                 <div>
-                                    <span className="font-semibold text-muted-foreground block">Phone:</span>
+                                    <span className="font-semibold text-muted-foreground block">{t('phone_label')}</span>
                                     {selectedContact.phone || 'N/A'}
                                 </div>
                                 <div>
-                                    <span className="font-semibold text-muted-foreground block">Current Status:</span>
+                                    <span className="font-semibold text-muted-foreground block">{t('current_status_label')}</span>
                                     {getStatusBadge(selectedContact.status)}
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <span className="font-semibold text-muted-foreground block text-sm">Subject:</span>
+                                <span className="font-semibold text-muted-foreground block text-sm">{t('subject_label')}</span>
                                 <div className="p-2 bg-gray-50 dark:bg-gray-800 rounded border font-medium">
                                     {selectedContact.subject}
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <span className="font-semibold text-muted-foreground block text-sm">Message:</span>
+                                <span className="font-semibold text-muted-foreground block text-sm">{t('message_label')}</span>
                                 <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded border text-sm whitespace-pre-wrap h-[150px] overflow-y-auto">
                                     {selectedContact.message}
                                 </div>
@@ -221,16 +223,16 @@ export default function ContactsPage() {
                     )}
                     <DialogFooter className="sm:justify-between flex-row gap-2">
                         <Button variant="destructive" size="sm" onClick={() => selectedContact && handleDelete(selectedContact.id)}>
-                            <Trash2 className="h-4 w-4 mr-2" /> Delete
+                            <Trash2 className="h-4 w-4 mr-2" /> {t('delete')}
                         </Button>
                         <div className="flex gap-2">
                             {selectedContact?.status !== 'replied' && (
                                 <Button size="sm" onClick={() => selectedContact && handleUpdateStatus(selectedContact.id, 'replied')} className="bg-green-600 hover:bg-green-700">
-                                    <CheckCircle className="h-4 w-4 mr-2" /> Mark Replied
+                                    <CheckCircle className="h-4 w-4 mr-2" /> {t('mark_replied')}
                                 </Button>
                             )}
                             <Button variant="outline" size="sm" onClick={() => setIsDetailOpen(false)}>
-                                Close
+                                {t('close')}
                             </Button>
                         </div>
                     </DialogFooter>

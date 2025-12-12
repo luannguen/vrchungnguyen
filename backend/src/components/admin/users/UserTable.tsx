@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { UserDTO } from '@/components/data/types';
 import { Role } from '@/services/rbacService';
 import { Loader2, Edit2, Check, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface UserTableProps {
     users: UserDTO[];
@@ -10,6 +11,7 @@ interface UserTableProps {
 }
 
 const UserTable: React.FC<UserTableProps> = ({ users, loading, onUpdateRole }) => {
+    const { t } = useTranslation();
     const [editingId, setEditingId] = useState<string | null>(null);
     const [selectedRole, setSelectedRole] = useState<Role>('user');
     const [updating, setUpdating] = useState(false);
@@ -47,7 +49,7 @@ const UserTable: React.FC<UserTableProps> = ({ users, loading, onUpdateRole }) =
     if (users.length === 0) {
         return (
             <div className="text-center p-8 text-gray-500">
-                No users found.
+                {t('no_users_found')}
             </div>
         );
     }
@@ -57,10 +59,10 @@ const UserTable: React.FC<UserTableProps> = ({ users, loading, onUpdateRole }) =
             <table className="w-full text-left text-sm text-gray-500">
                 <thead className="bg-gray-50 text-xs uppercase text-gray-700">
                     <tr>
-                        <th className="px-6 py-3">User</th>
-                        <th className="px-6 py-3">Email</th>
-                        <th className="px-6 py-3">Role</th>
-                        <th className="px-6 py-3 text-right">Actions</th>
+                        <th className="px-6 py-3">{t('user_header')}</th>
+                        <th className="px-6 py-3">{t('email_header')}</th>
+                        <th className="px-6 py-3">{t('role_header')}</th>
+                        <th className="px-6 py-3 text-right">{t('actions_header')}</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -89,14 +91,14 @@ const UserTable: React.FC<UserTableProps> = ({ users, loading, onUpdateRole }) =
                                         className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-1 border"
                                         disabled={updating}
                                     >
-                                        <option value="user">User</option>
-                                        <option value="editor">Editor</option>
-                                        <option value="admin">Admin</option>
+                                        <option value="user">{t('user_role')}</option>
+                                        <option value="editor">{t('editor_role')}</option>
+                                        <option value="admin">{t('admin_role')}</option>
                                     </select>
                                 ) : (
                                     <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${user.role === 'admin' ? 'bg-purple-100 text-purple-800' :
-                                            user.role === 'editor' ? 'bg-blue-100 text-blue-800' :
-                                                'bg-green-100 text-green-800'
+                                        user.role === 'editor' ? 'bg-blue-100 text-blue-800' :
+                                            'bg-green-100 text-green-800'
                                         }`}>
                                         {user.role}
                                     </span>
@@ -109,7 +111,7 @@ const UserTable: React.FC<UserTableProps> = ({ users, loading, onUpdateRole }) =
                                             onClick={() => handleSave(user.id)}
                                             disabled={updating}
                                             className="text-green-600 hover:text-green-900 mx-1"
-                                            title="Save"
+                                            title={t('save')}
                                         >
                                             {updating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
                                         </button>
@@ -117,7 +119,7 @@ const UserTable: React.FC<UserTableProps> = ({ users, loading, onUpdateRole }) =
                                             onClick={handleCancel}
                                             disabled={updating}
                                             className="text-red-600 hover:text-red-900 mx-1"
-                                            title="Cancel"
+                                            title={t('cancel')}
                                         >
                                             <X className="h-4 w-4" />
                                         </button>
@@ -126,7 +128,7 @@ const UserTable: React.FC<UserTableProps> = ({ users, loading, onUpdateRole }) =
                                     <button
                                         onClick={() => handleEditClick(user)}
                                         className="text-blue-600 hover:text-blue-900"
-                                        title="Edit Role"
+                                        title={t('edit_role')}
                                     >
                                         <Edit2 className="h-4 w-4" />
                                     </button>

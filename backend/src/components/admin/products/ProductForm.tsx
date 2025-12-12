@@ -1,84 +1,71 @@
-import React, { useState, useEffect } from 'react';
-import { Product, Category } from '@/components/data/types';
-import { X, Plus, Trash2, Image as ImageIcon } from 'lucide-react';
-import { ImagePickerModal } from '@/components/admin/media/ImagePickerModal';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Tag, Image as ImageIcon, X, Save, Plus, Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { productsService } from '../../../services/products.service';
 
 interface ProductFormProps {
-    initialData?: Product;
-    categories: Category[];
-    onSave: (product: Partial<Product>) => Promise<void>;
-    onCancel: () => void;
+    initialData?: any;
 }
 
-const ProductForm: React.FC<ProductFormProps> = ({ initialData, categories, onSave, onCancel }) => {
-    const [formData, setFormData] = useState<Partial<Product>>({
-        name: '',
-        slug: '',
-        description: '',
-        category_id: '',
-        price: '',
-        image_url: '',
-        is_new: false,
-        is_bestseller: false,
-        features: [],
-        specifications: {}
+const ProductForm: React.FC<ProductFormProps> = ({ initialData }) => {
+    const navigate = useNavigate();
+    const { t } = useTranslation();
+    const [loading, setLoading] = useState(false);
+    const [formData, setFormData] = useState({
+        name: initialData?.name || '',
+        slug: initialData?.slug || '',
+        category: initialData?.category || '',
+        price: initialData?.price || '',
+        image: initialData?.image || '',
+        description: initialData?.description || '',
+        isNew: initialData?.isNew || false,
+        isBestseller: initialData?.isBestseller || false,
+        features: initialData?.features || [],
+        specifications: initialData?.specifications || {},
     });
 
-    const [loading, setLoading] = useState(false);
-    const [newFeature, setNewFeature] = useState('');
-    const [specKey, setSpecKey] = useState('');
-    const [specValue, setSpecValue] = useState('');
-    const [showImagePicker, setShowImagePicker] = useState(false);
-
-    useEffect(() => {
-        if (initialData) {
-            setFormData(initialData);
-        }
-    }, [initialData]);
+    const [featureInput, setFeatureInput] = useState('');
+    const [newSpec, setNewSpec] = useState({ key: '', value: '' });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        const { name, value, type } = e.target as HTMLInputElement;
+        setFormData(prev => ({
+            ...prev,
+            [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+        }));
     };
 
-    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, checked } = e.target;
-        setFormData(prev => ({ ...prev, [name]: checked }));
-    };
-
-    const handleAddFeature = () => {
-        if (newFeature.trim()) {
+    const handleAddFeature = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' && featureInput.trim()) {
+            e.preventDefault();
             setFormData(prev => ({
                 ...prev,
-                features: [...(prev.features || []), newFeature.trim()]
+                features: [...prev.features, featureInput.trim()]
             }));
-            setNewFeature('');
+            setFeatureInput('');
         }
     };
 
-    const handleRemoveFeature = (index: number) => {
+    const removeFeature = (index: number) => {
         setFormData(prev => ({
             ...prev,
-            features: (prev.features || []).filter((_, i) => i !== index)
+            features: prev.features.filter((_: string, i: number) => i !== index)
         }));
     };
 
     const handleAddSpec = () => {
-        if (specKey.trim() && specValue.trim()) {
+        if (newSpec.key && newSpec.value) {
             setFormData(prev => ({
                 ...prev,
-                specifications: {
-                    ...(prev.specifications || {}),
-                    [specKey.trim()]: specValue.trim()
-                }
+                specifications: { ...prev.specifications, [newSpec.key]: newSpec.value }
             }));
-            setSpecKey('');
-            setSpecValue('');
+            setNewSpec({ key: '', value: '' });
         }
     };
 
-    const handleRemoveSpec = (key: string) => {
-        const newSpecs = { ...(formData.specifications || {}) };
+    const removeSpec = (key: string) => {
+        const newSpecs = { ...formData.specifications };
         delete newSpecs[key];
         setFormData(prev => ({ ...prev, specifications: newSpecs }));
     };
@@ -86,253 +73,265 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, categories, onSa
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
+
         try {
-            await onSave(formData);
+            if (initialData) {
+                await productsService.update(initialData.id, formData);
+            } else {
+                await productsService.create(formData);
+            }
+            navigate('/admin/products');
         } catch (error) {
-            console.error('Failed to save', error);
+            console.error('Error saving product:', error);
         } finally {
             setLoading(false);
         }
     };
 
-    // Auto-generate slug from name if empty
-    const handleNameBlur = () => {
-        if (formData.name && !formData.slug) {
-            const slug = formData.name
-                .toLowerCase()
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .replace(/[^a-z0-9]+/g, '-')
-                .replace(/(^-|-$)+/g, '');
-            setFormData(prev => ({ ...prev, slug }));
-        }
-    };
-
     return (
-        <>
-            <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow">
-                <div className="flex justify-between items-center mb-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div className="flex items-center justify-between mb-6">
                     <h3 className="text-lg font-medium text-gray-900">
-                        {initialData ? 'Edit Product' : 'New Product'}
+                        {initialData ? t('edit_product') : t('new_product')}
                     </h3>
-                    <button type="button" onClick={onCancel} className="text-gray-400 hover:text-gray-500">
-                        <X className="h-6 w-6" />
-                    </button>
+                    <div className="flex space-x-3">
+                        <button
+                            type="button"
+                            onClick={() => navigate('/admin/products')}
+                            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 flex items-center"
+                        >
+                            <X className="w-4 h-4 mr-2" />
+                            {t('cancel')}
+                        </button>
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center disabled:opacity-50"
+                        >
+                            <Save className="w-4 h-4 mr-2" />
+                            {loading ? t('saving') : t('save_product')}
+                        </button>
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Basic Info */}
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Name</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('product_name')}</label>
                             <input
                                 type="text"
                                 name="name"
-                                value={formData.name || ''}
+                                value={formData.name}
                                 onChange={handleChange}
-                                onBlur={handleNameBlur}
+                                className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                 required
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2"
                             />
                         </div>
+
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Slug</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('slug')}</label>
                             <input
                                 type="text"
                                 name="slug"
-                                value={formData.slug || ''}
+                                value={formData.slug}
                                 onChange={handleChange}
+                                className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                 required
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2"
                             />
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">Category</label>
-                            <select
-                                name="category_id"
-                                value={formData.category_id || ''}
-                                onChange={handleChange}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2"
-                            >
-                                <option value="">Select Category</option>
-                                {categories.map(cat => (
-                                    <option key={cat.id} value={cat.id}>{cat.name}</option>
-                                ))}
-                            </select>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">{t('category')}</label>
+                                <select
+                                    name="category"
+                                    value={formData.category}
+                                    onChange={handleChange}
+                                    className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                    required
+                                >
+                                    <option value="">{t('select_category')}</option>
+                                    <option value="vr-headsets">VR Headsets</option>
+                                    <option value="accessories">Accessories</option>
+                                    <option value="cameras">Cameras</option>
+                                    <option value="software">Software</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">{t('price')}</label>
+                                <input
+                                    type="text"
+                                    name="price"
+                                    value={formData.price}
+                                    onChange={handleChange}
+                                    placeholder={t('price_placeholder')}
+                                    className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                    required
+                                />
+                            </div>
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">Price</label>
-                            <input
-                                type="text"
-                                name="price"
-                                value={formData.price || ''}
-                                onChange={handleChange}
-                                placeholder="e.g. $99.99 or Contact for Quote"
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2"
-                            />
-                        </div>
-                        <div className="flex space-x-4">
+
+                        <div className="flex space-x-6">
                             <label className="flex items-center">
                                 <input
                                     type="checkbox"
-                                    name="is_new"
-                                    checked={formData.is_new || false}
-                                    onChange={handleCheckboxChange}
-                                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                    name="isNew"
+                                    checked={formData.isNew}
+                                    onChange={handleChange}
+                                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                                 />
-                                <span className="ml-2 text-sm text-gray-900">New Arrival</span>
+                                <span className="ml-2 text-sm text-gray-700">{t('is_new')}</span>
                             </label>
                             <label className="flex items-center">
                                 <input
                                     type="checkbox"
-                                    name="is_bestseller"
-                                    checked={formData.is_bestseller || false}
-                                    onChange={handleCheckboxChange}
-                                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                    name="isBestseller"
+                                    checked={formData.isBestseller}
+                                    onChange={handleChange}
+                                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                                 />
-                                <span className="ml-2 text-sm text-gray-900">Bestseller</span>
+                                <span className="ml-2 text-sm text-gray-700">{t('is_bestseller')}</span>
                             </label>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">{t('image_url')}</label>
+                            <div className="mt-1 relative rounded-md shadow-sm">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <ImageIcon className="h-5 w-5 text-gray-400" />
+                                </div>
+                                <input
+                                    type="text"
+                                    name="image"
+                                    value={formData.image}
+                                    onChange={handleChange}
+                                    placeholder="https://..."
+                                    className="block w-full pl-10 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                />
+                            </div>
                         </div>
                     </div>
 
-                    {/* Details & Image */}
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Image URL</label>
-                            <div className="mt-1 flex gap-2">
-                                <input
-                                    type="text"
-                                    name="image_url"
-                                    value={formData.image_url || ''}
-                                    onChange={handleChange}
-                                    placeholder="https://..."
-                                    className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowImagePicker(true)}
-                                    className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                                >
-                                    <ImageIcon className="h-4 w-4 mr-2" />
-                                    Select
-                                </button>
+                            <label className="block text-sm font-medium text-gray-700">{t('image_url')}</label>
+                            <div className="mt-1 relative aspect-video rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden bg-gray-50">
+                                {formData.image ? (
+                                    <img src={formData.image} alt={t('preview')} className="w-full h-full object-cover" />
+                                ) : (
+                                    <div className="text-center">
+                                        <ImageIcon className="mx-auto h-12 w-12 text-gray-400" />
+                                        <p className="mt-1 text-sm text-gray-500">{t('image_url')}</p>
+                                    </div>
+                                )}
                             </div>
-                            {formData.image_url && (
-                                <div className="mt-2 h-32 w-full bg-gray-100 rounded flex items-center justify-center overflow-hidden border">
-                                    <img src={formData.image_url} alt="Preview" className="h-full object-contain" />
-                                </div>
-                            )}
                         </div>
+
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Description</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('description')}</label>
                             <textarea
                                 name="description"
-                                rows={3}
-                                value={formData.description || ''}
+                                value={formData.description}
                                 onChange={handleChange}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2"
+                                rows={4}
+                                className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                required
                             />
                         </div>
                     </div>
                 </div>
 
-                <div className="border-t pt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Features */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Features</label>
-                        <div className="flex space-x-2 mb-2">
-                            <input
-                                type="text"
-                                value={newFeature}
-                                onChange={(e) => setNewFeature(e.target.value)}
-                                placeholder="Add feature"
-                                className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2"
-                            />
-                            <button
-                                type="button"
-                                onClick={handleAddFeature}
-                                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                            >
-                                <Plus className="h-4 w-4" />
-                            </button>
-                        </div>
-                        <ul className="space-y-2 max-h-40 overflow-y-auto">
-                            {formData.features?.map((feature, index) => (
-                                <li key={index} className="flex justify-between items-center bg-gray-50 px-3 py-1 rounded">
-                                    <span className="text-sm text-gray-700 truncate">{feature}</span>
-                                    <button type="button" onClick={() => handleRemoveFeature(index)} className="text-red-500 hover:text-red-700">
-                                        <Trash2 className="h-4 w-4" />
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
+                <div className="mt-6 pt-6 border-t border-gray-100">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{t('features')}</label>
+                    <div className="flex gap-2 mb-2">
+                        <input
+                            type="text"
+                            value={featureInput}
+                            onChange={(e) => setFeatureInput(e.target.value)}
+                            onKeyDown={handleAddFeature}
+                            placeholder={t('add_feature')}
+                            className="flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => {
+                                if (featureInput.trim()) {
+                                    setFormData(prev => ({
+                                        ...prev,
+                                        features: [...prev.features, featureInput.trim()]
+                                    }));
+                                    setFeatureInput('');
+                                }
+                            }}
+                            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                        >
+                            <Plus className="w-5 h-5" />
+                        </button>
                     </div>
+                    <ul className="space-y-2">
+                        {formData.features.map((feature: string, index: number) => (
+                            <li key={index} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-lg">
+                                <span className="text-sm text-gray-700">{feature}</span>
+                                <button
+                                    type="button"
+                                    onClick={() => removeFeature(index)}
+                                    className="text-red-500 hover:text-red-700"
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
 
-                    {/* Specifications */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Specifications</label>
-                        <div className="flex space-x-2 mb-2">
+                <div className="mt-6 pt-6 border-t border-gray-100">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{t('specifications')}</label>
+                    <div className="grid grid-cols-2 gap-4 mb-2">
+                        <input
+                            type="text"
+                            value={newSpec.key}
+                            onChange={(e) => setNewSpec(prev => ({ ...prev, key: e.target.value }))}
+                            placeholder={t('spec_key')}
+                            className="rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        />
+                        <div className="flex gap-2">
                             <input
                                 type="text"
-                                value={specKey}
-                                onChange={(e) => setSpecKey(e.target.value)}
-                                placeholder="Key (e.g. Weight)"
-                                className="w-1/3 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2"
-                            />
-                            <input
-                                type="text"
-                                value={specValue}
-                                onChange={(e) => setSpecValue(e.target.value)}
-                                placeholder="Value (e.g. 5kg)"
-                                className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2"
+                                value={newSpec.value}
+                                onChange={(e) => setNewSpec(prev => ({ ...prev, value: e.target.value }))}
+                                placeholder={t('spec_value')}
+                                className="flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                             />
                             <button
                                 type="button"
                                 onClick={handleAddSpec}
-                                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
                             >
-                                <Plus className="h-4 w-4" />
+                                <Plus className="w-5 h-5" />
                             </button>
                         </div>
-                        <ul className="space-y-2 max-h-40 overflow-y-auto">
-                            {Object.entries(formData.specifications || {}).map(([key, value]) => (
-                                <li key={key} className="flex justify-between items-center bg-gray-50 px-3 py-1 rounded">
-                                    <span className="text-sm text-gray-700 truncate">
-                                        <span className="font-medium">{key}:</span> {value}
-                                    </span>
-                                    <button type="button" onClick={() => handleRemoveSpec(key)} className="text-red-500 hover:text-red-700">
-                                        <Trash2 className="h-4 w-4" />
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
+                    </div>
+                    <div className="space-y-2">
+                        {Object.entries(formData.specifications).map(([key, value]) => (
+                            <div key={key} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-lg">
+                                <div className="flex-1 grid grid-cols-2 gap-4">
+                                    <span className="text-sm font-medium text-gray-700">{key}</span>
+                                    <span className="text-sm text-gray-600">{value as string}</span>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => removeSpec(key)}
+                                    className="text-red-500 hover:text-red-700 ml-4"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                </button>
+                            </div>
+                        ))}
                     </div>
                 </div>
-
-                <div className="flex justify-end space-x-3 border-t pt-4">
-                    <button
-                        type="button"
-                        onClick={onCancel}
-                        className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-                    >
-                        {loading ? 'Saving...' : 'Save Product'}
-                    </button>
-                </div>
-            </form>
-
-            <ImagePickerModal
-                open={showImagePicker}
-                onOpenChange={setShowImagePicker}
-                onSelect={(url) => setFormData(prev => ({ ...prev, image_url: url }))}
-            />
-        </>
+            </div>
+        </form>
     );
 };
 

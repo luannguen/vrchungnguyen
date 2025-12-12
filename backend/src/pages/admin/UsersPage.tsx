@@ -4,8 +4,10 @@ import { userService, UsersFilter } from '@/services/userService';
 import { Role } from '@/services/rbacService';
 import UserTable from '@/components/admin/users/UserTable';
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const UsersPage: React.FC = () => {
+    const { t } = useTranslation();
     const [users, setUsers] = useState<UserDTO[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<UsersFilter>({
@@ -52,16 +54,16 @@ const UsersPage: React.FC = () => {
         if (result.success) {
             fetchUsers(); // Refresh list after update
         } else {
-            alert('Failed to update role. Please try again.');
+            alert(t('update_role_fail'));
         }
     };
 
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-semibold text-gray-900">Users Management</h1>
+                <h1 className="text-2xl font-semibold text-gray-900">{t('users_management')}</h1>
                 <div className="text-sm text-gray-500">
-                    Total Users: {total}
+                    {t('total_users_count', { count: total })}
                 </div>
             </div>
 
@@ -73,7 +75,7 @@ const UsersPage: React.FC = () => {
                 <input
                     type="text"
                     className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder="Search users by email or name..."
+                    placeholder={t('search_users_placeholder')}
                     value={filter.search}
                     onChange={handleSearchChange}
                 />
@@ -97,7 +99,7 @@ const UsersPage: React.FC = () => {
                         <ChevronLeft className="h-5 w-5" />
                     </button>
                     <span className="text-sm text-gray-700">
-                        Page {filter.page} of {totalPages}
+                        {t('page_info', { page: filter.page, total: totalPages })}
                     </span>
                     <button
                         onClick={() => handlePageChange(filter.page + 1)}

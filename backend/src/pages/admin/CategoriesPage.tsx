@@ -1,4 +1,5 @@
 
+
 import React, { useEffect, useState } from 'react';
 import { categoryService } from '@/services/categoryService';
 import { Category, ContentType } from '@/components/data/types';
@@ -20,8 +21,10 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useTranslation } from 'react-i18next';
 
 const CategoriesPage: React.FC = () => {
+    const { t } = useTranslation();
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -85,17 +88,17 @@ const CategoriesPage: React.FC = () => {
             setIsDialogOpen(false);
             loadData();
         } catch (error) {
-            alert('Failed to save category');
+            alert(t('save_category_fail'));
         }
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this category?')) return;
+        if (!confirm(t('confirm_delete_category'))) return;
         try {
             await categoryService.deleteCategory(id);
             setCategories(prev => prev.filter(c => c.id !== id));
         } catch (error) {
-            alert('Failed to delete category');
+            alert(t('delete_category_fail'));
         }
     };
 
@@ -106,19 +109,19 @@ const CategoriesPage: React.FC = () => {
     return (
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h1 className="text-2xl font-semibold text-gray-900">Categories</h1>
+                <h1 className="text-2xl font-semibold text-gray-900">{t('categories')}</h1>
                 <Button onClick={handleCreate}>
                     <Plus className="h-4 w-4 mr-2" />
-                    Add Category
+                    {t('add_category')}
                 </Button>
             </div>
 
             <Tabs defaultValue="news" value={activeTab} onValueChange={(val: string) => setActiveTab(val as ContentType)} className="w-full">
                 <TabsList className="grid w-full grid-cols-4 lg:w-[400px]">
-                    <TabsTrigger value="news">News</TabsTrigger>
-                    <TabsTrigger value="product">Products</TabsTrigger>
-                    <TabsTrigger value="project">Projects</TabsTrigger>
-                    <TabsTrigger value="event">Events</TabsTrigger>
+                    <TabsTrigger value="news">{t('news')}</TabsTrigger>
+                    <TabsTrigger value="product">{t('products')}</TabsTrigger>
+                    <TabsTrigger value="project">{t('projects')}</TabsTrigger>
+                    <TabsTrigger value="event">{t('events')}</TabsTrigger>
                 </TabsList>
             </Tabs>
 
@@ -130,7 +133,7 @@ const CategoriesPage: React.FC = () => {
                     <Input
                         type="text"
                         className="pl-10"
-                        placeholder="Search categories..."
+                        placeholder={t('search_categories_placeholder')}
                         value={searchTerm}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
                     />
@@ -145,16 +148,16 @@ const CategoriesPage: React.FC = () => {
                 ) : filteredCategories.length === 0 ? (
                     <div className="flex flex-col items-center justify-center p-8 text-gray-500">
                         <FolderOpen className="h-12 w-12 mb-2 opacity-50" />
-                        <p>No categories found for {activeTab}.</p>
+                        <p>{t('no_categories_for', { type: activeTab })}</p>
                     </div>
                 ) : (
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Slug</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                                <th scope="col" className="relative px-6 py-3"><span className="sr-only">Actions</span></th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('name_header')}</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('slug_header')}</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('description_header')}</th>
+                                <th scope="col" className="relative px-6 py-3"><span className="sr-only">{t('actions')}</span></th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
@@ -181,11 +184,11 @@ const CategoriesPage: React.FC = () => {
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>{editingCategory ? 'Edit Category' : 'Create Category'}</DialogTitle>
+                        <DialogTitle>{editingCategory ? t('edit_category') : t('create_category')}</DialogTitle>
                     </DialogHeader>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Name</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('name_header')}</label>
                             <Input
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -193,22 +196,22 @@ const CategoriesPage: React.FC = () => {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Slug (Optional)</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('slug_optional')}</label>
                             <Input
                                 value={formData.slug}
                                 onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                                placeholder="Auto-generated if empty"
+                                placeholder={t('slug_placeholder')}
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Description</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('description_header')}</label>
                             <Input
                                 value={formData.description}
                                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Type</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('type_label')}</label>
                             <Select
                                 value={formData.type}
                                 onValueChange={(val: string) => setFormData({ ...formData, type: val as ContentType })}
@@ -218,16 +221,16 @@ const CategoriesPage: React.FC = () => {
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="news">News</SelectItem>
-                                    <SelectItem value="product">Product</SelectItem>
-                                    <SelectItem value="project">Project</SelectItem>
-                                    <SelectItem value="event">Event</SelectItem>
+                                    <SelectItem value="news">{t('news')}</SelectItem>
+                                    <SelectItem value="product">{t('products')}</SelectItem>
+                                    <SelectItem value="project">{t('projects')}</SelectItem>
+                                    <SelectItem value="event">{t('events')}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
                         <DialogFooter>
-                            <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-                            <Button type="submit">Save</Button>
+                            <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>{t('cancel')}</Button>
+                            <Button type="submit">{t('save')}</Button>
                         </DialogFooter>
                     </form>
                 </DialogContent>
