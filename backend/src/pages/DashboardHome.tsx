@@ -116,7 +116,7 @@ export default function DashboardHome() {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="pl-2">
-                        <div className="h-[300px] w-full min-h-[300px]">
+                        <div style={{ width: '100%', height: 300 }}>
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={growthData}>
                                     <CartesianGrid strokeDasharray="3 3" className="stroke-gray-200 dark:stroke-gray-700" />
@@ -133,8 +133,8 @@ export default function DashboardHome() {
                     </CardContent>
                 </Card >
 
-        {/* Quick Actions or Recent Contacts Placeholder */ }
-        < Card className = "col-span-1" >
+                {/* Quick Actions or Recent Contacts Placeholder */}
+                < Card className="col-span-1" >
                     <CardHeader>
                         <CardTitle>Recent Activity</CardTitle>
                     </CardHeader>
