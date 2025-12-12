@@ -13,38 +13,38 @@ const menuGroups = [
     {
         label: 'Dashboard',
         items: [
-            { icon: LayoutDashboard, label: 'Overview', href: '/admin' }, // Changed from '/' to '/admin' to be explicit, assuming base is admin
+            { icon: LayoutDashboard, label: 'Overview', href: '/' },
         ]
     },
     {
         label: 'Content Management',
         items: [
-            { icon: FileText, label: 'News', href: '/admin/news' },
-            { icon: Package, label: 'Products', href: '/admin/products' },
-            { icon: FolderOpen, label: 'Categories', href: '/admin/categories' },
-            { icon: Book, label: 'Pages', href: '/admin/pages' },
-            { icon: Briefcase, label: 'Projects', href: '/admin/projects' },
-            { icon: Image, label: 'Media', href: '/admin/media' },
-            { icon: Layout, label: 'Banners', href: '/admin/banners' },
-            { icon: Calendar, label: 'Events', href: '/admin/events' },
-            { icon: Mail, label: 'Contacts', href: '/admin/contacts' },
+            { icon: FileText, label: 'News', href: '/news' },
+            { icon: Package, label: 'Products', href: '/products' },
+            { icon: FolderOpen, label: 'Categories', href: '/categories' },
+            { icon: Book, label: 'Pages', href: '/pages' },
+            { icon: Briefcase, label: 'Projects', href: '/projects' },
+            { icon: Image, label: 'Media', href: '/media' },
+            { icon: Layout, label: 'Banners', href: '/banners' },
+            { icon: Calendar, label: 'Events', href: '/events' },
+            { icon: Mail, label: 'Contacts', href: '/contacts' },
         ]
     },
     {
         label: 'System & Settings',
         items: [
-            { icon: Users, label: 'Users', href: '/admin/users' },
-            { icon: UserCog, label: 'Roles', href: '/admin/roles' },
-            { icon: List, label: 'Navigation', href: '/admin/menu' },
-            { icon: Settings, label: 'Settings', href: '/admin/settings' },
+            { icon: Users, label: 'Users', href: '/users' },
+            { icon: UserCog, label: 'Roles', href: '/roles' },
+            { icon: List, label: 'Navigation', href: '/menu' },
+            { icon: Settings, label: 'Settings', href: '/settings' },
         ]
     },
     {
         label: 'Support',
         items: [
-            { icon: PenTool, label: 'Resources', href: '/admin/resources' },
-            { icon: Trophy, label: 'Achievements', href: '/admin/achievements' },
-            { icon: HelpCircle, label: 'FAQs', href: '/admin/faqs' },
+            { icon: PenTool, label: 'Resources', href: '/resources' },
+            { icon: Trophy, label: 'Achievements', href: '/achievements' },
+            { icon: HelpCircle, label: 'FAQs', href: '/faqs' },
         ]
     }
 ];
@@ -69,15 +69,15 @@ export function Sidebar() {
 
     // Helper to normalize path comparison (handling trailing slashes or sub-routes)
     const isLinkActive = (href: string) => {
-        if (href === '/admin' && location.pathname === '/admin') return true;
-        if (href !== '/admin' && location.pathname.startsWith(href)) return true;
+        if (href === '/' && location.pathname === '/') return true;
+        if (href !== '/' && location.pathname.startsWith(href)) return true;
         return false;
     };
 
     return (
         <div className="flex h-screen w-64 flex-col border-r bg-white dark:bg-gray-900 dark:border-gray-800">
             <div className="flex h-16 items-center justify-center border-b px-6 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50">
-                <Link to="/admin" className="flex items-center gap-2">
+                <Link to="/" className="flex items-center gap-2">
                     <div className="bg-primary/10 p-1.5 rounded-md">
                         <MenuIcon className="h-5 w-5 text-primary" />
                     </div>
