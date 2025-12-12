@@ -2,12 +2,14 @@ import { useState, useRef, useEffect } from 'react';
 import { Search, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 interface SearchComponentProps {
   isMobile?: boolean;
 }
 
 const SearchComponent = ({ isMobile = false }: SearchComponentProps) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -53,12 +55,21 @@ const SearchComponent = ({ isMobile = false }: SearchComponentProps) => {
       setSearchQuery('');
     }
   };
+
+  const tags = [
+    { label: t('tag_cold_storage'), value: 'Kho lạnh' },
+    { label: t('tag_air_conditioner'), value: 'Điều hòa' },
+    { label: t('tag_maintenance'), value: 'Bảo trì' },
+    { label: t('tag_energy_saving'), value: 'Tiết kiệm năng lượng' },
+    { label: t('tag_chiller'), value: 'Chiller' }
+  ];
+
   return (
     <div className="relative" ref={searchContainerRef}>
       <button
         className={`navbar-link ${isOpen ? 'text-accent' : ''} relative z-50`}
         onClick={toggleSearch}
-        aria-label="Search"
+        aria-label={t('search_button')}
       >
         <motion.div
           animate={isOpen ? { rotate: 90 } : { rotate: 0 }}
@@ -112,7 +123,7 @@ const SearchComponent = ({ isMobile = false }: SearchComponentProps) => {
                   <motion.input
                     ref={searchInputRef}
                     type="text"
-                    placeholder="Nhập từ khóa tìm kiếm..."
+                    placeholder={t('search_placeholder')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="flex-1 p-3 pl-10 bg-transparent rounded-md 
@@ -138,9 +149,9 @@ const SearchComponent = ({ isMobile = false }: SearchComponentProps) => {
                     className="p-2 bg-primary hover:bg-primary/90 text-white rounded-md 
                               shadow-md hover:shadow-lg transition-all 
                               flex items-center justify-center space-x-1"
-                    aria-label="Submit search"
+                    aria-label={t('search_button')}
                   >
-                    <span>Tìm kiếm</span>
+                    <span>{t('search_button')}</span>
                     <Search size={16} />
                   </button>
                 </motion.div>
@@ -153,19 +164,19 @@ const SearchComponent = ({ isMobile = false }: SearchComponentProps) => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
               >
-                <span className="text-xs text-gray-500 dark:text-gray-400">Phổ biến:</span>
-                {['Kho lạnh', 'Điều hòa', 'Bảo trì', 'Tiết kiệm năng lượng', 'Chiller'].map((tag) => (
+                <span className="text-xs text-gray-500 dark:text-gray-400">{t('popular_searches')}</span>
+                {tags.map((tag) => (
                   <button
-                    key={tag}
+                    key={tag.value}
                     onClick={() => {
-                      setSearchQuery(tag);
+                      setSearchQuery(tag.value);
                       searchInputRef.current?.focus();
                     }}
                     className="text-xs py-1 px-2 bg-gray-100 dark:bg-gray-700 
                               text-gray-700 dark:text-gray-300 rounded-full 
                               hover:bg-primary/20 hover:text-primary transition-colors"
                   >
-                    {tag}
+                    {tag.label}
                   </button>
                 ))}
               </motion.div>

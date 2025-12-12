@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
 // import AppLink from '@/components/ui/app-link'; // Not used for dynamic dynamic paths unless modified
@@ -12,6 +13,7 @@ interface MainNavigationProps {
 const MainNavigation = ({ isMobile = false }: MainNavigationProps) => {
   const [navItems, setNavItems] = useState<NavigationItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchNav = async () => {
@@ -31,20 +33,42 @@ const MainNavigation = ({ isMobile = false }: MainNavigationProps) => {
     fetchNav();
   }, []);
 
+  const getTranslatedLabel = (item: NavigationItem) => {
+    // Map paths to calls to translation keys
+    // This allows backend dynamic items to still be translated if they match core routes
+    const pathToKeyMap: Record<string, string> = {
+      '/': 'home',
+      '/about': 'about',
+      '/products': 'products',
+      '/news': 'news',
+      '/contact': 'contact',
+    };
+
+    if (item.path && pathToKeyMap[item.path]) {
+      return t(pathToKeyMap[item.path]);
+    }
+
+    return item.label;
+  };
+
+  if (isLoading) {
+    return null; // Or a skeleton loader
+  }
+
   if (isMobile) {
     return (
       <nav className="flex flex-col space-y-4">
         {navItems.map((item) => (
           <div key={item.id}>
             <Link to={item.path} className="navbar-link text-lg block py-1">
-              {item.label}
+              {getTranslatedLabel(item)}
             </Link>
             {/* Mobile Submenu handling can be added here if needed */}
             {item.children && item.children.length > 0 && (
               <div className="pl-4 space-y-2 mt-2 border-l border-gray-200">
                 {item.children.map(child => (
                   <Link key={child.id} to={child.path} className="text-muted-foreground hover:text-primary block text-base">
-                    {child.label}
+                    {getTranslatedLabel(child)}
                   </Link>
                 ))}
               </div>
@@ -62,7 +86,7 @@ const MainNavigation = ({ isMobile = false }: MainNavigationProps) => {
           {item.children && item.children.length > 0 ? (
             <>
               <button className="navbar-link text-base font-medium flex items-center">
-                <span>{item.label}</span>
+                <span>{getTranslatedLabel(item)}</span>
                 <ChevronDown size={16} className="ml-1" />
               </button>
               <div className="absolute hidden group-hover:block bg-white/95 backdrop-blur-sm shadow-lg p-4 rounded min-w-48 right-0 top-full z-50 animate-in fade-in slide-in-from-top-2">
@@ -73,7 +97,7 @@ const MainNavigation = ({ isMobile = false }: MainNavigationProps) => {
                       to={child.path}
                       className="text-gray-600 hover:text-primary transition-colors text-sm font-medium py-1"
                     >
-                      {child.label}
+                      {getTranslatedLabel(child)}
                     </Link>
                   ))}
                 </div>
@@ -81,7 +105,7 @@ const MainNavigation = ({ isMobile = false }: MainNavigationProps) => {
             </>
           ) : (
             <Link to={item.path} className="navbar-link text-base font-medium">
-              {item.label}
+              {getTranslatedLabel(item)}
             </Link>
           )}
         </div>

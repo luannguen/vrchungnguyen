@@ -1,0 +1,23 @@
+{
+    "language": "Language",
+    "home": "Home",
+    "about": "About",
+    "products": "Products",
+    "news": "News",
+    "contact": "Contact",
+    "contact_project": "Contact for similar project",
+    "copyright": "© 2024 VRC. All rights reserved.",
+    "quick_links": "Quick Links",
+    "privacy_policy": "Privacy Policy",
+    "terms_of_use": "Terms of Use",
+    "cookie_policy": "Cookie Policy",
+    "sitemap": "Sitemap",
+    "search_placeholder": "Enter search keywords...",
+    "search_button": "Search",
+    "popular_searches": "Popular:",
+    "tag_cold_storage": "Cold Storage",
+    "tag_air_conditioner": "Air Conditioner",
+    "tag_maintenance": "Maintenance",
+    "tag_energy_saving": "Energy Saving",
+    "tag_chiller": "Chiller"
+}

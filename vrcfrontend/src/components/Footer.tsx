@@ -4,8 +4,10 @@ import { navigationService } from '@/services/navigationService';
 import { useSettings } from '@/hooks/useSettings';
 import { NavigationItem } from '@/components/data/types';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Footer = () => {
+  const { t } = useTranslation();
   const [footerMenus, setFooterMenus] = useState<NavigationItem[]>([]);
   const { settings, loading } = useSettings();
 
@@ -24,7 +26,7 @@ const Footer = () => {
     fetchNav();
   }, []);
 
-  const copyrightText = settings['copyright_text'] || `© ${new Date().getFullYear()} VRC - Tổng công ty kỹ thuật điện lạnh Việt Nam. Tất cả quyền được bảo lưu.`;
+  const copyrightText = settings['copyright_text'] || t('copyright');
   const contactEmail = settings['contact_email'] || 'info@vrc.com.vn';
   const contactAddress = settings['contact_address'] || '123 Nguyễn Văn Linh, Quận 7, TP. Hồ Chí Minh, Việt Nam';
   const siteDescription = settings['site_description'] || 'Cung cấp giải pháp điện lạnh toàn diện cho mọi doanh nghiệp và công trình.';
@@ -101,11 +103,11 @@ const Footer = () => {
           {footerMenus.length === 0 && (
             <>
               <div>
-                <h4 className="text-white font-semibold mb-4">Liên kết nhanh (Default)</h4>
+                <h4 className="text-white font-semibold mb-4">{t('quick_links')}</h4>
                 <ul className="space-y-2">
-                  <li><Link to="/about" className="footer-link">Về chúng tôi</Link></li>
-                  <li><Link to="/products" className="footer-link">Sản phẩm</Link></li>
-                  <li><Link to="/contact" className="footer-link">Liên hệ</Link></li>
+                  <li><Link to="/about" className="footer-link">{t('about')}</Link></li>
+                  <li><Link to="/products" className="footer-link">{t('products')}</Link></li>
+                  <li><Link to="/contact" className="footer-link">{t('contact')}</Link></li>
                 </ul>
               </div>
             </>
@@ -113,7 +115,7 @@ const Footer = () => {
 
           {/* Column 4: Contact Info (Always present) */}
           <div>
-            <h4 className="text-white font-semibold mb-4">Liên hệ</h4>
+            <h4 className="text-white font-semibold mb-4">{t('contact')}</h4>
             <address className="not-italic text-gray-300 mb-4 space-y-2 whitespace-pre-line">
               {contactAddress}
             </address>
@@ -133,10 +135,10 @@ const Footer = () => {
           </p>
           <div className="flex flex-wrap justify-center gap-4 md:gap-6 text-sm">
             {/* Dynamic legal links could be here, for now mapping standard legal pages */}
-            <Link to="/legal/privacy" className="text-gray-300 hover:text-white footer-link">Chính sách bảo mật</Link>
-            <Link to="/legal/terms" className="text-gray-300 hover:text-white footer-link">Điều khoản sử dụng</Link>
-            <Link to="/legal/cookies" className="text-gray-300 hover:text-white footer-link">Chính sách cookie</Link>
-            <Link to="/legal/sitemap" className="text-gray-300 hover:text-white footer-link">Sơ đồ trang</Link>
+            <Link to="/legal/privacy" className="text-gray-300 hover:text-white footer-link">{t('privacy_policy')}</Link>
+            <Link to="/legal/terms" className="text-gray-300 hover:text-white footer-link">{t('terms_of_use')}</Link>
+            <Link to="/legal/cookies" className="text-gray-300 hover:text-white footer-link">{t('cookie_policy')}</Link>
+            <Link to="/legal/sitemap" className="text-gray-300 hover:text-white footer-link">{t('sitemap')}</Link>
           </div>
         </div>
       </div>

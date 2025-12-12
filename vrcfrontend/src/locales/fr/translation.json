@@ -1,0 +1,23 @@
+{
+    "language": "Langue",
+    "home": "Accueil",
+    "about": "À propos",
+    "products": "Produits",
+    "news": "Nouvelles",
+    "contact": "Contact",
+    "contact_project": "Contact pour projet similaire",
+    "copyright": "© 2024 VRC. Tous droits réservés.",
+    "quick_links": "Liens rapides",
+    "privacy_policy": "Politique de confidentialité",
+    "terms_of_use": "Conditions d'utilisation",
+    "cookie_policy": "Politique de cookies",
+    "sitemap": "Plan du site",
+    "search_placeholder": "Entrez des mots-clés...",
+    "search_button": "Recherche",
+    "popular_searches": "Populaires:",
+    "tag_cold_storage": "Entreposage frigorifique",
+    "tag_air_conditioner": "Climatiseur",
+    "tag_maintenance": "Maintenance",
+    "tag_energy_saving": "Économie d'énergie",
+    "tag_chiller": "Refroidisseur"
+}

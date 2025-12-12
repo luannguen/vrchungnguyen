@@ -5,9 +5,11 @@ import { statsService, DashboardStats } from '@/services/statsService';
 import { Users, FileText, Package, Calendar, Briefcase, Mail, Loader2, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useTranslation } from 'react-i18next';
 
 export default function DashboardHome() {
     const { user } = useAuth();
+    const { t } = useTranslation();
     const [stats, setStats] = useState<DashboardStats | null>(null);
     const [growthData, setGrowthData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -52,57 +54,57 @@ export default function DashboardHome() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Dashboard Overview</h1>
-                    <p className="text-gray-500 dark:text-gray-400">Welcome back, {user?.full_name || 'Admin'}!</p>
+                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">{t('dashboard')}</h1>
+                    <p className="text-gray-500 dark:text-gray-400">{t('welcome_back')}, {user?.full_name || 'Admin'}!</p>
                 </div>
             </div>
 
             {/* Stats Grid */}
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                 <StatCard
-                    title="Total Users"
+                    title={t('total_users')}
                     value={stats?.users}
                     icon={Users}
                     color="text-blue-500"
-                    subtext="Registered accounts"
+                    subtext={t('users')}
                 />
                 <StatCard
-                    title="Pending News"
+                    title={t('pending_news')}
                     value={stats?.news}
                     icon={FileText}
                     color="text-orange-500"
-                    subtext="Total articles"
+                    subtext={t('news')}
                 />
                 <StatCard
-                    title="New Contacts"
+                    title={t('new_contacts')}
                     value={stats?.contacts_pending}
                     icon={Mail}
                     color="text-red-500"
-                    subtext="Unread messages"
+                    subtext={t('contacts')}
                 />
                 <StatCard
-                    title="Total Products"
+                    title={t('total_products')}
                     value={stats?.products}
                     icon={Package}
                     color="text-green-500"
-                    subtext="Active products"
+                    subtext={t('products')}
                 />
             </div>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                 <StatCard
-                    title="Projects"
+                    title={t('projects')}
                     value={stats?.projects}
                     icon={Briefcase}
                     color="text-purple-500"
-                    subtext="Ongoing & Completed"
+                    subtext={t('projects')}
                 />
                 <StatCard
-                    title="Events"
+                    title={t('events')}
                     value={stats?.events}
                     icon={Calendar}
                     color="text-pink-500"
-                    subtext="Upcoming & Past"
+                    subtext={t('events')}
                 />
             </div>
 
@@ -112,7 +114,7 @@ export default function DashboardHome() {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <TrendingUp className="h-4 w-4" />
-                            Monthly Growth
+                            {t('monthly_growth')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="pl-2">
@@ -136,7 +138,7 @@ export default function DashboardHome() {
                 {/* Quick Actions or Recent Contacts Placeholder */}
                 < Card className="col-span-1" >
                     <CardHeader>
-                        <CardTitle>Recent Activity</CardTitle>
+                        <CardTitle>{t('recent_activity')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
@@ -145,15 +147,15 @@ export default function DashboardHome() {
                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                                     <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                                 </span>
-                                <p className="text-sm text-gray-500">System is running normally.</p>
+                                <p className="text-sm text-gray-500">{t('system_running_normal')}</p>
                             </div>
                             {stats?.contacts_pending && stats.contacts_pending > 0 ? (
                                 <div className="p-3 bg-red-50 text-red-700 rounded-md text-sm border border-red-100">
-                                    You have {stats.contacts_pending} unread contact messages.
+                                    {t('unread_messages', { count: stats.contacts_pending })}
                                 </div>
                             ) : (
                                 <div className="p-3 bg-green-50 text-green-700 rounded-md text-sm border border-green-100">
-                                    All contact messages have been read.
+                                    {t('all_messages_read')}
                                 </div>
                             )}
                         </div>
@@ -163,3 +165,4 @@ export default function DashboardHome() {
         </div >
     );
 }
+

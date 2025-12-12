@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
@@ -8,55 +7,57 @@ import {
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useAuth } from '@/features/auth/useAuth';
+import { useTranslation } from 'react-i18next';
 
 const menuGroups = [
     {
-        label: 'Dashboard',
+        label: 'dashboard',
         items: [
-            { icon: LayoutDashboard, label: 'Overview', href: '/' },
+            { icon: LayoutDashboard, label: 'overview', href: '/' },
         ]
     },
     {
-        label: 'Content Management',
+        label: 'content_management',
         items: [
-            { icon: FileText, label: 'News', href: '/news' },
-            { icon: Package, label: 'Products', href: '/products' },
-            { icon: FolderOpen, label: 'Categories', href: '/categories' },
-            { icon: Book, label: 'Pages', href: '/pages' },
-            { icon: Briefcase, label: 'Projects', href: '/projects' },
-            { icon: Image, label: 'Media', href: '/media' },
-            { icon: Layout, label: 'Banners', href: '/banners' },
-            { icon: Calendar, label: 'Events', href: '/events' },
-            { icon: Mail, label: 'Contacts', href: '/contacts' },
+            { icon: FileText, label: 'news', href: '/news' },
+            { icon: Package, label: 'products', href: '/products' },
+            { icon: FolderOpen, label: 'categories', href: '/categories' },
+            { icon: Book, label: 'pages', href: '/pages' },
+            { icon: Briefcase, label: 'projects', href: '/projects' },
+            { icon: Image, label: 'media', href: '/media' },
+            { icon: Layout, label: 'banners', href: '/banners' },
+            { icon: Calendar, label: 'events', href: '/events' },
+            { icon: Mail, label: 'contacts', href: '/contacts' },
         ]
     },
     {
-        label: 'System & Settings',
+        label: 'system_settings',
         items: [
-            { icon: Users, label: 'Users', href: '/users' },
-            { icon: UserCog, label: 'Roles', href: '/roles' },
-            { icon: List, label: 'Navigation', href: '/menu' },
-            { icon: Settings, label: 'Settings', href: '/settings' },
+            { icon: Users, label: 'users', href: '/users' },
+            { icon: UserCog, label: 'roles', href: '/roles' },
+            { icon: List, label: 'navigation', href: '/menu' },
+            { icon: Settings, label: 'settings', href: '/settings' },
         ]
     },
     {
-        label: 'Support',
+        label: 'support',
         items: [
-            { icon: PenTool, label: 'Resources', href: '/resources' },
-            { icon: Trophy, label: 'Achievements', href: '/achievements' },
-            { icon: HelpCircle, label: 'FAQs', href: '/faqs' },
+            { icon: PenTool, label: 'resources', href: '/resources' },
+            { icon: Trophy, label: 'achievements', href: '/achievements' },
+            { icon: HelpCircle, label: 'faqs', href: '/faqs' },
         ]
-    }
+    },
 ];
 
 export function Sidebar() {
     const location = useLocation();
     const { logout } = useAuth();
+    const { t } = useTranslation();
     const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
-        'Content Management': true,
-        'System & Settings': true,
-        'Dashboard': true,
-        'Support': false
+        'content_management': true,
+        'system_settings': true,
+        'dashboard': true,
+        'support': false
     });
 
     const toggleGroup = (label: string) => {
@@ -92,7 +93,7 @@ export function Sidebar() {
                             onClick={() => toggleGroup(group.label)}
                             className="flex w-full items-center justify-between px-2 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
                         >
-                            {group.label}
+                            {t(group.label)}
                             {openGroups[group.label] ? (
                                 <ChevronDown className="h-3 w-3" />
                             ) : (
@@ -124,7 +125,7 @@ export function Sidebar() {
                                                         : 'text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300'
                                                 )}
                                             />
-                                            {item.label}
+                                            {t(item.label)}
                                         </Link>
                                     );
                                 })}
@@ -140,7 +141,7 @@ export function Sidebar() {
                     className="group flex w-full items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 hover:shadow-sm transition-all duration-200 dark:text-red-400 dark:bg-red-900/10 dark:hover:bg-red-900/20"
                 >
                     <LogOut className="mr-2 h-4 w-4" />
-                    Sign out
+                    {t('sign_out')}
                 </button>
             </div>
         </div>

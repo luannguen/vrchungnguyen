@@ -1,0 +1,23 @@
+{
+    "language": "Sprache",
+    "home": "Startseite",
+    "about": "Über uns",
+    "products": "Produkte",
+    "news": "Nachrichten",
+    "contact": "Kontakt",
+    "contact_project": "Kontakt für ähnliches Projekt",
+    "copyright": "© 2024 VRC. Alle Rechte vorbehalten.",
+    "quick_links": "Quicklinks",
+    "privacy_policy": "Datenschutzrichtlinie",
+    "terms_of_use": "Nutzungsbedingungen",
+    "cookie_policy": "Cookie-Richtlinie",
+    "sitemap": "Seitenverzeichnis",
+    "search_placeholder": "Suchbegriffe eingeben...",
+    "search_button": "Suche",
+    "popular_searches": "Beliebt:",
+    "tag_cold_storage": "Kühllager",
+    "tag_air_conditioner": "Klimaanlage",
+    "tag_maintenance": "Wartung",
+    "tag_energy_saving": "Energie sparen",
+    "tag_chiller": "Kühler"
+}

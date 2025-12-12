@@ -1,0 +1,23 @@
+{
+    "language": "Язык",
+    "home": "Главная",
+    "about": "О нас",
+    "products": "Продукты",
+    "news": "Новости",
+    "contact": "Контакт",
+    "contact_project": "Связаться по похожему проекту",
+    "copyright": "© 2024 VRC. Все права защищены.",
+    "quick_links": "Быстрые ссылки",
+    "privacy_policy": "Политика конфиденциальности",
+    "terms_of_use": "Условия использования",
+    "cookie_policy": "Политика использования файлов cookie",
+    "sitemap": "Карта сайта",
+    "search_placeholder": "Введите ключевые слова...",
+    "search_button": "Поиск",
+    "popular_searches": "Популярные:",
+    "tag_cold_storage": "Холодный склад",
+    "tag_air_conditioner": "Кондиционер",
+    "tag_maintenance": "Техническое обслуживание",
+    "tag_energy_saving": "Энергосбережение",
+    "tag_chiller": "Чиллер"
+}
