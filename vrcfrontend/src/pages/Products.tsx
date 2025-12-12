@@ -98,7 +98,7 @@ const Products = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 tracking-tight"
+            className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 tracking-tight text-white"
           >
             Danh Mục Sản Phẩm
           </motion.h1>
