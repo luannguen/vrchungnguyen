@@ -22,6 +22,8 @@ import ResourcesPage from './pages/admin/ResourcesPage'; // Added
 import AchievementsPage from './pages/admin/AchievementsPage';
 import FAQsPage from './pages/admin/FAQsPage';
 import TeamPage from './pages/admin/TeamPage';
+import ForgotPasswordPage from './components/admin/pages/auth/ForgotPasswordPage';
+import ResetPasswordPage from './components/admin/pages/auth/ResetPasswordPage';
 
 
 function App() {
@@ -29,6 +31,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/user" element={<UserPage />} />
 
         {/* Admin Routes - Strict 'admin' role required */}

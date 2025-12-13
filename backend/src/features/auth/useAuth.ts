@@ -86,11 +86,21 @@ export function useAuth() {
         return result;
     };
 
+    const resetPasswordForEmail = async (email: string) => {
+        return await authService.resetPasswordForEmail(email);
+    };
+
+    const updatePassword = async (password: string) => {
+        return await authService.updatePassword(password);
+    };
+
     return {
         user,
         loading,
         login,
         logout,
+        resetPasswordForEmail,
+        updatePassword,
         isAuthenticated: !!user,
     };
 }

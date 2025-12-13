@@ -14,6 +14,7 @@ export const ErrorCodes = {
     SERVER_ERROR: 'SERVER_ERROR',
     DB_ERROR: 'DB_ERROR',
     UNKNOWN_ERROR: 'UNKNOWN_ERROR',
+    USER_EXISTS: 'USER_EXISTS',
 };
 
 export function success<T>(data: T): Result<T> {
@@ -28,6 +29,19 @@ export function failure<T = any>(error: string, code = ErrorCodes.UNKNOWN_ERROR)
 export interface LoginDTO {
     email: string;
     password?: string; // Optional because magic link or OAuth might not need it, but for now we use password
+}
+
+export interface CreateUserDTO {
+    email: string;
+    password: string;
+    full_name?: string;
+    role?: 'admin' | 'editor' | 'user';
+}
+
+export interface UpdateUserDTO {
+    full_name?: string;
+    role?: 'admin' | 'editor' | 'user';
+    password?: string;
 }
 
 export interface UserDTO {

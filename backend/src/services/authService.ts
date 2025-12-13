@@ -100,5 +100,31 @@ export const authService = {
         } catch (err: any) {
             return failure(err.message, ErrorCodes.UNKNOWN_ERROR);
         }
+    },
+
+    resetPasswordForEmail: async (email: string): Promise<Result<void>> => {
+        try {
+            const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: `${window.location.origin}/reset-password`,
+            });
+
+            if (error) return failure(error.message, ErrorCodes.SERVER_ERROR);
+            return success(undefined);
+        } catch (err: any) {
+            return failure(err.message, ErrorCodes.UNKNOWN_ERROR);
+        }
+    },
+
+    updatePassword: async (password: string): Promise<Result<void>> => {
+        try {
+            const { error } = await supabase.auth.updateUser({
+                password: password
+            });
+
+            if (error) return failure(error.message, ErrorCodes.SERVER_ERROR);
+            return success(undefined);
+        } catch (err: any) {
+            return failure(err.message, ErrorCodes.UNKNOWN_ERROR);
+        }
     }
 };
