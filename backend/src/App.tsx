@@ -35,28 +35,34 @@ function App() {
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/user" element={<UserPage />} />
 
-        {/* Admin Routes - Strict 'admin' role required */}
-        <Route element={<ProtectedRoute requiredRole="admin" />}>
+        {/* Admin Routes - Requires 'dashboard.view' permission */}
+        <Route element={<ProtectedRoute requiredPermission="dashboard.view" />}>
           <Route path="/" element={<AdminLayout />}>
             <Route index element={<DashboardHome />} />
-            <Route path="users" element={<UsersPage />} />
-            <Route path="roles" element={<RolesPage />} />
-            <Route path="products" element={<ProductsPage />} />
-            <Route path="events" element={<EventsPage />} />
-            <Route path="projects" element={<ProjectsPage />} />
-            <Route path="news" element={<NewsPage />} />
-            <Route path="categories" element={<CategoriesPage />} />
-            <Route path="menu" element={<MenuManager />} />
-            <Route path="contacts" element={<ContactsPage />} />
-            <Route path="media" element={<MediaLibrary />} />
-            <Route path="banners" element={<BannersPage />} />
-            <Route path="pages" element={<PagesPage />} />
-            <Route path="services" element={<ServicesPage />} />
-            <Route path="resources" element={<ResourcesPage />} /> {/* Added */}
-            <Route path="achievements" element={<AchievementsPage />} />
-            <Route path="faqs" element={<FAQsPage />} />
-            <Route path="team" element={<TeamPage />} />
-            <Route path="settings" element={<SettingsPage />} />
+            {/* Content Routes - Requires ANY content permission */}
+            {/* Note: In Sidebar, we group these under 'content_management' which requires ANY of these */}
+            <Route element={<ProtectedRoute oneOfPermissions={['content.view', 'content.create', 'content.edit', 'content.delete']} />}>
+              <Route path="products" element={<ProductsPage />} />
+              <Route path="events" element={<EventsPage />} />
+              <Route path="projects" element={<ProjectsPage />} />
+              <Route path="news" element={<NewsPage />} />
+              <Route path="categories" element={<CategoriesPage />} />
+              <Route path="contacts" element={<ContactsPage />} />
+              <Route path="media" element={<MediaLibrary />} />
+              <Route path="banners" element={<BannersPage />} />
+              <Route path="pages" element={<PagesPage />} />
+              <Route path="services" element={<ServicesPage />} />
+              <Route path="resources" element={<ResourcesPage />} />
+              <Route path="achievements" element={<AchievementsPage />} />
+              <Route path="faqs" element={<FAQsPage />} />
+              <Route path="team" element={<TeamPage />} />
+            </Route>
+
+            {/* System Settings - Granular Permissions */}
+            <Route path="users" element={<ProtectedRoute requiredPermission="users.view"><UsersPage /></ProtectedRoute>} />
+            <Route path="roles" element={<ProtectedRoute requiredPermission="roles.manage"><RolesPage /></ProtectedRoute>} />
+            <Route path="menu" element={<ProtectedRoute requiredPermission="settings.manage"><MenuManager /></ProtectedRoute>} />
+            <Route path="settings" element={<ProtectedRoute requiredPermission="settings.view"><SettingsPage /></ProtectedRoute>} />
           </Route>
         </Route>
 

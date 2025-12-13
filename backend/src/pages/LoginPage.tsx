@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/features/auth/useAuth';
 import { authService } from '@/services/authService';
+import { ErrorCodes } from '@/components/data/types';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Loader2, Lock, Mail } from 'lucide-react';
 
@@ -32,7 +33,11 @@ export default function LoginPage() {
             const from = location.state?.from?.pathname || '/';
             navigate(from, { replace: true });
         } else {
-            setError(result.error || 'Login failed');
+            if (result.code === ErrorCodes.EMAIL_NOT_VERIFIED) {
+                setError('Tài khoản của bạn chưa được xác thực. Vui lòng kiểm tra email để xác nhận.');
+            } else {
+                setError(result.error || 'Login failed');
+            }
         }
         setIsSubmitting(false);
     };

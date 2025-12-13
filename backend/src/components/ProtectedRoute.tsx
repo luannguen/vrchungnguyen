@@ -5,12 +5,20 @@ import { Role } from '@/services/rbacService';
 import { Loader2 } from 'lucide-react';
 
 interface ProtectedRouteProps {
-    requiredRole?: Role;
+    requiredRole?: Role | Role[];
+    requiredPermission?: string;
+    oneOfPermissions?: string[]; // New prop: Access if user has ANY of these permissions
+    children?: React.ReactNode;
 }
 
-export default function ProtectedRoute({ requiredRole }: ProtectedRouteProps) {
+export default function ProtectedRoute({
+    requiredRole,
+    requiredPermission,
+    oneOfPermissions,
+    children
+}: ProtectedRouteProps) {
     const { isAuthenticated, loading } = useAuth();
-    const { hasRole } = useRBAC();
+    const { hasRole, hasPermission } = useRBAC();
 
     if (loading) {
         return (
@@ -26,9 +34,21 @@ export default function ProtectedRoute({ requiredRole }: ProtectedRouteProps) {
 
     // Strict role check: if role is required and user lacks it
     if (requiredRole && !hasRole(requiredRole)) {
-        // If user is logged in but doesn't have permission, send to User Dashboard
         return <Navigate to="/user" replace />;
     }
 
-    return <Outlet />;
+    // Single Permission check
+    if (requiredPermission && !hasPermission(requiredPermission)) {
+        return <Navigate to="/user" replace />;
+    }
+
+    // Multiple Permissions check (OR logic)
+    if (oneOfPermissions && oneOfPermissions.length > 0) {
+        const hasAny = oneOfPermissions.some(p => hasPermission(p));
+        if (!hasAny) {
+            return <Navigate to="/user" replace />;
+        }
+    }
+
+    return children ? <>{children}</> : <Outlet />;
 }

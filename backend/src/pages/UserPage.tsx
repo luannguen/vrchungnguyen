@@ -2,6 +2,7 @@ import React from 'react';
 import { useAuth } from '@/features/auth/useAuth';
 import { useNavigate } from 'react-router-dom';
 
+
 const UserPage: React.FC = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();

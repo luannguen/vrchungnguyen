@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,13 +8,13 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useUser } from '@/features/users/useUser';
-import { Role } from '@/services/rbacService';
+import { Role, rbacService, RoleDef } from '@/services/rbacService';
 import { UserDTO } from '@/components/data/types';
 import { toast } from 'sonner';
 
 const editUserSchema = z.object({
     full_name: z.string().min(2, 'Full name must be at least 2 characters'),
-    role: z.enum(['admin', 'editor', 'user'] as [string, ...string[]]),
+    role: z.string().min(1, 'Role is required'), // Changed to generic string
 });
 
 type EditUserFormValues = z.infer<typeof editUserSchema>;
@@ -27,6 +27,7 @@ interface EditUserDialogProps {
 
 export const EditUserDialog: React.FC<EditUserDialogProps> = ({ user, open, onOpenChange }) => {
     const { updateUser } = useUser();
+    const [roles, setRoles] = useState<RoleDef[]>([]);
 
     const form = useForm<EditUserFormValues>({
         resolver: zodResolver(editUserSchema),
@@ -37,6 +38,12 @@ export const EditUserDialog: React.FC<EditUserDialogProps> = ({ user, open, onOp
     });
 
     useEffect(() => {
+        if (open) {
+            loadRoles();
+        }
+    }, [open]);
+
+    useEffect(() => {
         if (user && open) {
             form.reset({
                 full_name: user.full_name || '',
@@ -44,6 +51,15 @@ export const EditUserDialog: React.FC<EditUserDialogProps> = ({ user, open, onOp
             });
         }
     }, [user, open, form]);
+
+    const loadRoles = async () => {
+        const result = await rbacService.getRoles();
+        if (result.success) {
+            setRoles(result.data || []);
+        } else {
+            toast.error('Failed to load roles');
+        }
+    };
 
     const onSubmit = async (data: EditUserFormValues) => {
         if (!user) return;
@@ -98,9 +114,11 @@ export const EditUserDialog: React.FC<EditUserDialogProps> = ({ user, open, onOp
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            <SelectItem value="user">User</SelectItem>
-                                            <SelectItem value="editor">Editor</SelectItem>
-                                            <SelectItem value="admin">Admin</SelectItem>
+                                            {roles.map((role) => (
+                                                <SelectItem key={role.id} value={role.id}>
+                                                    {role.name}
+                                                </SelectItem>
+                                            ))}
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />

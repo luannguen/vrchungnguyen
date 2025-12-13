@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import { Result, ErrorCodes, success, failure } from '@/components/data/types';
 
-export type Role = 'admin' | 'editor' | 'user';
+export type Role = string;
 export type Permission = string; // Changed from union type to string to support dynamic DB permissions
 
 export interface RoleDef {
@@ -123,6 +123,69 @@ export const rbacService = {
                 if (insertError) return failure(insertError.message, ErrorCodes.DB_ERROR);
             }
 
+            return success(undefined);
+        } catch (err: any) {
+            return failure(err.message, ErrorCodes.UNKNOWN_ERROR);
+        }
+    },
+
+    createRole: async (name: string, description?: string): Promise<Result<RoleDef>> => {
+        try {
+            // Generate a slug-like ID from the name handling Vietnamese characters
+            const slugify = (text: string) => {
+                return text
+                    .toString()
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/[^\w-]+/g, '')
+                    .replace(/--+/g, '-')
+                    .replace(/^-+/, '')
+                    .replace(/-+$/, '');
+            };
+
+            const id = slugify(name) || `role-${Date.now()}`;
+
+            console.log('[rbacService] Creating role:', { name, id });
+
+            const { data, error } = await supabase
+                .from('roles')
+                .insert({ id, name, description })
+                .select()
+                .single();
+
+            if (error) return failure(error.message, ErrorCodes.DB_ERROR);
+            return success(data);
+        } catch (err: any) {
+            return failure(err.message, ErrorCodes.UNKNOWN_ERROR);
+        }
+    },
+
+    updateRole: async (id: string, updates: { name?: string; description?: string }): Promise<Result<RoleDef>> => {
+        try {
+            const { data, error } = await supabase
+                .from('roles')
+                .update(updates)
+                .eq('id', id)
+                .select()
+                .single();
+
+            if (error) return failure(error.message, ErrorCodes.DB_ERROR);
+            return success(data);
+        } catch (err: any) {
+            return failure(err.message, ErrorCodes.UNKNOWN_ERROR);
+        }
+    },
+
+    deleteRole: async (id: string): Promise<Result<void>> => {
+        try {
+            const { error } = await supabase
+                .from('roles')
+                .delete()
+                .eq('id', id);
+
+            if (error) return failure(error.message, ErrorCodes.DB_ERROR);
             return success(undefined);
         } catch (err: any) {
             return failure(err.message, ErrorCodes.UNKNOWN_ERROR);

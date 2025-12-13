@@ -85,7 +85,13 @@ export const userService = {
     createUser: async (data: CreateUserDTO): Promise<Result<UserDTO>> => {
         try {
             // 1. Create a temporary client to avoid signing out the admin
-            const tempClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            const tempClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+                auth: {
+                    persistSession: false,
+                    autoRefreshToken: false,
+                    detectSessionInUrl: false
+                }
+            });
 
             // 2. Sign up the new user
             const { data: authData, error: authError } = await tempClient.auth.signUp({

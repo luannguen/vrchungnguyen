@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,14 +8,14 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useUser } from '@/features/users/useUser';
-import { Role } from '@/services/rbacService';
+import { Role, rbacService, RoleDef } from '@/services/rbacService';
 import { toast } from 'sonner';
 
 const createUserSchema = z.object({
     email: z.string().email('Invalid email address'),
     full_name: z.string().min(2, 'Full name must be at least 2 characters'),
     password: z.string().min(6, 'Password must be at least 6 characters'),
-    role: z.enum(['admin', 'editor', 'user'] as [string, ...string[]]),
+    role: z.string().min(1, 'Role is required'), // Changed to generic string
 });
 
 type CreateUserFormValues = z.infer<typeof createUserSchema>;
@@ -27,6 +27,22 @@ interface CreateUserDialogProps {
 
 export const CreateUserDialog: React.FC<CreateUserDialogProps> = ({ open, onOpenChange }) => {
     const { createUser } = useUser();
+    const [roles, setRoles] = useState<RoleDef[]>([]);
+
+    useEffect(() => {
+        if (open) {
+            loadRoles();
+        }
+    }, [open]);
+
+    const loadRoles = async () => {
+        const result = await rbacService.getRoles();
+        if (result.success) {
+            setRoles(result.data || []);
+        } else {
+            toast.error('Failed to load roles');
+        }
+    };
 
     const form = useForm<CreateUserFormValues>({
         resolver: zodResolver(createUserSchema),
@@ -114,16 +130,18 @@ export const CreateUserDialog: React.FC<CreateUserDialogProps> = ({ open, onOpen
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Role</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                                         <FormControl>
                                             <SelectTrigger>
                                                 <SelectValue placeholder="Select a role" />
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            <SelectItem value="user">User</SelectItem>
-                                            <SelectItem value="editor">Editor</SelectItem>
-                                            <SelectItem value="admin">Admin</SelectItem>
+                                            {roles.map((role) => (
+                                                <SelectItem key={role.id} value={role.id}>
+                                                    {role.name}
+                                                </SelectItem>
+                                            ))}
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />

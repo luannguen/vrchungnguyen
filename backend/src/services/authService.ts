@@ -14,6 +14,9 @@ export const authService = {
             });
 
             if (error) {
+                if (error.message.includes('Email not confirmed')) {
+                    return failure('Email not confirmed', ErrorCodes.EMAIL_NOT_VERIFIED);
+                }
                 return failure(error.message, ErrorCodes.UNAUTHORIZED);
             }
 

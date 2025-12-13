@@ -15,6 +15,7 @@ export const ErrorCodes = {
     DB_ERROR: 'DB_ERROR',
     UNKNOWN_ERROR: 'UNKNOWN_ERROR',
     USER_EXISTS: 'USER_EXISTS',
+    EMAIL_NOT_VERIFIED: 'EMAIL_NOT_VERIFIED',
 };
 
 export function success<T>(data: T): Result<T> {
@@ -35,21 +36,24 @@ export interface CreateUserDTO {
     email: string;
     password: string;
     full_name?: string;
-    role?: 'admin' | 'editor' | 'user';
+    role?: Role;
 }
 
 export interface UpdateUserDTO {
     full_name?: string;
-    role?: 'admin' | 'editor' | 'user';
+    role?: Role;
     password?: string;
 }
+
+export type Role = string;
+export type Permission = string;
 
 export interface UserDTO {
     id: string;
     email: string;
     full_name?: string;
     avatar_url?: string;
-    role?: 'admin' | 'editor' | 'user';
+    role?: Role;
 }
 
 

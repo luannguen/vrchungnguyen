@@ -1,13 +1,13 @@
 # AI CODING RULES
 
-> **BẮT BUỘC**: AI phải đọc file này trước khi generate code.
+  > ** BẮT BUỘC **: AI phải đọc file này trước khi generate code.
 > Mọi code vi phạm RULE phải được sửa lại trước khi hoàn tất.
 
 ---
 
-## 📐 1. Kiến trúc Tổng Quan (3 Lớp)
+## 📐 1. Kiến trúc Tổng Quan(3 Lớp)
 
-```
+  ```
 ┌─────────────────────────────────────────────────────────────┐
 │                         UI LAYER                            │
 │   (Components - Chỉ render, nhận props, emit events)        │
@@ -25,9 +25,9 @@
 ```
 
 ### Nguyên tắc:
-- **UI** → Chỉ render, KHÔNG gọi API trực tiếp
-- **Feature Logic** → State, validate, xử lý nghiệp vụ, gọi service
-- **Data/Service** → Gọi API, map dữ liệu, trả về `Result<T>`
+- ** UI ** → Chỉ render, KHÔNG gọi API trực tiếp
+  - ** Feature Logic ** → State, validate, xử lý nghiệp vụ, gọi service
+    - ** Data / Service ** → Gọi API, map dữ liệu, trả về`Result<T>`
 
 ### ❌ KHÔNG ĐƯỢC:
 ```javascript
@@ -66,14 +66,14 @@ const productAPI = {
 
 ## 🎨 2. Quy Tắc UI Layer
 
-### 2.1. UI là Presentation Only
-- ❌ KHÔNG dùng `fetch`, `axios`, `base44.entities.*` trong component
-- ❌ KHÔNG chứa business logic phức tạp
-- ❌ KHÔNG tự xử lý validation phức tạp
-- ✅ Chỉ render props, emit events qua callbacks
+### 2.1.UI là Presentation Only
+  - ❌ KHÔNG dùng`fetch`, `axios`, `base44.entities.*` trong component
+    - ❌ KHÔNG chứa business logic phức tạp
+      - ❌ KHÔNG tự xử lý validation phức tạp
+        - ✅ Chỉ render props, emit events qua callbacks
 
-### 2.2. Sử dụng Component Chuẩn
-```javascript
+### 2.2.Sử dụng Component Chuẩn
+  ```javascript
 // ✅ ĐÚNG - Dùng component từ UI System
 import { Button } from "@/components/ui/button";
 import { BaseModal } from "@/components/shared/modal";
@@ -83,12 +83,12 @@ import { LoadingState, EmptyState } from "@/components/shared/ui";
 const MyButton = ({ children }) => <button className="...">{children}</button>;
 ```
 
-### 2.3. Giới Hạn Kích Thước
-- Component > 300 dòng → **PHẢI TÁCH NHỎ**
-- Component làm > 1 nhiệm vụ → **PHẢI TÁCH NHỎ**
+### 2.3.Giới Hạn Kích Thước
+  - Component > 300 dòng → ** PHẢI TÁCH NHỎ **
+    - Component làm > 1 nhiệm vụ → ** PHẢI TÁCH NHỎ **
 
-### 2.4. Đặt Tên Rõ Ràng
-```javascript
+### 2.4.Đặt Tên Rõ Ràng
+  ```javascript
 // ✅ ĐÚNG
 ProductListTable, OrderFormDialog, UserFilterBar, ReviewCard
 
@@ -98,13 +98,13 @@ List, Form, Card, Item, Component1
 
 ---
 
-## 🧠 3. Quy Tắc Feature Logic (Hooks)
+## 🧠 3. Quy Tắc Feature Logic(Hooks)
 
-### 3.1. Vị Trí Code
-- Mọi state, business logic, orchestration → **hooks/features**
-- Mỗi hook chỉ có **1 mục tiêu chính (Single Goal)**
+### 3.1.Vị Trí Code
+  - Mọi state, business logic, orchestration → ** hooks / features **
+    - Mỗi hook chỉ có ** 1 mục tiêu chính(Single Goal) **
 
-```javascript
+      ```javascript
 // ✅ ĐÚNG - Single goal
 useProductList()    // Chỉ lo list
 useProductForm()    // Chỉ lo form create/edit
@@ -114,7 +114,7 @@ useProductDetail()  // Chỉ lo detail view
 useProductEverything() // List + Detail + Form + Filter + Export
 ```
 
-### 3.2. Tách Hook Khi Cần
+### 3.2.Tách Hook Khi Cần
 Nếu hook đang xử lý quá nhiều:
 ```javascript
 // ❌ SAI - Hook quá lớn
@@ -128,12 +128,12 @@ useProductCRUD()   // Create/Update/Delete
 useProductExport() // Export logic
 ```
 
-### 3.3. Reuse Base Hooks
+### 3.3.Reuse Base Hooks
 Trước khi tạo hook mới, kiểm tra:
-1. `useCaseRegistry` có use case tương tự?
-2. Có base hook có thể extend?
+1. `useCaseRegistry` có use case tương tự ?
+  2. Có base hook có thể extend ?
 
-```javascript
+    ```javascript
 // ✅ ĐÚNG - Reuse base hook
 import { useItemListBase } from "@/components/shared/hooks";
 
@@ -146,8 +146,8 @@ export function useProductList() {
 }
 ```
 
-### 3.4. Không Duplicate Logic Client/Admin
-```javascript
+### 3.4.Không Duplicate Logic Client / Admin
+  ```javascript
 // ✅ ĐÚNG - Base hook dùng chung
 // shared/hooks/useItemListBase.js
 export function useItemListBase(options) { /* logic chung */ }
@@ -167,13 +167,13 @@ export function useProducts() {
 
 ---
 
-## 📡 4. Quy Tắc Data/Service Layer
+## 📡 4. Quy Tắc Data / Service Layer
 
-### 4.1. Vị Trí API Calls
-- **TẤT CẢ** API calls phải nằm trong service layer
-- Không hardcode URL trong UI/hook
+### 4.1.Vị Trí API Calls
+  - ** TẤT CẢ ** API calls phải nằm trong service layer
+    - Không hardcode URL trong UI / hook
 
-```javascript
+      ```javascript
 // ✅ ĐÚNG - Service layer
 // services/productService.js
 export const productAPI = {
@@ -185,8 +185,8 @@ export const productAPI = {
 base44.entities.Product.list(); // Không được gọi trực tiếp
 ```
 
-### 4.2. Trả Về Result<T>
-```javascript
+### 4.2.Trả Về Result < T >
+  ```javascript
 // ✅ ĐÚNG - Dùng Result wrapper
 import { success, failure, ErrorCodes } from "@/components/data/types";
 
@@ -210,8 +210,8 @@ create: async (data) => {
 }
 ```
 
-### 4.3. Mapping DTO Tại Service
-```javascript
+### 4.3.Mapping DTO Tại Service
+  ```javascript
 // ✅ ĐÚNG - Map tại service
 const productAPI = {
   list: async () => {
@@ -224,17 +224,17 @@ const productAPI = {
 products.map(p => ({ ...p, displayPrice: formatPrice(p.price) }));
 ```
 
-### 4.4. Khi Thêm Service Mới
-1. Tạo DTO input/output trong `types.js`
-2. Xử lý lỗi bằng `ErrorCodes`
-3. Export qua `components/data/index.js`
+### 4.4.Khi Thêm Service Mới
+1. Tạo DTO input / output trong`types.js`
+2. Xử lý lỗi bằng`ErrorCodes`
+3. Export qua`components/data/index.js`
 
 ---
 
 ## ⚠️ 5. Quy Tắc Error & Result
 
-### 5.1. Luôn Dùng Result<T>
-```javascript
+### 5.1.Luôn Dùng Result < T >
+  ```javascript
 import { success, failure, ErrorCodes } from "@/components/data/types";
 
 // ✅ ĐÚNG
@@ -246,8 +246,8 @@ throw new Error("Lỗi gì đó");
 return { error: "random message" };
 ```
 
-### 5.2. Error Codes Chuẩn
-```javascript
+### 5.2.Error Codes Chuẩn
+  ```javascript
 // Dùng ErrorCodes đã định nghĩa
 ErrorCodes.VALIDATION_ERROR  // Lỗi validate input
 ErrorCodes.NOT_FOUND         // Không tìm thấy
@@ -257,8 +257,8 @@ ErrorCodes.NETWORK_ERROR     // Lỗi mạng
 ErrorCodes.SERVER_ERROR      // Lỗi server
 ```
 
-### 5.3. UI Không Tự Bịa Message
-```javascript
+### 5.3.UI Không Tự Bịa Message
+  ```javascript
 // ✅ ĐÚNG - Dùng error mapping
 import { mapError } from "@/components/shared/errors";
 
@@ -274,10 +274,10 @@ alert("Lỗi không xác định");
 
 ## 🆕 6. Quy Tắc Thêm Feature Mới
 
-Khi tạo tính năng mới (vd: `review`, `category`), làm theo thứ tự:
+Khi tạo tính năng mới(vd: `review`, `category`), làm theo thứ tự:
 
 ### Bước 1: DTO & Types
-```javascript
+  ```javascript
 // components/data/types.js
 /**
  * @typedef {Object} ReviewCreateDTO
@@ -288,7 +288,7 @@ Khi tạo tính năng mới (vd: `review`, `category`), làm theo thứ tự:
 ```
 
 ### Bước 2: Service
-```javascript
+  ```javascript
 // services/reviewService.js
 export const reviewAPI = {
   create: async (data) => {
@@ -302,7 +302,7 @@ export const reviewAPI = {
 ```
 
 ### Bước 3: Hook
-```javascript
+  ```javascript
 // hooks/useReviewForm.js
 export function useReviewForm() {
   const mutation = useMutation({
@@ -313,7 +313,7 @@ export function useReviewForm() {
 ```
 
 ### Bước 4: UI
-```javascript
+  ```javascript
 // components/ReviewForm.jsx
 export function ReviewForm() {
   const { submit, isLoading, error } = useReviewForm();
@@ -321,8 +321,8 @@ export function ReviewForm() {
 }
 ```
 
-### Bước 5: Update UseCaseRegistry (BẮT BUỘC)
-```javascript
+### Bước 5: Update UseCaseRegistry(BẮT BUỘC)
+  ```javascript
 // components/data/useCaseRegistry.js
 {
   id: 'review.create',
@@ -339,8 +339,8 @@ export function ReviewForm() {
 
 ## ⚡ 7. Quy Tắc Performance
 
-### 7.1. Debounce Search/Filter
-```javascript
+### 7.1.Debounce Search / Filter
+  ```javascript
 // ✅ ĐÚNG
 import { useDebouncedValue } from "@/components/shared/utils";
 
@@ -352,8 +352,8 @@ useEffect(() => {
 }, [searchTerm]);
 ```
 
-### 7.2. Pagination
-```javascript
+### 7.2.Pagination
+  ```javascript
 // ✅ ĐÚNG - Có pagination
 const { data, page, setPage } = usePaginatedList();
 
@@ -361,8 +361,8 @@ const { data, page, setPage } = usePaginatedList();
 const allProducts = await productAPI.list(10000);
 ```
 
-### 7.3. Cache & Stale Time
-```javascript
+### 7.3.Cache & Stale Time
+  ```javascript
 // ✅ ĐÚNG
 useQuery({
   queryKey: ['products'],
@@ -371,8 +371,8 @@ useQuery({
 });
 ```
 
-### 7.4. Loading States
-```javascript
+### 7.4.Loading States
+  ```javascript
 // ✅ ĐÚNG - Dùng component chuẩn
 import { LoadingState, EmptyState, ErrorState } from "@/components/shared/ui";
 
@@ -385,24 +385,24 @@ if (!data.length) return <EmptyState message="Chưa có dữ liệu" />;
 
 ## 📁 8. Quy Tắc Kích Thước File
 
-### 8.1. Single Goal Per File
-- Mỗi file chỉ giải quyết **1 nhiệm vụ rõ ràng**
-- 1 component chính / 1 hook chính / 1 service logic
+### 8.1.Single Goal Per File
+  - Mỗi file chỉ giải quyết ** 1 nhiệm vụ rõ ràng **
+    - 1 component chính / 1 hook chính / 1 service logic
 
-### 8.2. Giới Hạn Dòng
-| Loại File | Giới Hạn | Hành Động |
-|-----------|----------|-----------|
+### 8.2.Giới Hạn Dòng
+  | Loại File | Giới Hạn | Hành Động |
+| -----------| ----------| -----------|
 | Component | 300 dòng | Tách component con |
 | Hook | 200 dòng | Tách logic riêng |
 | Service | 250 dòng | Tách theo domain |
 
-### 8.3. Tự Động Tách
-Khi file vượt giới hạn, AI **PHẢI**:
+### 8.3.Tự Động Tách
+Khi file vượt giới hạn, AI ** PHẢI **:
 1. Xác định các phần có thể tách
 2. Tạo file mới với tên rõ ràng
-3. Import/export đúng cách
+3. Import /export đúng cách
 
-```javascript
+  ```javascript
 // ❌ SAI - File quá lớn
 // ProductPage.jsx (500 dòng)
 // Chứa: List + Form + Detail + Filters + Export
@@ -414,8 +414,8 @@ Khi file vượt giới hạn, AI **PHẢI**:
 // ProductFilters.jsx (80 dòng)
 ```
 
-### 8.4. Tên File Rõ Nghĩa
-```javascript
+### 8.4.Tên File Rõ Nghĩa
+  ```javascript
 // ✅ ĐÚNG
 ProductListTable.jsx
 OrderFormDialog.jsx
@@ -431,14 +431,14 @@ helpers.js
 
 ## ♻️ 9. Quy Tắc Coding Style & Reuse
 
-### 9.1. Ưu Tiên Reuse
+### 9.1.Ưu Tiên Reuse
 Trước khi tạo mới, kiểm tra:
-1. `useCaseRegistry` có use case tương tự?
-2. `components/shared/` có component dùng được?
-3. `services/` có API method sẵn?
+1. `useCaseRegistry` có use case tương tự ?
+  2. `components/shared/` có component dùng được ?
+    3. `services/` có API method sẵn ?
 
-### 9.2. Không Copy-Paste
-```javascript
+### 9.2.Không Copy - Paste
+  ```javascript
 // ❌ SAI - Copy logic
 // useProductList.js
 const filteredProducts = products.filter(p => p.name.includes(search));
@@ -452,8 +452,8 @@ export const filterBySearch = (items, search, field = 'name') =>
   items.filter(item => item[field]?.toLowerCase().includes(search.toLowerCase()));
 ```
 
-### 9.3. Không Hardcode
-```javascript
+### 9.3.Không Hardcode
+  ```javascript
 // ❌ SAI
 if (status === 'pending') // Magic string
 const PAGE_SIZE = 20; // Trong component
@@ -466,8 +466,8 @@ export const ORDER_STATUS = { PENDING: 'pending', ... };
 export const DEFAULT_PAGE_SIZE = 20;
 ```
 
-### 9.4. Hạn Chế `any`
-```javascript
+### 9.4.Hạn Chế`any`
+  ```javascript
 // ❌ SAI
 const handleData = (data: any) => { ... }
 
@@ -480,19 +480,19 @@ const handleData = (products) => { ... }
 
 ## 🧪 10. Quy Tắc Testing
 
-### 10.1. Khi Thêm Use Case Mới
-Thêm ít nhất 1-2 test:
+### 10.1.Khi Thêm Use Case Mới
+Thêm ít nhất 1 - 2 test:
 - Case thành công
-- Case lỗi validate / lỗi nghiệp vụ
+  - Case lỗi validate / lỗi nghiệp vụ
 
-### 10.2. Tập Trung Test
-- ✅ Service methods
-- ✅ Use case logic
-- ✅ Business rules
-- ❌ Không test UI phức tạp
+### 10.2.Tập Trung Test
+  - ✅ Service methods
+    - ✅ Use case logic
+      - ✅ Business rules
+        - ❌ Không test UI phức tạp
 
-### 10.3. Cấu Trúc Test
-```javascript
+### 10.3.Cấu Trúc Test
+  ```javascript
 // __tests__/productService.test.js
 export const testProductCreateValidation = async () => {
   const result = await productAPI.create({ price: 0 });
@@ -527,19 +527,19 @@ export const testProductCreateValidation = async () => {
 
 ### Checklist Trước Khi Hoàn Tất:
 
-- [ ] Code theo đúng 3 lớp (UI → Hook → Service)?
-- [ ] UI không gọi API trực tiếp?
-- [ ] Dùng `Result<T>` và `ErrorCodes`?
-- [ ] File không quá dài?
-- [ ] Đã update `useCaseRegistry` (nếu thêm use case)?
-- [ ] Có reuse được gì từ codebase không?
-- [ ] Error messages dùng `mapError()`?
+-[] Code theo đúng 3 lớp(UI → Hook → Service) ?
+  -[] UI không gọi API trực tiếp ?
+    -[] Dùng `Result<T>` và`ErrorCodes` ?
+      -[] File không quá dài ?
+        -[] Đã update`useCaseRegistry`(nếu thêm use case) ?
+          -[] Có reuse được gì từ codebase không ?
+            -[] Error messages dùng`mapError()` ?
 
----
+              ---
 
 ## 📂 Cấu Trúc Folder Chuẩn
 
-```
+  ```
 components/
 ├── admin/
 │   ├── hooks/          # Admin-specific hooks
@@ -567,20 +567,20 @@ components/
 
 1. ❌ Gọi API trong component UI
 2. ❌ Hardcode error messages
-3. ❌ Copy-paste logic giữa các file
+3. ❌ Copy - paste logic giữa các file
 4. ❌ Tạo file > 300 dòng
 5. ❌ Bỏ qua `useCaseRegistry` khi thêm feature
-6. ❌ Dùng `throw new Error("random text")`
-7. ❌ Tạo component/hook mới khi đã có sẵn
+6. ❌ Dùng`throw new Error("random text")`
+7. ❌ Tạo component / hook mới khi đã có sẵn
 8. ❌ Load all data không pagination
 9. ❌ Không dùng debounce cho search
-10. ❌ Dùng `window.location.search` hoặc `window.location.pathname` - Dùng react-router-dom thay thế
+10. ❌ Dùng `window.location.search` hoặc`window.location.pathname` - Dùng react - router - dom thay thế
 
 ---
 
-## 🔗 12. Quy Tắc Routing (React Router DOM)
+## 🔗 12. Quy Tắc Routing(React Router DOM)
 
-### 12.1. LUÔN Dùng react-router-dom
+### 12.1.LUÔN Dùng react - router - dom
 Để đảm bảo SPA navigation reactive và hoạt động đúng:
 
 ```javascript
@@ -598,18 +598,18 @@ const location = useLocation();
 const { slug } = useParams();
 ```
 
-### 12.2. Hooks Routing Chuẩn
-| Mục đích | Hook |
-|----------|------|
-| Query params (?id=123) | `useSearchParams()` |
-| Route params (/post/:id) | `useParams()` |
+### 12.2.Hooks Routing Chuẩn
+  | Mục đích | Hook |
+| ----------| ------|
+| Query params(?id = 123) | `useSearchParams()` |
+| Route params(/post/: id) | `useParams()` |
 | Current location | `useLocation()` |
 | Programmatic navigate | `useNavigate()` |
 
-### 12.3. Lý Do
-- `window.location.*` **KHÔNG reactive** - component không re-render khi URL thay đổi trong SPA
-- `useSearchParams`, `useParams` là reactive - tự động trigger re-render khi URL thay đổi
-- Đảm bảo navigation trong SPA hoạt động mượt mà
+### 12.3.Lý Do
+  - `window.location.*` ** KHÔNG reactive ** - component không re - render khi URL thay đổi trong SPA
+    - `useSearchParams`, `useParams` là reactive - tự động trigger re - render khi URL thay đổi
+      - Đảm bảo navigation trong SPA hoạt động mượt mà
 
 ---
 
@@ -629,6 +629,15 @@ Khi tạo feature mới:
 
 ---
 
-> **Ghi nhớ**: Code sạch, tách biệt, dễ maintain. 
+> ** Ghi nhớ **: Code sạch, tách biệt, dễ maintain. 
 > Reuse trước, tạo mới sau.
-> Mọi lỗi phải có ErrorCode, mọi kết quả phải là Result<T>.
+> Mọi lỗi phải có ErrorCode, mọi kết quả phải là Result < T >.
+
+---
+
+## 🗄️ 13. Quy Tắc Database & SQL
+
+### 13.1.Vị Trí Lưu Trữ
+  - ** BẮT BUỘC **: Tất cả file SQL phải được lưu trong thư mục`F:\code duan\VRC-main\SQL`
+    - ❌ KHÔNG tạo file SQL rải rác trong `backend/src` hay các folder khác
+      - ✅ Đặt tên file rõ ràng, có số thứ tự nếu cần(vd: `01_init.sql`, `02_update_users.sql`)

@@ -271,5 +271,16 @@
     "is_visible": "Hiển thị",
     "is_visible_desc": "Bật để hiển thị dịch vụ này trên trang web.",
     "service_create_success": "Tạo dịch vụ mới thành công",
-    "service_update_success": "Cập nhật dịch vụ thành công"
+    "service_update_success": "Cập nhật dịch vụ thành công",
+    "roles_management": {
+        "title": "Quản lý Vai trò",
+        "create_success": "Tạo vai trò thành công",
+        "update_success": "Cập nhật vai trò thành công",
+        "delete_success": "Xóa vai trò thành công",
+        "permissions_updated": "Cập nhật quyền thành công",
+        "delete_confirm_title": "Bạn có chắc chắn không?",
+        "delete_confirm_desc": "Hành động này không thể hoàn tác. Vai trò này sẽ bị xóa vĩnh viễn và người dùng có thể mất quyền truy cập.",
+        "delete_button": "Xóa",
+        "role_permissions": "Phân quyền Vai trò"
+    }
 }
