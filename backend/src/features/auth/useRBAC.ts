@@ -6,7 +6,7 @@ export function useRBAC() {
     const { user } = useAuth();
 
     // Fetch permissions for the current user's role
-    const { data: permissions = [] } = useQuery({
+    const { data: permissions = [], isLoading } = useQuery({
         queryKey: ['permissions', user?.role],
         queryFn: async () => {
             if (!user?.role) return [];
@@ -35,6 +35,7 @@ export function useRBAC() {
         role: user?.role as Role,
         permissions,
         hasPermission,
-        hasRole
+        hasRole,
+        isLoading // Expose loading state
     };
 }
